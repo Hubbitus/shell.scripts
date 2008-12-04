@@ -1,0 +1,10 @@
+#!/bin/bash
+
+: ${1?"Порядок использования: `basename $0` file.php"}
+
+#SEARCH_DIR
+
+#	if 
+
+#phpdoc -f /var/www/_SHARED_/debug.php -t /var/www/temp/DOCS/ -s -o HTML:Smarty:PHP
+phpdoc -f $1 -t /var/www/temp/DOCS/ -s -o HTML:Smarty:PHP

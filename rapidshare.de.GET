@@ -1,0 +1,106 @@
+#!/bin/bash
+
+WEB_PATH_FOR_IMAGE=/var/www/temp/rapidshare.de/image.gif
+WEB_URL_FOR_IMAGE=http://x-www.info/rapidshare.de/image.gif
+
+#http_proxy=200.129.0.162:3128
+#http_proxy=195.175.37.71:80 #РАБОТАЕТ, но иногда юзается
+#http_proxy=195.175.37.70:8080 #РАБОТАЕТ, но иногда юзается
+#http_proxy=66.194.196.7:3128 #РАБОТАЕТ, но иногда юзается
+#http_proxy=203.172.163.69:8080 Вроде работает, но: Запрос Proxy послан, ожидается ответ... 411 Length Required
+#http_proxy=68.112.197.42:3128#РАБОТАЕТ, но иногда юзается
+#http_proxy=148.233.159.57:3128#Used
+#http_proxy=148.233.229.236:3128#Used
+#http_proxy=62.75.221.178:8080#Used
+#http_proxy=202.29.20.151:8080 #411 Length Required
+#http_proxy=196.209.251.2:80#Used
+#http_proxy=203.26.206.131:553#Used
+#http_proxy=202.143.131.20:8080 #411 Length Required
+#export http_proxy
+#ftp_proxy=$http_proxy
+
+#export ftp_proxy
+
+	if [ ! $1 ]
+	then
+	echo 'Необходим аргумент-ссылка!'
+	exit 1
+	fi
+
+#rapidshare_COM_GET(){
+#wget -c --save-cookies cookies.txt --post-data l=462934&p=%2538%2538%2534%2531%2532%2538%2535%2530%2538&dl.start=Download+template_pack_from_plumcake.part01.rar http://rapidshare.de/files/16751090/template_pack_from_plumcake.part01.rar
+
+###1 Сначала главную страницу
+wget $1 -O 1.htm  --keep-session-cookies --save-cookie cook.FILE
+
+###2 Выдираем action формы:
+FORM_ACTION=`cat 1.htm | grep '<form' | sed -r 's/.*[aA][cC][tT][iI][oO][nN]="([^"]+)".*/\1/g;'`
+echo FORM_ACTION=$FORM_ACTION
+
+###2.1 Выдираем URI:
+FORM_URI=`cat 1.htm | grep '<form' | sed -r 's/.*name="uri" value="([^"]+)".*/\1/g;'`
+echo FORM_URI=$FORM_URI
+
+#http_proxy="http://$PROXY" wget --proxy=on $BASEURL'?' --post-data "d="`cat link1.1`"&submit=Click%20here%20to%20proceed" -O 3.htm --load-cookies cook.FILE --save-cookie cook.FILE
+wget $FORM_ACTION --post-data "uri="$FORM_URI"&dl.start=Free" -O 2.htm --keep-session-cookies --load-cookies cook.FILE --save-cookie cook.FILE
+#http_proxy="http://$PROXY" wget --proxy=on $FORM_ACTION --post-data "uri="$FORM_URI"&dl.start=Free" -O 2.htm --load-cookies cook.FILE --save-cookie cook.FILE
+
+
+###3 Выдернем и форму
+cat 2.htm | grep 'unescape(' | sed -r "s/.*(unescape\('.+'\))}}.*/var ttt = \1; print (ttt);/g;" > form.coded
+
+###4 Разкодируем форму
+js form.coded > form.decoded
+
+###5 Выдираем ссылку на картинку:
+IMG_URL=`cat form.decoded | sed -r 's/.*src="([^"]+)".*/\1/g;'`
+echo IMG_URL=$IMG_URL
+
+	if [ ! $IMG_URL ] #Нету картинки, проверим просят ли нас подождать
+	then
+	WAIT_BAD_MIN=`cat 2.htm | grep '(Or wait ' | sed -r 's/.*?\(Or wait ([0-9]*) minutes\).*?/\1/'`
+	PROXY_USED=`cat 2.htm | grep 'Your IP-address ' | sed -r 's/.*Your IP-address ([0-9.]+) is already downloading a file.*/\1/'`
+	
+		if [ ! $WAIT_BAD_MIN ]
+		then
+		echo "<p>Your IP-address $PROXY_USED is already downloading a file. You have to wait until it is finished."
+		echo "Прокся $PROXY_USED РАБОЧАЯ, но к сожалению уже используется, занята"
+		else
+		echo 'You have reached the download-limit for free-users. Want to download more?'
+		echo "Предлагают подождать $WAIT_BAD_MIN минут"
+		fi
+
+	exit 1
+	fi
+
+###6 Грузим картинку
+wget $IMG_URL -O $WEB_PATH_FOR_IMAGE
+
+###7 Запрашиваем пользователя ее прочитать
+echo "Посмотрите картинку по адресу $WEB_URL_FOR_IMAGE и введите что там написано (автоматически разбор пока не реализован):"
+read IMG_ANS
+echo Вы ввели - $IMG_ANS, попробуем
+
+
+
+### Выдираем таймаут который надо подождать
+WAIT_TIMEOUT=`cat 2.htm | grep '<script>var' | sed -r "s/.*<script>var c = ([0-9]+); fc.*/\1/g;"`
+#echo "ПРИДЕТСЯ ПОДОЖДАТЬ для начала закачки $WAIT_TIMEOUT секунд! (Ждем половину)"
+#sleep $(( $WAIT_TIMEOUT / 2 ))
+echo "ПРИДЕТСЯ ПОДОЖДАТЬ для начала закачки $WAIT_TIMEOUT секунд!"
+sleep $WAIT_TIMEOUT
+
+
+
+###8 Снова action выдираем из формы:
+FORM_ACTION=`cat form.decoded | sed -r 's/.*[aA][cC][tT][iI][oO][nN]="([^"]+)".*/\1/g;'`
+echo FORM_ACTION=$FORM_ACTION
+
+###8.1 И submit (name="actionstring")
+#<input type="submit" name="actionstring" value="Download">
+FORM_SUBMIT=`cat form.decoded | sed -r 's/.*name="actionstring" value="(.+)".*/\1/g;'`
+echo FORM_SUBMIT=$FORM_SUBMIT
+
+###9 УХХ, вроде финал, все сабмитим и грузим:
+wget $FORM_ACTION --limit-rate=15k --server-response -c --post-data "captcha=$IMG_ANS&actionstring=$FORM_SUBMIT" --keep-session-cookies --load-cookies cook.FILE --save-cookie cook.FILE
+#}#rapidshare_COM_GET()

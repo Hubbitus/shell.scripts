@@ -1,0 +1,4 @@
+#!/bin/bash
+
+aviInfo.video "$1"
+aviInfo.audio "$1"

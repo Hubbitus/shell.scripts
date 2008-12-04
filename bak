@@ -1,0 +1,52 @@
+#!/bin/bash
+
+MAIN_BAK_DIR='/mnt/sgtBarracuda/BAK'
+DATE_FORMAT='%Y-%m-%d'
+
+. /home/pasha/bin/SHARED/getopt_long.bash
+
+GETOPT_STRING="c:"
+LONG_GETOPT_STRING="cmd:"
+long_getopt_parse "$@"
+
+#echo OPTc=$OPTc
+#echo OPTcmd=$OPTcmd
+
+#$1 - ЧТО бакапим
+#$2 - ЧЕМ бакапим, какой коммандой (например cp, mv)
+
+	if [ ! "$1" ]; then
+	echo 'Нужен аргумент-файл!';
+	exit 1
+	fi
+
+	if [ "$OPTcmd" ]; then
+	cmd="$OPTcmd"
+	else
+		if [ "$OPTc" ]; then
+		cmd="$OPTc"
+		else
+		cmd='cp -r --backup=numbered'
+		fi
+	fi
+#############################################
+target="$1"
+
+	#Корректируем путь, если он не абсолютный
+	if [[ '/' != "${target:0:1}" ]]; then
+	target="$(pwd)/$1"
+#	dir=$(dirname "$(pwd)/$1")
+	fi
+
+dir=$(dirname "$target")
+#echo "\$target="$target
+#echo "\$dir="$dir
+
+#Создается иерархия
+#echo mkdir -p "${MAIN_BAK_DIR}/$(date +$DATE_FORMAT)${dir}"
+mkdir -p "${MAIN_BAK_DIR}/$(date +$DATE_FORMAT)${dir}"
+	if [ $( id -g ) -eq 0 ]; then #Put it to users
+	chown :users "${MAIN_BAK_DIR}/$(date +$DATE_FORMAT)"
+	fi
+#echo $cmd "$@" "${MAIN_BAK_DIR}/$(date +$DATE_FORMAT)${dir}"
+$cmd "$@" "${MAIN_BAK_DIR}/$(date +$DATE_FORMAT)${dir}"

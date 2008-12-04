@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "*" `LANG=C date +'%a %b %e %Y'` "Pavel Alexeev <Pahan [ at ] Hubbitus [ DOT ] spb [ dOt.] su>"

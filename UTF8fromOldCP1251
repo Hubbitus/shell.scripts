@@ -1,0 +1,6 @@
+#!/bin/bash
+
+mv "$1" "$1.cp1251"
+iconv -f CP1251 -t UTF8 "$1.cp1251" > "$1"
+
+rm "$1.cp1251"

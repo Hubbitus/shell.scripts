@@ -1,0 +1,137 @@
+#!/bin/bash
+
+. ~/bin/SHARED/getopt.bash
+. ~/bin/SHARED/timedread.bash
+. ~/bin/SHARED/printArray.bash
+
+#Перемнные, для возврата значения
+ReturN0=''
+ReturN1=''
+
+######SETTINGS#########
+PROXY_CONNECT_TIMEOUT=${PROXY_CONNECT_TIMEOUT:-10}	#Время таймаута, после которого считаем проксю вообще МЕРТВОЙ
+PROXY_TEST_MAX_TIME=40	#Секунд, сколько всего на тест прокси!
+
+WEB_PLAY_URL="http://temp/web_play.php"		#Какой URL загружать, чтобы проиграть звук. Так сделано для того чтобы можно было проиграть звук на удаленной машине, а не обязательно на той, на которой сейчас выполняется скрипт!!!
+#WEB_PLAY_URL=http://x-www.info/web_play.php
+
+LOGFILE=log.log
+
+CLEAN_TEMP_FILES=1	#Удалять за собой временные файлы или нет
+
+#Можно заменять, для другого варианта проверки правильности загрузки!
+Proxy_Check_Result_FUNCTION=${Proxy_Check_Result_FUNCTION:-"Proxy_Check_Result"}
+#######################
+
+# Вывод команд перед их исполнением.
+#set -o verbose
+
+#Free SOCKS 4 proxy list:
+#SOCKS4_proxy=68.96.112.225:40233
+
+function CLEAN_TEMP(){
+	if [ $CLEAN_TEMP_FILES -gt 0 ] ; then
+	rm 1.htm 2.htm form.coded form.decoded 2>/dev/null
+	fi
+}; #f CLEAN_TEMP
+
+#Проверка результата
+function Proxy_Check_Result(){
+#$1 - Error Code
+#$2 - Загруженный файл!
+#$3 - ИМЯ вообще желаемого к загрузке файла
+
+	if [ $1 -eq 0 ] ; then
+	#Интересно, код может быть 0, но не загрузится ничего, или загрузится фигня
+	#Потому как прокси уже получил ерунду, а мне отдал без ошибки.
+	#смотрим на зугруженный результат
+	filesize=`find -wholename "$2" -printf "%s"`
+		if [ $filesize -ge $SUCSESFUL_SIZE ] ; then
+		return 0;	#ВСЕ ПУЧКОМ!
+		else
+		return 101;
+		fi
+	else
+	return $1;
+	fi
+}; #f Proxy_Check_Result
+
+#Пробная загрузка и проверка результата
+function proxy_GET(){
+GET_URL=$1
+GET_PROXY=$2
+
+#Настраиваемо
+RESULT_FILE="-o ${PROXY_DIR}${GET_PROXY/:/_}/result.htm"
+
+CURLTestCmd="$CURLcmd $GET_URL --max-time $PROXY_TEST_MAX_TIME --connect-timeout $PROXY_CONNECT_TIMEOUT $RESULT_FILE"
+
+	#сначала стандартно используем Проксю
+	if [ "$PROXY_DIR" -a "$GET_PROXY" ] ; then
+	mkdir -p ${PROXY_DIR}${GET_PROXY/:/_}
+	CURLTestCmd="$CURLTestCmd --trace-ascii ${PROXY_DIR}${GET_PROXY/:/_}/proxy.log"
+	fi
+
+	echo "Пробуем прокси ${GET_PROXY/:/_} в стандартном HTTP-режиме ($CURLTestCmd)":
+	$CURLTestCmd
+	$Proxy_Check_Result_FUNCTION $? "$RESULT_FILE" "`basename $GET_URL`"
+	errno=$?
+		if [ $errno -eq 0 ] ; then
+		return 0;	#Ну и все круто, работает, прокся хорошая, продолжаем
+		else	#Тогда теперь попробуем туннелинг #-p/--proxytunnel:
+			if [ "$OPTp" ]; then	#Только если это был обычнфй прокс
+			CURLcmd="$CURLcmd --proxytunnel"	#Если заработает, то это должно быть дописано, если нет - ну и Бог с ним, на следующем проходе цикла заново инициализируетя переменная
+			ReturN0=$errno	#потом понадобится, как возаращаемое знаечние, записать
+				if [ "$PROXY_DIR" -a "${GET_PROXY/:/_}" ] ; then
+				CURLTestCmd="$CURLTestCmd --proxytunnel --trace-ascii ${PROXY_DIR}${GET_PROXY/:/_}/tunnel.log"
+				else
+				CURLTestCmd="$CURLTestCmd --proxytunnel"
+				fi
+
+			echo "Пробуем прокси ${GET_PROXY/:/_} в режиме туннелирования трафика ($CURLTestCmd):"
+			$CURLTestCmd
+			$Proxy_Check_Result_FUNCTION $? "$RESULT_FILE" "`basename $GET_URL`"
+			return $?		#Теперь полюбому этот код возвращаем, что бы в нем теперь не было
+			else
+			return $errno
+			fi
+		fi
+}; #f proxy_GET
+
+function check_PROXY(){
+GETOPTS_STRING="p:4:5:s:"
+URL=$1
+shift 1	#Первый параметр позиционный, так и есть URL, его отрезаем
+#echo '$@='$@
+#Парсим параметры
+getopt_parse "$@"
+
+#	if [ $OPT4 ]; then echo '$OPT4="'$OPT4'"'; fi
+#	if [ $OPTp ]; then echo '$OPTp="'$OPTp'"'; fi
+#	if [ $OPT5 ]; then echo '$OPT5="'$OPT5'"'; fi
+#	if [ $OPTs ]; then echo '$OPTs="'$OPTs'"'; fi
+
+CURLcmd="curl"
+
+PROXY=
+	if [ $OPT4 ]; then CURLcmd="$CURLcmd --socks4 $OPT4 "; PROXY=$OPT4; fi
+	if [ $OPT5 ]; then CURLcmd="$CURLcmd --socks5 $OPT5 "; PROXY=$OPT5; fi
+	if [ $OPTp ]; then CURLcmd="$CURLcmd --proxy $OPTp "; PROXY=$OPTp; fi
+	#Speed
+	if [ $OPTs ]; then CURLcmd="$CURLcmd --limit-rate $OPTs"; fi
+#echo $CURLcmd
+#exit
+
+CURLcmdWithoutLog=$CURLcmd	#БЕЗ лога
+CURLcmd="$CURLcmd --trace-ascii $LOGFILE "	#Добавляем логирование
+
+	if [ "empty" = "empty$URL" ]
+	then
+	echo 'Необходим аргумент-ссылка!'
+	exit 1
+	fi
+
+proxy_GET "$URL" "$PROXY"
+return $?
+
+}; #f check_PROXY

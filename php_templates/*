@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cat << HEREDOC
+/**
+* DescrHere
+* @param
+* @return
+**/
+HEREDOC

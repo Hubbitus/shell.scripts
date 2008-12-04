@@ -1,0 +1,38 @@
+#!/bin/sh
+
+#
+# MEncoder dev-CVS-041123-12:29-3.4.2
+# $Id: divx.encode,v 1.2 2005/04/16 07:48:25 aquatique Exp $
+#
+#Recommended video bitrate for 700MB CD: 826
+#Recommended video bitrate for 2 x 700MB CD: 1748
+#
+#Audio stream:   80,858 kbit/s  (10107 bps)  size: 64429224 bytes  6374,544 secs
+#
+# 106 / 1:46
+#
+
+lameopts="vbr=2:q=8:aq=8:mode=1:vol=7"
+lavcopts="vcodec=mpeg4:mbd=2:trell:cbp:mv0:v4mv:vbitrate=1748:vqmin=2:vqmax=21:vqcomp=0.8:vqblur=0.1:vlelim=-3:vcelim=5:lumi_mask=0.01:dark_mask=0.1:scplx_mask=0.1:tcplx_mask=0.01:naq:autoaspect"
+DVDdevice="/big2/DVD/Pitch Black"
+namebase="Pitch Black"
+vfs="-vf pullup,softskip,crop=704:352:8:64,hqdn3d"
+#poss="-chapter 2 -endpos 1:00"
+poss=""
+extra="-aid 128 -noautoexpand -ofps 24000/1001"
+
+mencoder ${extra} -o /dev/null \
+  -oac mp3lame -lameopts $lameopts \
+  -ovc lavc -lavcopts ${lavcopts}:vpass=1:turbo $vfs $poss -dvd-device "$DVDdevice" dvd://1
+
+mencoder ${extra} -o /dev/null \
+  -oac mp3lame -lameopts $lameopts \
+  -ovc lavc -lavcopts ${lavcopts}:vpass=3:psnr $vfs $poss -dvd-device "$DVDdevice" dvd://1
+
+cp divx2pass.log 2nd_divx2pass.log
+
+mencoder ${extra} -o "${namebase}.avi" \
+  -oac mp3lame -lameopts $lameopts \
+  -info name="Pitch Black":comment="encoded by <aquatique@rusunix.org>":srcform="DVD" \
+  -ovc lavc -lavcopts ${lavcopts}:vpass=3:psnr:qns=1:qpel $vfs $poss -dvd-device "$DVDdevice" dvd://1
+

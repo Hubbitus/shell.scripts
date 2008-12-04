@@ -1,0 +1,50 @@
+#!/bin/bash
+#Внимание, ссылки надо давать не прямые, а на страницу закачки
+#все необходимые ссылки для скачивания будут извлечены автоматически!
+
+#######################Settings - Настройки############################
+BASEURL=http://www.filefactory.com
+#######################################################################
+
+	if [ ! $1 ]
+	then
+	echo 'Необходим аргумент-ссылка!'
+	exit 1
+	fi
+
+#1 Основная страница ссылки
+wget $1 -O 1.htm --save-cookie cook.FILE
+
+#2 Дальше выдираем ссылку бесплатной загрузки:
+cat 1.htm | grep 'Download for free with FileFactory Basic' \
+	| sed -n '{s/.* [hH][rR][eE][fF]="\?//g;s/"\?>.*//g;p}' > link1
+
+#sleep 17	#15 JS
+
+#3 Грузим страницу бесплатной скачки (относительная ссылка):
+echo Грузим $BASEURL`cat link1`
+wget $BASEURL`cat link1` -O 2.htm --load-cookies cook.FILE --save-cookie cook.FILE
+
+#4 Выдираем ссылку на бесплатную загрузку FTP (можно по HTTP еще)
+cat 2.htm | grep '<strong>Click here to begin your download</strong>'  \
+	| sed 's/<a/\n<a/g' \
+	| sed -n '{s/.* [hH][rR][eE][fF]="\?//g;s/"\?>.*//g;p}' \
+	| grep http > link2
+#	| grep 'FTP -- Click' \
+
+##просто комментарии не позволены в многострочной комманде:
+#	| sed 's/<a/\n<a/g' \ #Это разобъет ссылки на разные строчки
+#	| grep 'FTP -- Click' \ #Это выдерет именно FTP
+#	| grep http -- отсеять пустые строки
+#sleep 18	#15 JS
+
+####5 Хрен, там еще страничка с рекламой и уже полной ссылкой:
+###wget "$BASEURL`cat link2`" -O 3.htm --load-cookies cook.FILE --save-cookie cook.FILE
+
+####6 Выдираем ссылку уже на загрузку вроде:
+###cat 3.htm | grep 'ftp://' \
+###	| sed -n '{s/.* [hH][rR][eE][fF]="\?//g;s/"\?>.*//g;p}' > link3
+
+#7 Ну и вроде грузим сам файл уже (там полная ссылка):
+#wget --limit-rate=15k -c `cat link2`
+wget -c `cat link2`

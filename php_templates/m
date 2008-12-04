@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#1 - Function name
+#2 - Access type (public, private...)
+
+\*
+echo -e $2' function '$1"(){\n\n}#m "$1

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+: ${1?"Порядок использования: `basename $0` URL"}
+
+IMG_DIR='/home/pasha/IMG-cool/Thanks'
+URL="$1"
+
+echo ${URL##*\/}
+wget -c "$URL" -O "$IMG_DIR/${URL##*\/}"
+echo "$URL" > "$IMG_DIR/${URL##*\/}.url"

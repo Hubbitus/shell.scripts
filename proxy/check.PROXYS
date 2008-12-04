@@ -1,0 +1,211 @@
+#!/bin/bash
+
+#Отладочный режим
+#set -x
+
+. ~/bin/proxy/check.PROXY
+
+#PROXYS_TYPE="-p"	#Прокси
+#PROXYS_TYPE="-4"	#SOCKS4
+#PROXYS_TYPE="-5"	#SOCKS5
+
+PROXYS_TYPE=${PROXYS_TYPE:-"-p"}	#Если не задано раньше, дефолтно прокси обычный
+
+#check_PROXY "$1" "${PROXYS_TYPE}${PROXYS[$i]}" "$2"
+#Какую функцию вызывать для проверки или загрузки!:
+CHECK_OR_LOAD_FUNCTION=${CHECK_OR_LOAD_FUNCTION:-"check_PROXY"}
+
+#####################################################
+	if [ "$1" -a "$2" ]; then
+	PROXY_LIST="$2"
+#Нельзя, нету "опережающего" объявления, поэтому ниже (в конце файла) это условие снова
+#rapidshare_com_GET_viaPROXY $1 "$3"
+	fi
+######################################################
+
+############################################################
+##########################Настройки#########################
+############################################################
+#Все параметры имею значения поумолчанию, НО могут быть переорпределены, если встретяся ранее
+PROXY_LIST=${PROXY_LIST:-"proxy.txt"}		#Это НЕ проверенный
+PROXY_DIR=${PROXY_DIR:-"/var/www/temp/rapidshare.com/PROXYS/"}
+PROXY_LIST_good=${PROXY_LIST_good:-"$PROXY_DIR$PROXY_LIST.good"}
+PROXY_LIST_bad=${PROXY_LIST_bad:-"$PROXY_DIR$PROXY_LIST.bad"}
+PROXY_LIST_bak=${PROXY_LIST_bak:-"$PROXY_LIST.orig"}	#После обработки, проверенные прокси будут удалены, место куда сохранять оригинальный список
+
+PROXYS_GOOD=${PROXY_LIST_bad:-"$PROXY_DIR/PROXYS.good"}	#Общий список хороших проксей!!!
+SUCSESFUL_SIZE=512	#Размер (байт) загружаемого файла, после которого можно прокси считать рабочим!
+
+############################################################
+##########################Functions#########################
+############################################################
+##На выход (в т.ч. Control+C) вешаем сохранение списка, чтобы больше не заботиться об этом
+trap 'LIST_save_tail' EXIT
+# EXIT -- это название сигнала, генерируемого при выходе из сценария.
+
+
+
+#Сохраняет "оставшиеся" непроверенные файлы в оригинальный файл,
+# а оригинальный переименовывает согласно конфигу в $PROXY_LIST_bak
+function LIST_save_tail(){
+echo ENDING
+echo Cохраняем список непроверенных проксей и выходим
+
+	#Только один раз, иначе если каждый, какой он нафиг "оригинальный"
+	if [ ! -e "$PROXY_LIST_bak" ]; then
+		if [ ! -e "$PROXY_LIST" ]; then
+		echo "Затребована проверка проксей, но список $PROXY_LIST НЕ НАЙДЕН!"
+		exit 1;
+		else
+		mv "$PROXY_LIST" "$PROXY_LIST_bak"
+		fi
+	fi
+
+echo "Остановились на I равном "$i
+echo 'Остались непроверенных проксей - '$(( $PROXYS_cnt - $i ))
+PROXYS=( ${PROXYS[@]:$i:$PROXYS_cnt} )
+
+printArray ${PROXYS[@]} > "$PROXY_LIST"
+} #f LIST_save_tail
+
+function PROXY_ADD_good(){
+#$1 - ${PROXYS[$i]}
+	if [ "$2" ] ; then
+	echo -e "$1\t$2" >> "$PROXY_LIST_good"
+	else
+	echo "$1" | tee -a "$PROXYS_GOOD" >> "$PROXY_LIST_good"
+	fi
+} #f PROXY_ADD_good
+
+function PROXY_ADD_bad(){
+#$1 - ${PROXYS[$i]}
+#$2 - error 1
+#$3 - error 2 (optional)
+
+#echo -e "${PROXYS[$i]}\t$error" >> $PROXY_LIST_bad
+echo -e "$1\t$2 $3" >> "$PROXY_LIST_bad"
+} #f PROXY_ADD_bad
+
+function PROXY_SORT_by_code(){
+#$1 = Сама прокся, через которую пытались
+#$2 = код завершения загрузки чего-то откуда-то CURL'ом
+
+echo "$1 ошибка: $2;"
+
+	case $2 in
+	0		)	#Все хорошо
+		PROXY_ADD_good $1
+	;;
+	#ошибки curl'а
+	7 | 28	)	#Мертвый прокс, выходим
+		echo 'Ошибка соединения или таймаут. Прокси не работает!!!'
+		PROXY_ADD_bad $1 $2 $3
+	;;
+	52		)
+		echo 'CURL error 52: The server didn’t reply anything, which here  is  considered  an error'
+		echo 'curl: (52) Empty reply from server'
+		PROXY_ADD_bad $1 $2 $3
+	;;
+	55		)
+		echo 'CURL error 55: Unable to receive initial SOCKS5 response.'
+		PROXY_ADD_bad $1 $2 $3
+	;;
+	56		)	#
+		echo 'CURL error 56: Failure in receiving network data'
+#разные коды могут быть
+#		echo 'curl: (56) Received HTTP code 405 (Method Not Allowed) from proxy after CONNECT'
+		PROXY_ADD_bad $1 $2 $3
+	;;
+	#Дальше, с кодами больше 100, мои ошибки будут
+	101		)	#Не загрузилась через прокси начальная страница
+		PROXY_ADD_bad $1 $2 $3
+	;;
+	102		)
+		echo "<p>Your IP-address $PROXY_USED is already downloading a file. You have to wait until it is finished."
+		echo "Прокся $PROXY_USED РАБОЧАЯ, но к сожалению уже используется, занята"
+		#PROXY_ADD_good $1 "Used NOW"
+		PROXY_ADD_good $1 $2
+	;;
+	103		)
+		echo 'You have reached the download-limit for free-users. Want to download more?'
+		echo "Предлагают подождать $WAIT_BAD_MIN минут"
+		#PROXY_ADD_good $1 "Wait $WAIT_BAD_MIN min"
+		PROXY_ADD_good $1 $2 $WAIT_BAD_MIN
+	;;
+	*		)
+		echo СТРАННО, какой-то код должен быть!!!
+	esac
+
+return $2
+} #f PROXY_SORT_by_code
+########################
+
+##########################/Functions########################
+
+
+function check_PROXYS(){
+echo START;
+#$1 - URL, который качать
+#$2 - ОСТАЛЬНЫЕ параметры, для передачи в rapidshare_COM_GET
+
+PROXYS=( $(cat "$PROXY_LIST") )
+
+#URL=http://rapidshare.com/files/14884914/Squirting.part3.rar.html
+#echo `basename ${URL%.html}`
+#exit
+
+
+#Всего элементов
+#echo Всего проксей: ${#PROXYS[@]}
+#echo ${PROXYS[@]}
+
+	if [ ! -d $PROXY_DIR ] ; then
+	mkdir -p $PROXY_DIR
+	fi
+
+PROXYS_cnt=${#PROXYS[@]}
+	for (( i = 0 ; i < $PROXYS_cnt ; i++ ))
+	do
+	echo 
+	echo ===============================================
+	echo ===============================================
+	echo "Прокси №  "$(( $i + 1 ))" (из $PROXYS_cnt):" ${PROXYS[$i]}
+	echo -----------------------------------------------
+
+#	rapidshare_COM_GET http://rapidshare.com/files/14884914/Squirting.part3.rar -p ${PROXYS[$i]}
+#	rapidshare_COM_GET "$1" -p ${PROXYS[$i]} $2
+
+ReturN0=''	#Дополнителный, опциональный параметр
+#	check_PROXY "$1" "${PROXYS_TYPE}${PROXYS[$i]}" "$2"
+	$CHECK_OR_LOAD_FUNCTION "$1" "${PROXYS_TYPE}${PROXYS[$i]}" "$2"
+
+	PROXY_SORT_by_code ${PROXYS[$i]} $? $ReturN0
+		if [ $? -eq 0 ] ; then
+		#Все круто!
+		echo ПОХОЖЕ ЧТО ВСЕ УСПЕШНО ЗАГРУЖЕНО.
+		#Не надо теперь сохранять, на выход это и так повешано, см. trap выше
+		#LIST_save_tail
+		exit 0; #Выходим
+		fi
+	done
+
+#Сюда мы можем придти только в конце цикла, если не вышли раньше по успешному
+echo 'СПИСОК проксей кончился! Надо бы новый! ;)'
+
+	if [ "$WEB_PLAY_URL" ] ; then	#Если настроено, проиграем звук!
+	curl $WEB_PLAY_URL &>/dev/null &
+	fi
+
+exit 100
+} #f check_PROXYS
+
+#####################################################
+	if [ "$1" -a "$2" ]; then
+	#Если переданы 2 параметра при вызове скрипта (файла) то автоматически запускаем, считая:
+	#$1 - URL
+	#$2 - Proxy-list (в ./ !!!)
+	#$3 - ОСТАЛЬНЫЕ параметры (в КАВЫЧКАХ!), для передачи в rapidshare_COM_GET
+
+	check_PROXYS $1 "$3"
+	fi
+######################################################

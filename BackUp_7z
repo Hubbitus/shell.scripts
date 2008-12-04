@@ -1,0 +1,47 @@
+#!/bin/bash
+
+EXCLFILE="/etc/backups/exclude"
+
+usage(){
+echo "Неробходимо вызывать в следующем формате: "
+echo `basename $0`" <1)что бакапить> [<2)Имя бакапа|BackUp_date.tar.7z> <3)Куда|./>]"
+exit 1;
+}
+
+	if [ -z "$1" ] ; then
+	usage
+#	#Поумолчанию что бакапить
+#	WHAT_BACKUP="/"
+	else
+	WHAT_BACKUP="$1"
+	fi
+
+	#Имя файла-бакапа
+	if [ -z "$2" ] ; then
+	BACKFILENAME=BackUp_`date '+%d.%m.%Y'`.tar.7z
+	else
+	BACKFILENAME="$2"
+	fi
+
+	if [ -z "$3" ] ; then
+	#Поумолчанию Куда бакапить
+	BACKPATH="./"
+	else
+	BACKPATH="$3"
+	fi
+
+
+
+tar -cp -f - $WHAT_BACKUP  \
+--exclude-from $EXCLFILE \
+--exclude $BACKFILENAME \
+--absolute-names \
+--force-local \
+--one-file-system \
+--check-links \
+--totals \
+--seek \
+--sparse \
+| 7za a -t7z -m0=LZMA -mx=6 $BACKPATH/$BACKFILENAME -si
+#Параметры 7z подобраны тщательно, смотри тесты 7ZIP!!!!
+#7za a -t7z -m1=LZMA $BACKPATH/linux_desktop_BAK.`date '+%d.%m.%Y'`.tar.7z $WHAT_BACKUP/*

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+	if [ ! "$1" ] ; then
+	echo 'Необходим один аргумент - строка для grep';
+	exit
+	fi
+
+SIGNAL=''
+
+	if [ "$2" ] ; then
+	SIGNAL=$2
+	fi
+
+echo Подходящие под маску процессы:
+ps aux | grep $1 | grep -Ev "grep|`basename $0` +$1"
+
+#количество выведенных строк. Чтобы не справшивать, если убивать нечего
+COUNT=$( ps aux | grep $1 | grep -Ev "grep|`basename $0` +$1" | wc -l )
+
+	if [ $COUNT -gt 0 ]; then
+	echo "Убить? (y/n)";
+	read ans
+
+		if [[ "$ans" = 'y' || "$ans" = 'Y' ]]; then
+		ps aux | grep $1 | grep -Ev "grep|`basename $0` +$1" | awk '{ print $2; }' | xargs -r kill $SIGNAL
+		fi
+	fi

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+EXCL_FROM=${1-'*.exclude'}
+
+#Excludes
+#необходимо чтобы у egrep бфл аргумент, хоть и пустой
+EXCLUDE_EGREP_PATTERN="$( sed -rn 's/[[:space:]]*#.*//; /./ H;${x; s/\n/|/g; s/^\|//; p}' 2>/dev/null $EXCL_FROM )"
+#echo EXCLUDE_EGREP_PATTERN=${EXCLUDE_EGREP_PATTERN:-''}
+#exit
+
+
+#set -x
+
+fgrep 'File does not exist' ${1-error_log} \
+	| egrep -v "${EXCLUDE_EGREP_PATTERN:-''}" \
+		| fgrep 'referer' \
+			| sed -r 's/(File does not exist)/\n\t\1/g;s/( referer)/\n\t\1/g' \
+				> error_log.FDNE
+
+#		| grep -v '/home/amurforum/public_html/:' \

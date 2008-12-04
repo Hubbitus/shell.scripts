@@ -1,0 +1,271 @@
+#!/bin/bash
+
+. ~/bin/SHARED/getopt.bash
+. ~/bin/SHARED/timedread.bash
+. ~/bin/SHARED/printArray.bash
+
+
+######SETTINGS#########
+PROXY_CONNECT_TIMEOUT=${PROXY_CONNECT_TIMEOUT:-10}	#Время таймаута, после которого считаем проксю вообще МЕРТВОЙ
+PROXY_TEST_MAX_TIME=40	#Секунд, сколько всего на тест прокси!
+
+WEB_PATH_FOR_IMAGE=/var/www/temp/rapidshare.com/image.gif
+WEB_URL_FOR_IMAGE=http://x-www.info/rapidshare.com/image.gif
+
+WEB_PLAY_URL="http://temp/web_play.php"		#Какой URL загружать, чтобы проиграть звук. Так сделано для того чтобы можно было проиграть звук на удаленной машине, а не обязательно на той, на которой сейчас выполняется скрипт!!!
+#WEB_PLAY_URL=http://x-www.info/web_play.php
+
+LOGFILE=log.log
+
+CLEAN_TEMP_FILES=1	#Удалять за собой временные файлы или нет
+
+PROXY_DIR=${PROXY_DIR:-'./'}
+#######################
+
+#Перемнные, для возврата значения
+ReturN0=''
+ReturN1=''
+
+# Вывод команд перед их исполнением.
+#set -o verbose
+
+#Free SOCKS 4 proxy list:
+#SOCKS4_proxy=68.96.112.225:40233
+
+function CLEAN_TEMP(){
+	if [ $CLEAN_TEMP_FILES -gt 0 ] ; then
+	rm 1.htm 2.htm form.coded form.decoded 2>/dev/null
+	fi
+}; #f CLEAN_TEMP
+
+#Проверка результата
+function rapidshare_Proxy_Check_Result(){
+#$1 - Error Code
+#$2 - Загруженный файл!
+#$3 - ИМЯ вообще желаемого к загрузке файла
+
+	if [ $1 -eq 0 ] ; then
+	echo Для проверки используем файл $2
+	#Интересно, код может быть 0, но не загрузится ничего, или загрузится фигня
+	#Потому как прокси уже получил ерунду, а мне отдал без ошибки.
+	#смотрим на зугруженный результат
+	#<input type="submit" name="dl.start" value="Free">
+	#FORM_ACTION=`fgrep '<form' "$2" | sed -r 's/.*[aA][cC][tT][iI][oO][nN]="([^"]+)".*/\1/g;'`
+#set -x
+	FORM_ACTION=`grep -P "<form.+$3" "$2" | sed -r 's/.*[aA][cC][tT][iI][oO][nN]="([^"]+)".*/\1/g;'`
+#set +x
+#echo FORM_ACTION=$FORM_ACTION
+#exit 150
+		if [ ! "$FORM_ACTION" ] ; then
+		return 101;
+		else
+		return 0;	#ВСЕ ПУЧКОМ!
+		fi
+	else
+	return $1;
+	fi
+}; #f rapidshare_Proxy_Check_Result
+
+#Пробная загрузка и проверка результата
+function rapidshare_PROXY_CHECK(){
+GET_URL=$1
+GET_PROXY=$2
+#Настраиваемо
+RESULT_FILE="${PROXY_DIR}${GET_PROXY/:/_}/result.htm"
+#CURLTestCmd="$CURLcmd $URL --max-time $PROXY_TEST_MAX_TIME --connect-timeout $PROXY_CONNECT_TIMEOUT -o ${PROXY_DIR}${PROXY}/result.htm"
+CURLTestCmd="$CURLcmd $GET_URL --max-time $PROXY_TEST_MAX_TIME --connect-timeout $PROXY_CONNECT_TIMEOUT -o $RESULT_FILE"
+
+	#сначала стандартно используем Проксю
+	if [ "$PROXY_DIR" -a "$GET_PROXY" ] ; then
+	mkdir -p ${PROXY_DIR}${GET_PROXY/:/_}
+	CURLTestCmd="$CURLTestCmd --trace-ascii ${PROXY_DIR}${GET_PROXY/:/_}/proxy.log"
+	fi
+
+	echo "Пробуем прокси $GET_PROXY в стандартном HTTP-режиме ($CURLTestCmd)":
+	$CURLTestCmd
+	rapidshare_Proxy_Check_Result $? "$RESULT_FILE" "`basename $GET_URL`"
+	errno=$?
+		if [ $errno -eq 0 ] ; then
+		return 0;	#Ну и все круто, работает, прокся хорошая, продолжаем
+		else	#Тогда теперь попробуем туннелинг #-p/--proxytunnel:
+			if [ "$OPTp" ]; then	#Только если это был обычнфй прокс
+			ReturN0=$errno	#потом понадобится, как возаращаемое знаечние, записать
+				if [ "$PROXY_DIR" -a "$GET_PROXY" ] ; then
+				CURLTestCmd="$CURLTestCmd --proxytunnel --trace-ascii ${PROXY_DIR}${GET_PROXY/:/_}/tunnel.log"
+				else
+				CURLTestCmd="$CURLTestCmd --proxytunnel"
+				fi
+
+			echo "Пробуем прокси $PROXY в режиме туннелирования трафика ($CURLTestCmd):"
+			$CURLTestCmd
+			rapidshare_Proxy_Check_Result $? "$RESULT_FILE" "`basename $GET_URL`"
+			return $?		#Теперь полюбому этот код возвращаем, что бы в нем теперь не было
+			else
+			return $errno
+			fi
+		fi
+}; #f rapidshare_PROXY_CHECK
+
+function rapidshare_COM_GET(){
+GETOPTS_STRING="p:4:5:s:"
+URL=$1
+
+shift 1	#Первый параметр позиционный, так и есть URL, его отрезаем
+#echo '$@='$@
+#Парсим параметры
+getopt_parse "$@"
+
+if [ $OPT4 ]; then echo '$OPT4="'$OPT4'"'; fi
+if [ $OPTp ]; then echo '$OPTp="'$OPTp'"'; fi
+if [ $OPT5 ]; then echo '$OPT5="'$OPT5'"'; fi
+if [ $OPTs ]; then echo '$OPTs="'$OPTs'"'; fi
+
+#Бакапим старую картинку сначала:
+`dirname $WEB_PATH_FOR_IMAGE`/image_bak.bash $WEB_PATH_FOR_IMAGE 2>/dev/null
+
+#CURLcmd="curl --trace-ascii $LOGFILE -v"
+CURLcmd="curl"
+
+PROXY=
+	if [ $OPT4 ]; then CURLcmd="$CURLcmd --socks4 $OPT4 "; PROXY=$OPT4; fi
+	if [ $OPT5 ]; then CURLcmd="$CURLcmd --socks5 $OPT5 "; PROXY=$OPT5; fi
+	if [ $OPTp ]; then CURLcmd="$CURLcmd --proxy $OPTp "; PROXY=$OPTp; fi
+	#Speed
+	if [ $OPTs ]; then CURLcmd="$CURLcmd --limit-rate $OPTs"; fi
+#echo $CURLcmd
+#exit
+
+CURLcmdWithoutLog=$CURLcmd	#БЕЗ лога
+CURLcmd="$CURLcmd --trace-ascii $LOGFILE "	#Добавляем логирование
+
+#wget -c --save-cookies cookies.txt --post-data l=462934&p=%2538%2538%2534%2531%2532%2538%2535%2530%2538&dl.start=Download+template_pack_from_plumcake.part01.rar http://rapidshare.de/files/16751090/template_pack_from_plumcake.part01.rar
+
+	if [ "empty" = "empty$URL" ]
+	then
+	echo 'Необходим аргумент-ссылка!'
+	exit 1
+	fi
+
+###1 Сначала главную страницу
+##Если все нормально, то какраз и вернется нулевой код и 1.htm нужный уже быдет загружен
+#Глобальную, чтобы 100 раз не проверять
+FORM_ACTION=
+
+rapidshare_PROXY_CHECK "$URL" "$PROXY"
+errno=$?	#Без переменной нельзя, иначе условие тоже операция, и значение переписывается
+	if [ $errno -ne 0 ] ; then
+	CLEAN_TEMP
+	return $errno;
+	fi
+
+echo 'ПРОКСИ РАБОТАЕТ похоже!'
+PROXY_DIR_TMP=`dirname $RESULT_FILE`
+
+
+###ТУТ УЖЕ ДОЛЖЕН РАБОТАТЬ ПРОКСИ!!!!!!!!! Дальше все как всегда!!!
+
+###2 Выдираем action формы:
+#FORM_ACTION=`fgrep '<form' 1.htm | sed -r 's/.*[aA][cC][tT][iI][oO][nN]="([^"]+)".*/\1/g;'`
+#Выше закомментировал, потому как в проверках он уже должен был быть распаршен
+echo FORM_ACTION=$FORM_ACTION
+
+###2 Грузим
+$CURLcmd --data "dl.start=Free" $FORM_ACTION -o $PROXY_DIR_TMP/2.htm
+
+#1 Странно, видать отказались от подобного кодирования. ну так даже проще.
+###3 Выдернем форму
+#fgrep 'unescape(' 2.htm | sed -r "s/.*(unescape\('.+'\))}}.*/var ttt = \1; print (ttt);/g;" > form.coded
+###4 Разкодируем форму
+#js form.coded > form.decoded
+###5 Выдираем ссылку на картинку:
+#IMG_URL=`cat form.decoded | sed -r 's/.*src="([^"]+)".*/\1/g;'`
+IMG_URL=`fgrep 'No premium user. Please enter' $PROXY_DIR_TMP/2.htm | sed -r 's/.*src="([^"]+)".*/\1/g;'`
+echo IMG_URL=$IMG_URL
+
+
+	if [ ! $IMG_URL ] #Нету картинки, проверим просят ли нас подождать
+	then
+	WAIT_BAD_MIN=`fgrep '(Or wait ' $PROXY_DIR_TMP/2.htm | sed -r 's/.*?\(Or wait ([0-9]*) minutes?\).*?/\1/'`
+	PROXY_USED=`fgrep 'Your IP-address ' $PROXY_DIR_TMP/2.htm | sed -r 's/.*Your IP-address ([0-9.]+) is already downloading a file.*/\1/'`
+	
+		if [ ! $WAIT_BAD_MIN ]
+		then
+		echo "Your IP-address $PROXY_USED is already downloading a file. You have to wait until it is finished."
+		echo "Прокся $PROXY_USED РАБОЧАЯ, но к сожалению уже используется, занята"
+		return 102
+		else
+		echo 'You have reached the download-limit for free-users. Want to download more?'
+		echo "Предлагают подождать $WAIT_BAD_MIN минут"
+		return 103
+		fi
+	fi
+
+###6 Грузим картинку
+$CURLcmd $IMG_URL -o $WEB_PATH_FOR_IMAGE
+
+	if [ "$WEB_PLAY_URL" ] ; then	#Если настроено, проиграем звук!
+	curl $WEB_PLAY_URL -s -o /dev/null &
+	fi
+
+###7 Запрашиваем пользователя ее прочитать
+echo "Посмотрите картинку по адресу $WEB_URL_FOR_IMAGE и введите что там написано (автоматически разбор пока не реализован):"
+timedread IMG_ANS
+echo Вы ввели - $IMG_ANS, попробуем
+
+### Выдираем таймаут который надо подождать
+WAIT_TIMEOUT=`fgrep '<script>var' $PROXY_DIR_TMP/2.htm | sed -r "s/.*<script>var c=([0-9]+); var.*/\1/g;"`
+#echo "ПРИДЕТСЯ ПОДОЖДАТЬ для начала закачки $WAIT_TIMEOUT секунд! (Ждем половину)"
+#sleep $(( $WAIT_TIMEOUT / 2 ))
+echo "ПРИДЕТСЯ ПОДОЖДАТЬ для начала закачки $WAIT_TIMEOUT секунд!"
+##(( WAIT_TIMEOUT-=ReadSeconds ))
+#ReadSeconds сколько секунд читали ответ (сколько отвечал пользователь) из ф-ии timedread
+#Если просрочили, то отрицательного не надо  в любом случае
+(( (WAIT_TIMEOUT-=ReadSeconds) < 0 ? WAIT_TIMEOUT=0 : 0 ))
+echo "На самом деле, ждать уже осталось $WAIT_TIMEOUT секунд..."
+sleep $WAIT_TIMEOUT
+
+###8 Снова action выдираем из формы:
+#FORM_ACTION=`cat form.decoded | sed -r 's/.*[aA][cC][tT][iI][oO][nN]="([^"]+)".*/\1/g;'`
+FORM_ACTION=`fgrep 'form name="dl" action=' $PROXY_DIR_TMP/2.htm | sed -r 's/.*form name="dl" action="([^"]+)".*/\1/g;'`
+echo FORM_ACTION=$FORM_ACTION
+
+###8.1 И submit (name="actionstring")
+#<input type="submit" name="actionstring" value="Download from Level (3) #2-network"></h3>
+#FORM_SUBMIT=`cat form.decoded | sed -r 's/.*name="actionstring" value="(.+)".*/\1/g;'`
+#echo FORM_SUBMIT=$FORM_SUBMIT
+
+#Можно качать ГЕТом!!!
+#http://forum.ru-board.com/topic.cgi?forum=5&topic=21567&start=0&limit=1&m=1#1
+#http://dl43cg2.rapidshare.com/files/7310884/4458304/kart_fokusy.part1.rar?accesscode=91HS 
+
+###9 УХХ, вроде финал, все сабмитим и грузим:
+#НЕЛЬЗЯ использовать докачку
+#wget $FORM_ACTION --post-data "accesscode=$IMG_ANS&actionstring=$FORM_SUBMIT" --load-cookies cook.FILE --save-cookie cook.FILE
+
+#Загрузка долгая, очищаем сначала
+#CLEAN_TEMP
+echo "Грузим следующей коммандой:"
+echo "$CURLcmdWithoutLog "$FORM_ACTION?accesscode=$IMG_ANS" -o `basename $URL`"
+$CURLcmdWithoutLog "$FORM_ACTION?accesscode=$IMG_ANS" -o `basename $URL`
+
+	#Сигнал завершения. Обычно в очереди стоят, а распознавание картинки ручное.
+	if [ "$WEB_PLAY_URL" ] ; then	#Если настроено, проиграем звук!
+	curl $WEB_PLAY_URL -s -o /dev/null &
+	fi
+
+return 0;
+}; #rapidshare_COM_GET()
+
+#rapidshare_COM_GET "http://rapidshare.com/files/195650/SolidWorks.2007.Multilanguage.SP0.0.part03.rar" 4 "200.21.214.107:1080"
+#rapidshare_COM_GET "http://rapidshare.com/files/187135/SolidWorks.2007.Multilanguage.SP0.0.part04.rar"
+
+#####################################################
+	if [ "$1" ]; then
+	#Если переданы 3 параметра при вызове скрипта (файла) то автоматически запускаем, считая:
+	#$1 - URL
+	#$2 - Proxy-type
+	#$3 - Proxy
+
+	rapidshare_COM_GET $1 $2 $2
+	fi
+######################################################

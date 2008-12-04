@@ -1,0 +1,56 @@
+#!/bin/bash
+#Внимание, ссылки надо давать не прямые, а на страницу закачки
+#все необходимые ссылки для скачивания будут извлечены автоматически!
+
+#######################Settings - Настройки############################
+BASEURL=http://www.megaupload.com/
+#PROXY=66.243.195.153:80	#Необходим НЕ русский, для получения ссылки
+#PROXY=200.122.153.250:553	#Необходим НЕ русский, для получения ссылки
+#PROXY=62.116.40.112:443	#Необходим НЕ русский, для получения ссылки
+PROXY=203.167.109.146:3128	#Необходим НЕ русский, для получения ссылки
+#######################################################################
+
+	if [ ! $1 ]
+	then
+	echo 'Необходим аргумент-ссылка!'
+	exit 1
+	fi
+
+###1 Основная страница ссылки
+http_proxy="http://$PROXY" wget --proxy=on $1 -O 1.htm --save-cookie cook.FILE
+
+##echo 'Спим 55 секунд'
+sleep 55	#JS - 45
+
+###2 Дальше выдираем ссылку продолжения (защита какая-то, фреймы) загрузки:
+#cat 1.htm | grep 'dl.php' \
+#	| sed -n '{s/.* [sS][rR][cC]="//g;s/".*>.*//g;p}' > link1
+
+###3 Грузим страницу рекламы с таймером и потом ссылкой скачки (относительная ссылка):
+#http_proxy="http://$PROXY" wget --proxy=on $BASEURL`cat link1` -O 2.htm --load-cookies cook.FILE --save-cookie cook.FILE
+
+###4 Теперь надо выдрать параметр d из этой ссылки, и заПОСТИть его:
+#cat link1 | sed -n '{s/.*d=//g;s/&.*//g;p}' > link1.1
+
+###5 ПОСТим:
+#http_proxy="http://$PROXY" wget --proxy=on $BASEURL'?' --post-data "d="`cat link1.1`"&submit=Click%20here%20to%20proceed" -O 3.htm --load-cookies cook.FILE --save-cookie cook.FILE
+
+###6 Выдираем последнюю ссылку, алгоритм такой:
+#Есть 3 ссылки на разные сервера, там где ссылки прямые и полные,
+# верная ссылка (перавая - http://www21.megaupload.com/files/7bb23fc6d2db28518e83f1138fb6a0ed/DDT - Solo Kontsert Shevchuka v Moskovskom Politehe 1997.part2.rar),
+# но не верный сервер (www21), там где верный сервер (www07 - http://www07.megaupload.com/files/7bb23fc6d2db28518e83f1138fb6a0ed/DDT - Solo Kontsert Shevchuka v Moskovskom Politehe 1997.part2.rar)
+# там не верная ссылка, на JS формируется.
+#Ну что же, комбинируем:
+cat 1.htm | grep 'Click here to download' | sed -n '{s/.* [hH][rR][eE][fF]="//g;s/".*>.*//g;p}' > link2 
+#Файлик нужен, он дальше опять юзается
+head -n 1 link2 | \
+sed -e "s/www[0-9]*/`tail -n 1 link2 | sed 's/http:\/\///g;s/\..*//g'`/" > link3
+##просто комментарии не позволены в многострочной комманде:
+#head -n 1 link2 | \ #- берем первую ссылку
+#`tail -n 1 link2 | sed 's/http:\/\///g;s/\..*//g'` # - выдираем сервер последней
+
+
+
+
+###7 финально грузим:
+wget -c "`cat link3`" --load-cookies cook.FILE

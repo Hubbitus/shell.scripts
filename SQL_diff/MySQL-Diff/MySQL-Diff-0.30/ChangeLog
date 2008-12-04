@@ -1,0 +1,125 @@
+2002-06-20  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Diff.pm: version 0.30
+
+	* README: update my email
+
+	* MANIFEST: did a 'make manifest'
+
+	* Database.pm: allow postgres-style '-- foo' comments
+
+2002-06-09  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* README:
+	Requires 5.6.0 now.  Thanks to scottb (at) incursio.com for pointing
+	this out.
+
+2002-04-02  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Makefile.PL: require Perl 5.6
+
+2002-03-11  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Database.pm: check we're applying changes to a db
+
+2002-02-27  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Utils.pm:
+	stop directories being treated as files containing SQL definitions
+
+2002-02-20  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Database.pm, Diff.pm, Utils.pm: version 0.29:
+	  - refactoring
+	  - new -A (--apply) option
+	  - safety check for "use", "drop database" and "create database" commands
+	    in file being canonicalised (thanks to Tripp Lilley for the idea)
+
+2002-02-19  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Diff.pm: 0.28
+
+	* Diff.pm: add -k option
+
+2002-02-14  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Table.pm: still learning MakeMethods *sigh*
+
+	* Diff.pm: debugging
+
+2002-02-13  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Diff.pm, Makefile.PL, Table.pm: - use Class::MakeMethods
+	- don't break on fulltext (doesn't diff it yet though)
+
+2002-01-09  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Diff.pm: didn't quite do the bugfix right, thanks AGAIN Warwick!
+
+2002-01-08  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Table.pm: support KEY foo(bar) format with missing space
+	(thanks again to Warwick Smith)
+
+	* Table.pm:
+	fix problem with older MySQLs which don't include TYPE=MyISAM in dump
+	(thanks again to Warwick Smith)
+
+	* Table.pm: no need for brackets around primary key
+
+	* Diff.pm:
+	no need for brackets around primary key (thanks to Warwick Smith)
+
+2001-11-12  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Utils.pm: patch from Geoffrey Talvola <gtalvola@mediaone.net> to
+	allow specifying alternate ports.
+
+2001-11-07  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Utils.pm: missed a bit of the socket patch, thanks again Jody!
+
+	* README: slight inaccuracies
+
+	* Makefile.PL: omit postamble hack for other people
+
+	* Diff.pm, Utils.pm: - bump to 0.27
+	- move parse_arg and available_dbs to MySQL::Utils
+	- incorporate patch from Jody Biggs <jody@codegrok.com>
+	  to support sockets
+
+	* .cvsignore: *** empty log message ***
+
+	* Database.pm:
+	bug fix for empty databases from Noam Solomon <noam@socketnet.com>
+
+	* Makefile.PL: best to stick to CPAN conventions
+
+	* Makefile.PL: ChangeLog hack
+
+	* .cvsignore, INSTALL, Makefile.PL, MANIFEST, README, test.pl:
+	mysqldiff packaging
+
+	* Diff.pm: bump up version for new release
+
+	* Database.pm, Diff.pm, Table.pm, Utils.pm:
+	- add missing `use strict' and fix compile errors - doh!
+	- support table options
+
+2001-10-20  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Diff.pm: fix primary key diffing
+
+	* Diff.pm: doh!
+
+	* Diff.pm: move MySQLdiff -> MySQL::Diff
+
+2001-09-18  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Table.pm: bugfix from Paul Mineiro (pmineiro@codegrok.com)
+
+2001-02-14  Adam Spiers  <mysqldiff@adamspiers.org>
+
+	* Database.pm, Table.pm, Utils.pm:
+	split into pieces so we can reuse it in other utilities
+

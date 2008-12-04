@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#1 грузим саму страницу с линком
+wget http://up-file.com/download/a6a59f649802/Morcheeba.rar.html -O link.htm --save-cookie cook.FILE
+
+#2 выдрали ссылку
+cat link.htm | grep 'Generating by up-file' \
+	| sed -n 'H;${x;s/\n//g;s/ [hH][rR][eE][fF]=/\n/g;p}' | sed 's/[ >].*//;s/"//g' \
+	| grep '/download2' > links
+
+#3 грузим эту страницу (относительная ссылка)
+wget http://up-file.com`cat links` -O ttt1.htm --load-cookies cook.FILE --save-cookie cook.FILE
+
+#4 Выдираем из нее уже конечную ссылку:
+cat ttt1.htm | grep '/download3' \
+	| sed -n '{s/.* [hH][rR][eE][fF]="\?//g;s/"\?>.*//g;p}' > links1
+
+#5 грузим наконец что хотели (относительная ссылка)
+wget http://up-file.com`cat links1` --load-cookies cook.FILE

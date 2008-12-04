@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo До очистки были:
+ipcs -q
+ipcs -q | grep 0x | cut -d' ' -f1 | xargs -i{} ipcrm -Q {}
+echo Вроде все очистилось:
+ipcs -q
+

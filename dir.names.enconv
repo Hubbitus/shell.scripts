@@ -1,0 +1,29 @@
+#!/bin/bash
+
+function enconv_names(){
+# $1 - dir to process
+: ${1?"Порядок использования: `basename $0` dir"}
+
+	#for is not suitable for names with spaces!
+	find "$1" -maxdepth 1 |
+		while read dirItem ; do
+		encName="$( echo $dirItem | enconv )"
+#		echo "dirItem=[$dirItem]; encName=[$encName]"
+			if [ "$dirItem" != "$encName" ]; then
+				if [ '' != "$encName" ]; then
+				echo "Rename [$dirItem] to [$encName]";
+				mv "$dirItem" "$encName"
+				dirItem="$encName"
+				else
+				echo "Cant't auto name recode for [$dirItem]"
+				fi
+			fi
+
+			if [ -d "$dirItem" -a "$dirItem" != "$1" ]; then #Recursion
+			echo -e "\tSteep to [$dirItem]"
+			enconv_names "$dirItem"
+			fi
+		done
+}
+
+enconv_names ./

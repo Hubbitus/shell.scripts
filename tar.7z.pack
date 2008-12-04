@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#$1 - Что паковать
+#$2 - Куда, имя архива
+
+#echo ZIP7_OPTIONS=${ZIP7_OPTIONS:--t7z -m0=LZMA -mx=6}
+#exit
+
+tar $TAR_OPTIONS_ADDON -cp -f - "$1" \
+	--absolute-names \
+	--force-local \
+	--one-file-system \
+	--check-links \
+	--totals \
+	--seek \
+	--sparse \
+		| 7za a ${ZIP7_OPTIONS:--t7z -m0=LZMA -mx=6} $ZIP7_OPTIONS_ADDON -si "$2"
+
+#Параметры 7z подобраны в тесте и выбраны из соображений производительность/упакованность

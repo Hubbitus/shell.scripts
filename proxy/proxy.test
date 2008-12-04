@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#PROXY_LIST=${PROXY_LIST:-"./PROXYS/russian.prx"}		#Это НЕ проверенный
+PROXY_LIST=${PROXY_LIST:-"./freeproxy.ru_sort_uniq.prx"}		#Это НЕ проверенный
+#PROXY_LIST=${PROXY_LIST:-"./Free_SOCKS_5_proxy_list.prx"}		#Это НЕ проверенный
+PROXY_DIR=${PROXY_DIR:-"./PROXYS/"}
+PROXY_LIST_good=${PROXY_LIST_good:-"$PROXY_DIR$PROXY_LIST.good"}
+PROXY_LIST_bad=${PROXY_LIST_bad:-"$PROXY_DIR$PROXY_LIST.bad"}
+PROXY_LIST_bak=${PROXY_LIST_bak:-"$PROXY_LIST.orig"}	#После обработки, проверенные прокси будут удалены, место куда сохранять оригинальный список
+
+#PROXYS_TYPE="-p"	#Прокси
+#PROXYS_TYPE="-4"	#SOCKS4
+PROXYS_TYPE="-5"	#SOCKS5
+
+#set -x
+
+. ./check.PROXYS
+
+check_PROXYS http://www.rbc.ru

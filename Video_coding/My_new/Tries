@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#DONE_PREFIX='4_'
+#BITRATE=6000
+#VIDEO_FILTERS='-vf softskip,hqdn3d,kerndeint'
+#EXT_OPTIONS='-forceidx -noodml -noskip -ffourcc divx'
+#AUDIO_OPTIONS='-oac mp3lame -lameopts cbr=3:br=128:q=0:aq=0'
+##ENDPOS='-endpos 60 -frames 300'
+
+#VIDEO_OPTIONS_1pass="vcodec=mpeg4:mbd=2:trell:cbp:mv0:v4mv:vbitrate=${BITRATE}:vqmin=2:vqmax=21:vqcomp=0.8:vqblur=0.1:vlelim=-3:vcelim=5:lumi_mask=0.01:dark_mask=0.1:scplx_mask=0.1:tcplx_mask=0.01:naq:autoaspect"
+#VIDEO_CODUNG_1pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=1:turbo"
+#VIDEO_CODUNG_2pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=3:trell:qns=3:qpel"
+
+
+DONE_PREFIX='2_'
+BITRATE=1000
+VIDEO_FILTERS='-vf softskip,hqdn3d,kerndeint'
+EXT_OPTIONS='-forceidx -noodml -noskip -ffourcc divx -audio-delay 9.3'
+AUDIO_OPTIONS='-oac mp3lame -lameopts cbr=3:br=128:q=0:aq=0'
+#ENDPOS='-endpos 60 -frames 300'
+
+VIDEO_OPTIONS_1pass="vcodec=mpeg4:mbd=2:keyint=300:trell:cbp:mv0:v4mv:vbitrate=${BITRATE}:vqmin=2:vqmax=21:vqcomp=0.8:vqblur=0.1:vlelim=-3:vcelim=5:lumi_mask=0.01:dark_mask=0.1:scplx_mask=0.1:tcplx_mask=0.01:naq:autoaspect:vb_strategy=2:bidir_refine=4:vmax_b_frames=2"
+VIDEO_CODING_1pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=1:turbo"
+VIDEO_CODING_2pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=3:trell:qns=3:qpel"

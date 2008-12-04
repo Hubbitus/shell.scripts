@@ -1,0 +1,45 @@
+Второй проход:
+MEncoder 1.0rc2-4.1.2 (C) 2000-2007 MPlayer Team
+CPU: AMD Athlon(tm) XP 1800+ (Family: 6, Model: 8, Stepping: 1)
+CPUflags: Type: 6 MMX: 1 MMX2: 1 3DNow: 1 3DNow2: 1 SSE: 1 SSE2: 0
+Compiled with runtime CPU detection.
+115 audio & 237 video codecs
+success: format: 0  data: 0x0 - 0x58a3f28e
+AVI file format detected.
+[aviheader] Video stream found, -vid 0
+[aviheader] Audio stream found, -aid 1
+Generating Index:   1 %     Generating Index:   2 %     Generating Index:   3 %     Generating Index:   4 %     Generating Index:   5 %     Generating Index:   6 %     Generating Index:   7 %     Generating Index:   8 %     Generating Index:   9 %     Generating Index:  10 %     Generating Index:  11 %     Generating Index:  12 %     Generating Index:  13 %     Generating Index:  14 %     Generating Index:  15 %     Generating Index:  16 %     Generating Index:  17 %     Generating Index:  18 %     Generating Index:  19 %     Generating Index:  20 %     Generating Index:  21 %     Generating Index:  22 %     Generating Index:  23 %     Generating Index:  24 %     Generating Index:  25 %     Generating Index:  26 %     Generating Index:  27 %     Generating Index:  28 %     Generating Index:  29 %     Generating Index:  30 %     Generating Index:  31 %     Generating Index:  32 %     Generating Index:  33 %     Generating Index:  34 %     Generating Index:  35 %     Generating Index:  36 %     Generating Index:  37 %     Generating Index:  38 %     Generating Index:  39 %     Generating Index:  40 %     Generating Index:  41 %     Generating Index:  42 %     Generating Index:  43 %     Generating Index:  44 %     Generating Index:  45 %     Generating Index:  46 %     Generating Index:  47 %     Generating Index:  48 %     Generating Index:  49 %     Generating Index:  50 %     Generating Index:  51 %     Generating Index:  52 %     Generating Index:  53 %     Generating Index:  54 %     Generating Index:  55 %     Generating Index:  56 %     Generating Index:  57 %     Generating Index:  58 %     Generating Index:  59 %     Generating Index:  60 %     Generating Index:  61 %     Generating Index:  62 %     Generating Index:  63 %     Generating Index:  64 %     Generating Index:  65 %     Generating Index:  66 %     Generating Index:  67 %     Generating Index:  68 %     Generating Index:  69 %     Generating Index:  70 %     Generating Index:  71 %     Generating Index:  72 %     Generating Index:  73 %     Generating Index:  74 %     Generating Index:  75 %     Generating Index:  76 %     Generating Index:  77 %     Generating Index:  78 %     Generating Index:  79 %     Generating Index:  80 %     Generating Index:  81 %     Generating Index:  82 %     Generating Index:  83 %     Generating Index:  84 %     Generating Index:  85 %     Generating Index:  86 %     Generating Index:  87 %     Generating Index:  88 %     Generating Index:  89 %     Generating Index:  90 %     Generating Index:  91 %     Generating Index:  92 %     Generating Index:  93 %     Generating Index:  94 %     Generating Index:  95 %     Generating Index:  96 %     Generating Index:  97 %     Generating Index:  98 %     Generating Index:  99 %     AVI: Generated index table for 459968 chunks!
+VIDEO:  [XVID]  1024x576  24bpp  25.000 fps  899.5 kbps (109.8 kbyte/s)
+[V] filefmt:3  fourcc:0x44495658  size:1024x576  fps:25.00  ftime:=0.0400
+==========================================================================
+Opening audio decoder: [liba52] AC3 decoding with liba52
+Using SSE optimized IMDCT transform
+Using MMX optimized resampler
+AUDIO: 48000 Hz, 2 ch, s16le, 384.0 kbit/25.00% (ratio: 48000->192000)
+Selected audio codec: [a52] afm: liba52 (AC3-liba52)
+==========================================================================
+Opening video filter: [expand osd=1]
+Expand: -1 x -1, -1 ; -1, osd: 1, aspect: 0.000000, round: 1
+Opening video filter: [kerndeint]
+Opening video filter: [hqdn3d]
+Opening video filter: [softskip]
+==========================================================================
+Opening video decoder: [ffmpeg] FFmpeg's libavcodec codec family
+Selected video codec: [ffodivx] vfm: ffmpeg (FFmpeg MPEG-4)
+==========================================================================
+Forcing output FourCC to 78766964 [divx].
+MP3 audio selected.
+VDec: vo config request - 1024 x 576 (preferred colorspace: Planar YV12)
+VDec: using Planar YV12 as output csp (no 0)
+Movie-Aspect is 1.78:1 - prescaling to correct movie aspect.
+videocodec: libavcodec (1024x576 fourcc=78766964 [divx])
+[VE_LAVC] High quality encoding selected (non-realtime)!
+[mpeg4 @ 0x8880490]notice: b_frame_strategy only affects the first pass
+[mpeg4 @ 0x8880490][lavc rc] Using all of requested bitrate is not necessary for this video with these parameters.
+Pos:   0.0s      1f ( 0%)  0.82fps Trem:   0min   0mb  A-V:0.000 [0:0]Pos:   0.0s      2f ( 0%)  1.56fps Trem:   0min   0mb  A-V:0.004 [0:0]Writing header...
+ODML: vprp aspect is 16:9.
+Setting audio delay to 9.336s.
+Writing header...
+ODML: vprp aspect is 16:9.
+Setting audio delay to 9.336s.
+Pos:   0.0s      3f ( 0%)  1.52fps Trem:   0min   0mb  A-V:0.008 [0:0]Pos:   0.1s      4f ( 0%)  1.36fps Trem:   0min   0mb  A-V:0.012 [0:0]mencoder: ratecontrol.c:698: ff_rate_estimate_qscale: Assertion `picture_number<rcc->num_entries' failed.

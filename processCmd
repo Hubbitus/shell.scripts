@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#
+
+	if [ ! "$1" ]; then
+	echo NEED 1 argement - pid
+	exit
+	fi
+
+cat /proc/$1/cmdline | xargs -0 echo -e

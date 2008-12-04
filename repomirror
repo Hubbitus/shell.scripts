@@ -1,0 +1,69 @@
+#!/bin/bash
+
+#LOCAL_REPO_DIR=/mnt/virtuals/Hubbitus.Repo/
+LOCAL_REPO_DIR=/mnt/seagate/Hubbitus.Repo/
+
+#REPOS=( Fedora7 Fedora8 Fedora9 )
+REPOS=( Fedora9 )
+
+############################################################
+
+set -x
+
+function repoUpdate(){
+#$1 - In repodir.
+#$2 - Out dir where placed repodata directory
+#$3 - Logfile.
+
+#Обновление РЕПО-информации сначала
+# Due to BUG https://bugzilla.redhat.com/show_bug.cgi?id=449201 use option -C is not possible now
+#nice -n 19 createrepo -Cvpd -o "$1" "$2" | tee -a "$3"
+nice -n 19 createrepo -vpd -o "$1" "$2" | tee -a "$3"
+}
+
+	for distr in ${REPOS[*]}
+	do
+	pushd "$LOCAL_REPO_DIR/$distr"
+	repoUpdate ./ ./ "/home/pasha/repomirror.log"
+	echo $distr" DONE"
+	popd
+	done
+
+#	--script=/home/pasha/lftp.mirror.script \
+
+#nice -n 19 \
+#	lftp -c 'open -e "mirror -caveR \
+#		--exclude=.htaccess \
+#		--exclude=header.htm \
+#		--exclude=".*debuginfo.*" \
+#		--exclude="kernel.*" \
+#		--exclude=".*firefox.*" \
+#		--delete-first \
+#		--log=/home/pasha/lftp_mirror.log \
+#		'"$LOCAL_REPO_DIR"' test.bir.ru/D1R_hubbitus.org.ru/rpm" \
+#			ftp://hubbitus:rucomorg@hubbitus.org.ru' | tee /home/pasha/lftp_mirror.log.log
+#echo 'Repo updated'
+
+
+#nice -n 19 \
+#	lftp -c 'open -e "mirror -caveR \
+#		--exclude=.htaccess \
+#		--exclude=header.htm \
+#		--delete-first \
+#		--log=/home/pasha/lftp_mirror.log \
+#		'"$LOCAL_REPO_DIR"' WEB_hurpms.spb.su/rpm" \
+#			ftp://pasha:pasha-krut@hubbitus.net.ru' | tee /home/pasha/lftp_mirror.log.log
+#echo 'Repo ph-li updated'
+
+#nice -n 19 \
+#	lftp -c 'open -e "mirror -caveR \
+#		--exclude=.htaccess \
+#		--exclude=header.htm \
+#		--delete-first \
+#		--log=/home/pasha/lftp_mirror.log \
+#		'"$LOCAL_REPO_DIR"' _SITES/hubbitus.net.ru/rpm" \
+#			ftp://hubbitus:inFo7power@hubbitus.net.ru' | tee /home/pasha/lftp_mirror.log.log
+#echo 'Repo ph-li updated'
+
+RSYNC_SHARED_OPTIONS='-arlDSzv --stats --human-readable --partial --progress --itemize-changes'
+rsync $RSYNC_SHARED_OPTIONS --delete -e 'ssh -p 2222' "$LOCAL_REPO_DIR" 'hubbitus@hubbitus.net.ru:/home/hubbitus/_SITES/hubbitus.net.ru/rpm/' | tee /home/pasha/rsync_mirror.log

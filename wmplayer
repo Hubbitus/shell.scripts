@@ -1,0 +1,14 @@
+#!/bin/bash
+. findwine
+for n in "c:\\archivos de programa\\Reproductor de Windows Media\\mplayer2.exe" \
+         "c:\\program files\\windows media player\\mplayer2.exe"; do
+  echo -n "localized version $n ... "
+  UNIXPATH="`winepath -u "$n"`"
+  if [ "$UNIXPATH" = "" ]; then
+    echo "not found"
+    continue
+  fi
+  echo "starting"
+  $WINE "$n" ${PARAM:+"$PARAM"} &>/dev/null &
+  exit 0
+done

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+: ${1?"Необходимо указать полную комманду для отслеживания! Пример: 
+`basename $0` '\$( dig @TEZIS.MANAGEDNS1.ESTBOXES.COM alexeevs.info cname | grep -i cname | wc -l ) -gt 2' 'Cname for alexeevs.info updated.' 50 'mplayer do-do.mp3'"
+}
+
+MESSAGE=${2-"Updated!!!"}
+INTERVAL=${3-60}
+DONECMD=${4-'wget -c http://temp/web_play.php -q -O /dev/null'}
+#echo INTERVAL=$INTERVAL
+
+eval 'test '$1
+	while [ $? -ne 0 ] ; do
+	date;
+	sleep $INTERVAL;
+	eval 'test '$1
+	done;
+
+	if [ "$MESSAGE" ]; then
+	xmessage "$MESSAGE"
+	fi
+
+	#If present command - do it
+	if [ "$DONECMD" ]; then
+	eval '$DONECMD'
+	fi

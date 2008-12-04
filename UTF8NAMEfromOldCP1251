@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+echo $1
+echo "$1" | iconv -f CP1251 -t UTF8
+
+echo \"`echo "$1" | iconv -f CP1251 -t UTF8`\"
+
+##mv "$1" "`ls \"$1\" | iconv -f cp1251 -t UTF8`"
+mv "$1" "`echo \"$1\" | iconv -f cp1251 -t UTF8`"
+
+
+#ls \"`echo "$1" | iconv -f CP1251 -t UTF8`\"
+
+#echo "$1" `ls "$1" | iconv -f CP1251 -t UTF8`
+#mv "$1" `ls "$1" | iconv -f CP1251 -t UTF8`
+

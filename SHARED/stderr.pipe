@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#http://wooledge.org:8000/BashFAQ?action=show&redirect=BashFaq#head-3ea5ee0ab12df2fd6f37f29b32c061436943232d
+
+# Redirect stderr to a pipe, keeping stdout unaffected.
+
+exec 3>&1	# Save current "value" of stdout.
+myprog 2>&1 >&3 | grep ...	# Send stdout to FD 3.
+exec 3>&-	# Now close it for the remainder of the script.
+# Thanks to http://www.tldp.org/LDP/abs/html/io-redirection.html
+

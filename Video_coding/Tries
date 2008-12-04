@@ -1,0 +1,59 @@
+#!/bin/bash
+
+#1)
+DONE_PREFIX='1_'
+BITRATE=-1024000
+VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac:autoaspect=1'
+VIDEO_FILTERS='-vf ilpack,dsize=4/3:-2,scale=720:544:1:0:0.00:0.50,pp=fd/hb/vb/dr/al -sws 2 '
+EXT_OPTIONS='-forceidx -noodml'
+
+#2)
+#BITRATE=-1024000
+#VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac'
+#VIDEO_FILTERS='-vf ilpack,dsize=4/3:-2,scale=720:544:1:0:0.00:0.50,pp=fd/hb/vb/dr/al -sws 2 '
+#EXT_OPTIONS='-forceidx -noodml'
+
+#3)
+#BITRATE=-1024000
+#VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac'
+#VIDEO_FILTERS=' -sws 2 -vf halfpack,dsize=4/3,scale=720:544:1:0:0.00:0.50,pp=fd/hb/vb/dr/al'
+#EXT_OPTIONS='-forceidx -noodml -zoom'
+
+#4)
+#DONE_PREFIX='4_'
+#BITRATE=-1024000
+#VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac'
+#VIDEO_FILTERS='-sws 2 -vf halfpack,dsize=4/3,scale=720:544:1:0:0.00:0.50,pp=fd/hb/vb/dr/al'
+#EXT_OPTIONS='-forceidx -noodml -zoom'
+#??? -force-avi-aspect=1.3333'
+
+#5)
+#DONE_PREFIX='5_'
+#BITRATE=-1024000
+#VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac'
+#VIDEO_FILTERS='-sws 2 -vf dsize=4/3,scale=720:544:1:0:0.00:0.50,pp=fd/hb/vb/dr/al'
+#EXT_OPTIONS='-forceidx -noodml -zoom'
+
+#DONE_PREFIX='6_'
+#BITRATE=-1024000
+#VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac'
+#VIDEO_FILTERS='-sws 2 -vf scale=360:272:1:0:0.00:0.50,pp=fd/hb/vb/dr/al'
+#EXT_OPTIONS='-forceidx -noodml -zoom'
+
+#DONE_PREFIX='7_'
+#BITRATE=-1024000
+#VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac'
+#VIDEO_FILTERS='-vf halfpack,scale,pp=fd/hb/vb/dr/al'
+#EXT_OPTIONS='-forceidx -noodml -zoom'
+
+#DONE_PREFIX='8_'
+#BITRATE=-1024000
+#VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac'
+#VIDEO_FILTERS='-vf pp=fd/hb/vb/dr/al'
+#EXT_OPTIONS='-forceidx -noodml -zoom'
+
+#BITRATE=2000
+#DONE_PREFIX='9_'
+#VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac'
+#VIDEO_FILTERS='-vf pp=fd/hb/vb/dr/al'
+#EXT_OPTIONS=''

@@ -1,0 +1,2 @@
+Второй проход:
+nice -n 15 mencoder .//ttt -ofps 25 -oac mp3lame -lameopts cbr=3:br=128:q=0:aq=0 -forceidx -noodml -v -noskip -ovc xvid -xvidencopts pass=2:bitrate=-1024000:gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac:autoaspect=1 -vf ilpack,dsize=4/3:-2,scale=720:544:1:0:0.00:0.50,pp=fd/hb/vb/dr/al -sws 2 -o .//done/1_ttt

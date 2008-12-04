@@ -1,0 +1,50 @@
+#!/bin/bash
+#Внимание, ссылки надо давать не прямые, а на страницу закачки
+#все необходимые ссылки для скачивания будут извлечены автоматически!
+
+#######################Settings - Настройки############################
+BASEURL=http://www.sendspace.com/
+#PROXY=66.243.195.153:80	#Необходим НЕ русский, для получения ссылки
+#PROXY=200.122.153.250:553	#Необходим НЕ русский, для получения ссылки
+#PROXY=62.116.40.112:443	#Необходим НЕ русский, для получения ссылки
+#PROXY=203.167.109.146:3128	#Необходим НЕ русский, для получения ссылки
+PROXY=200.129.0.162:3128
+#######################################################################
+
+	if [ ! $1 ]
+	then
+	echo 'Необходим аргумент-ссылка!'
+	exit 1
+	fi
+
+###1 Основная страница ссылки
+http_proxy="http://$PROXY" wget --proxy=on $1 -O 1.htm --save-cookie cook.FILE
+
+##echo 'Спим 55 секунд'
+#sleep 55	#JS - 45
+
+###2 Дальше идет КОД PHP
+PHP_CODE="<? \$file='1.htm';
+\$outfile = '1.js';
+\$file_cont = file_get_contents(\$file);
+preg_match('#<script>(function enc.*?)<\/script><script language=\"javascript\">(.*?)<\/script>#ims', \$file_cont, \$matches);
+file_put_contents(\$outfile, array(\$matches[1], \$matches[2], 'print(link_dec);'));
+?>
+"
+
+###3 Выполним php, получим файл 1.js, который надо выполнить на JS уже
+echo $PHP_CODE | php
+
+###4 Выполним полученный JS
+js 1.js > link
+
+###5 Выдираем саму ссылку
+cat link | sed -n '{s/.* [hH][rR][eE][fF]="\?//g;s/"\?>.*//g;p}' \
+	| grep http > link.clean
+
+###7 финально грузим:
+#wget -c --limit-rate=10k "`cat link.clean`" --load-cookies cook.FILE
+wget -c "`cat link.clean`" --load-cookies cook.FILE
+
+
+#rm 1.htm cook.FILE 1.js link link.clean

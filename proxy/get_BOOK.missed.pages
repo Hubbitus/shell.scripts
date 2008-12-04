@@ -1,0 +1,7 @@
+#!/bin/bash
+
+: ${1?"Порядок использования: `basename $0` <количесвто страниц должно быть>"}
+
+#diff <(ls -1 | sed -r 's/page_([[:digit:]]*).+/\1/g' | sort -n) <(seq 1 430) | grep '>'
+
+echo $( diff <(ls -1 | sed -r 's/page_([[:digit:]]*).+/\1/g' | sort -n) <(seq 1 $1) | grep '>' | cut -f2 -d' ' ) | tr ' ' ','

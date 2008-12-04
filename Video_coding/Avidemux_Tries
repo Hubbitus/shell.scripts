@@ -1,0 +1,31 @@
+
+1
+Просто пересторил индекс, copy, copy
+
+1_1
+Video: Xvid4 constant quantizer = 4
+Audio: copy
+
+1_2
+Video: Xvid4 2 прохода, в размер 30Мб
+Audio: copy
+
+1_3
+Video: Xvid4 constant quantizer = 4
+Audio: Lame (mp3) 128 CBR
+
+1_4
+Video: Xvid4 2 прохода, в размер 30Мб
+Audio: Lame (mp3) 128 CBR
+
+1_5
+Video: Xvid4 2 прохода, средний битрэйт 2000
+Audio: Lame (mp3) 128 CBR
+
+1_6
+Video: Xvid4 2 прохода, средний битрэйт 3000
+Audio: Lame (mp3) 128 CBR
+
+1_7
+Video: Xvid4 2 прохода, средний битрэйт 6000
+Audio: Lame (mp3) 128 CBR

@@ -1,0 +1,2 @@
+rpm -qa --queryformat '%{NAME} %{ARCH}\n' | grep -v 'gpg-pubkey' | sort | uniq -d | cut -d' ' -f1 | xargs -r rpm -q --queryformat '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n' {} \;
+#| uniq -cd

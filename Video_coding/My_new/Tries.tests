@@ -1,0 +1,69 @@
+#!/bin/bash
+
+1- НЕ работает
+2- работает нормально, НО в середине обрывается. Наверное глюк?
+3,4 - Работают перкрасно. Качество вроде одинаковое.
+4 - Вроде лучше качество. !!!!
+5 - Сначала работал, потом отказался. Возможно проблема с диском. Качество было на уровне.
+
+#1)
+#DONE_PREFIX='1_'
+#BITRATE=6000
+#VIDEO_OPTIONS_1pass='gmc:vhq=1:qpel:me_quality=6:trellis:chroma_opt:quant_type=h263:hq_ac:autoaspect=1'
+#VIDEO_FILTERS='-vf ilpack,dsize=4/3:-2,scale=720:544:1:0:0.00:0.50,pp=fd/hb/vb/dr/al -sws 2 '
+#EXT_OPTIONS='-forceidx -noodml -noskip -ffourcc divx'
+#AUDIO_OPTIONS='-oac mp3lame -lameopts cbr=3:br=128:q=0:aq=0'
+##ENDPOS='-endpos 60 -frames 300'
+
+#VIDEO_CODUNG_1pass="-ovc xvid -xvidencopts pass=1:${VIDEO_OPTIONS_1pass}"
+#VIDEO_CODUNG_2pass="-ovc xvid -xvidencopts pass=2:bitrate=$BITRATE:${VIDEO_OPTIONS_1pass}"
+
+
+
+#DONE_PREFIX='2_'
+#BITRATE=6000
+#VIDEO_FILTERS='-vf spp=fd/hb/vb/dr/al '
+#EXT_OPTIONS='-forceidx -noodml -noskip -ffourcc divx'
+#AUDIO_OPTIONS='-oac mp3lame -lameopts cbr=3:br=128:q=0:aq=0'
+#ENDPOS='-endpos 60 -frames 300'
+
+#VIDEO_OPTIONS_1pass="vcodec=mpeg4:mbd=2:trell:cbp:mv0:v4mv:vbitrate=${BITRATE}:vqmin=2:vqmax=21:vqcomp=0.8:vqblur=0.1:vlelim=-3:vcelim=5:lumi_mask=0.01:dark_mask=0.1:scplx_mask=0.1:tcplx_mask=0.01:naq:autoaspect"
+#VIDEO_CODUNG_1pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=1:turbo"
+#VIDEO_CODUNG_2pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=3:trell:qns=3:qpel"
+
+
+
+#DONE_PREFIX='3_'
+#BITRATE=6000
+#VIDEO_FILTERS='-vf pp=fd/hb/vb/dr/al,hqdn3d -sws 2 '
+#EXT_OPTIONS='-forceidx -noodml -noskip -ffourcc divx'
+#AUDIO_OPTIONS='-oac mp3lame -lameopts cbr=3:br=128:q=0:aq=0'
+##ENDPOS='-endpos 60 -frames 300'
+
+#VIDEO_OPTIONS_1pass="vcodec=mpeg4:mbd=2:trell:cbp:mv0:v4mv:vbitrate=${BITRATE}:vqmin=2:vqmax=21:vqcomp=0.8:vqblur=0.1:vlelim=-3:vcelim=5:lumi_mask=0.01:dark_mask=0.1:scplx_mask=0.1:tcplx_mask=0.01:naq:autoaspect"
+#VIDEO_CODUNG_1pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=1:turbo"
+#VIDEO_CODUNG_2pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=3:trell:qns=3:qpel"
+
+
+#DONE_PREFIX='4_'
+#BITRATE=6000
+#VIDEO_FILTERS='-vf softskip,hqdn3d,kerndeint'
+#EXT_OPTIONS='-forceidx -noodml -noskip -ffourcc divx'
+#AUDIO_OPTIONS='-oac mp3lame -lameopts cbr=3:br=128:q=0:aq=0'
+##ENDPOS='-endpos 60 -frames 300'
+
+#VIDEO_OPTIONS_1pass="vcodec=mpeg4:mbd=2:trell:cbp:mv0:v4mv:vbitrate=${BITRATE}:vqmin=2:vqmax=21:vqcomp=0.8:vqblur=0.1:vlelim=-3:vcelim=5:lumi_mask=0.01:dark_mask=0.1:scplx_mask=0.1:tcplx_mask=0.01:naq:autoaspect"
+#VIDEO_CODUNG_1pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=1:turbo"
+#VIDEO_CODUNG_2pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=3:trell:qns=3:qpel"
+
+
+DONE_PREFIX='5_'
+BITRATE=6000
+VIDEO_FILTERS='-vf softskip,hqdn3d,kerndeint'
+EXT_OPTIONS='-forceidx -noodml -noskip -ffourcc divx'
+AUDIO_OPTIONS='-oac mp3lame -lameopts cbr=3:br=128:q=0:aq=0'
+#ENDPOS='-endpos 60 -frames 300'
+
+VIDEO_OPTIONS_1pass="vcodec=h263p:mbd=2:trell:cbp:mv0:v4mv:vbitrate=${BITRATE}:vqmin=2:vqmax=21:vqcomp=0.8:vqblur=0.1:vlelim=-3:vcelim=5:lumi_mask=0.01:dark_mask=0.1:scplx_mask=0.1:tcplx_mask=0.01:naq:autoaspect"
+VIDEO_CODUNG_1pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=1:turbo"
+VIDEO_CODUNG_2pass="-ovc lavc -lavcopts ${VIDEO_OPTIONS_1pass}:vpass=3:trell:qns=3"

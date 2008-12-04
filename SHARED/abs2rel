@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#Долбанный ПИТОНОВСКИЙ СКРИПТ! Создает абсолютные символические ссылки,
+#абcолютно бесполезные во временной директороии Приходится все их править,
+#отрезая саму временную директорию
+abs2rel(){
+#$1 - filename
+#$2 - DIR, relative to
+
+#echo sed=`sed "s/${2//\//\\/}//"`
+
+#echo '$1='$1
+#echo READLINK=$( readlink $1 | sed "s/${2//\//\\/}//" )
+ln -sf /$( readlink $1 | sed "s/${2//\//\\/}//" ) "$1"
+}
+
+#find $RPM_BUILD_ROOT/ -type l | xargs -I{} -r echo {}
+#-exec bash -c ". $0 ; abs2rel \"{}\" \"$RPM_BUILD_ROOT/\" " \;
+#  \;
+#    sed "s/${RPM_BUILD_ROOT//\//\\/}//"
+for file in $( find $RPM_BUILD_ROOT/ -type l )
+do
+abs2rel "$file" "$RPM_BUILD_ROOT/"
+done

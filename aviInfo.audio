@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mplayer -msglevel identify=6 "$1" -frames 0 -vo null 2>/dev/null | grep AUDIO:

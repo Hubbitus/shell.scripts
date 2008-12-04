@@ -1,0 +1,3 @@
+#!/bin/bash
+
+java -jar ~/bin/SQL_diff/PostgreSQL_Diff/apgdiff-1.0.0_beta13/apgdiff-1.0.0_beta13.jar $1 $2
