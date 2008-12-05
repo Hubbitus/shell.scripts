@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAIN_BAK_DIR='/mnt/sgtBarracuda/BAK'
+MAIN_BAK_DIR='/home/pasha/_BAK'
 DATE_FORMAT='%Y-%m-%d'
 
 . /home/pasha/bin/SHARED/getopt_long.bash
