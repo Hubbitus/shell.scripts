@@ -1,0 +1,3 @@
+#http://blog.taragana.com/index.php/archive/mysql-tip-how-to-check-repair-optimize-all-tables-in-all-databases/
+mysqlcheck -u root -p --auto-repair --check --optimize --all-databases
+ 

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "$@" >> /root/need.rpms
+yum install "$@"

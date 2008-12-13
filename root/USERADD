@@ -1,0 +1,59 @@
+#!/bin/bash
+
+GROUP=webusers
+
+	if [ ! "$1" ]; then
+	echo 'NAME is required!';
+	exit;
+	fi
+
+function checkYN(){
+read ANS
+	if [[ "$ANS" == 'Y' || "$ANS" == 'y' || "$ANS" == '' ]]; then
+	RES=1
+	else
+	RES=0
+	fi
+echo $RES;
+}
+
+USERNAME=$(echo "$1" | tr 'A-Z.-' 'a-z__' )
+echo 'Будет использоваться следующее имя пользователя, проверьте: '$USERNAME". Продолжаем? [Y/n]"
+	if [ $( checkYN ) -eq 0 ]; then
+	echo "Хм... Выходим"
+	exit 1
+	fi
+
+#/usr/sbin/useradd -c "Для заливки игры" -d /home/ -g 100 -s /bin/scp -n imho
+/usr/sbin/useradd -n -m -d /home/$USERNAME -g $GROUP -s /bin/bash $USERNAME
+#Иначе апач говорит что прав нету на документы :(
+chmod 0711 /home/$USERNAME
+chcon -u system_u -t tmp_t /home/$USERNAME/._tmp/
+chcon -u system_u -r object_r -t httpd_log_t /home/$USERNAME/.logs/
+
+echo 'Создавать для пользователя VirtualHost? [Y/n]'
+	if [ $( checkYN ) -eq 1 ]; then
+	Server_Name=$(echo "$1" | tr 'A-Z' 'a-z' )
+	echo "Использовать $Server_Name в качестве имени виртуального хоста (адреса)?? [Y/n]"
+		if [ $( checkYN ) -eq 0 ]; then
+		echo 'тогда введите желаемое:'
+		read Server_Name
+		fi
+		
+	sed "s/{USERNAME}/$USERNAME/g;s/{SERVER_NAME}/$Server_Name/g" /etc/httpd/conf.d/_skel.vhost > /etc/httpd/conf.d/vhosts.d/$USERNAME.vhost
+	echo "DON'T REMEMBER restart WebServer!"
+	fi
+
+echo 'Теперь необходимо установить пароль для пользователя:'
+echo 'Если фантазии не хватает, то можно использовать один из этих:'
+#http://www.google.ru/url?sa=t&ct=res&cd=1&url=http%3A%2F%2Fwww.osix.net%2Fmodules%2Farticle%2F%3Fid%3D570&ei=2WBPR9f6OY76wQGm8r2_Bw&usg=AFQjCNFtjmHwcfia-azJvbGMyOXX5UDV8Q&sig2=uWKnYIFTv9o8eO-d3b3Ofg
+genpass
+read Passwd
+echo "$Passwd" | passwd --stdin "$USERNAME"
+
+echo "$Passwd" >> /root/USERS/$USERNAME
+
+echo "Http server restart to take effect:"
+service httpd restart
+
+echo 'НЕ забудьте перезапустить сервисы вроде proftpd, чтобы изменения вступили в силу!'
