@@ -1,0 +1,34 @@
+#Got from http://bugs.archlinux.org/task/8481
+# And only adjust dir: 	sysvdir=/etc/rc.d to sysvdir=/etc/init.d
+
+_services(){
+	local sysvdir famdir
+	sysvdir=/etc/init.d
+	COMPREPLY=( $( builtin echo $sysvdir/!(functions)) )
+	COMPREPLY=( $( compgen -W '${COMPREPLY[@]#@($sysvdir)/}' -- $cur ) )
+}
+_service(){
+	local cur sysvdir
+
+	COMPREPLY=()
+	prev=${COMP_WORDS[COMP_CWORD-1]}
+	cur=${COMP_WORDS[COMP_CWORD]}
+
+	[[ ${COMP_WORDS[0]} != @(*rc.d/!(functions|~)|service) ]] && return 0
+
+	# don't complete past 2nd token
+	[ $COMP_CWORD -gt 2 ] && return 0
+
+    sysvdir=/etc/rc.d
+
+	if [[ $COMP_CWORD -eq 1 ]] && [[ $prev == "service" ]]; then
+		_services
+	else
+		COMPREPLY=( $( compgen -W '`sed -ne "y/|/ /; \
+				s/^.*usage.*{\(.*\)}.*$/\1/p" \
+				$sysvdir/${prev##*/} 2>/dev/null`' -- $cur ) )
+	fi
+
+	return 0
+}
+complete -F _service service
