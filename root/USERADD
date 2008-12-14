@@ -40,7 +40,7 @@ echo 'Создавать для пользователя VirtualHost? [Y/n]'
 		read Server_Name
 		fi
 		
-	sed "s/{USERNAME}/$USERNAME/g;s/{SERVER_NAME}/$Server_Name/g" /etc/httpd/conf.d/_skel.vhost > /etc/httpd/conf.d/vhosts.d/$USERNAME.vhost
+	sed "s/{USERNAME}/$USERNAME/g;s/{SERVER_NAME}/$Server_Name/g" /etc/httpd/conf.d/_skel.vhost | grep -v '#This is SKELETON for create virtualHosts for users' > /etc/httpd/conf.d/vhosts.d/$USERNAME.vhost
 	echo "DON'T REMEMBER restart WebServer!"
 	fi
 
