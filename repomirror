@@ -15,10 +15,10 @@ function repoUpdate(){
 #$2 - Out dir where placed repodata directory
 #$3 - Logfile.
 
-#Обновление РЕПО-информации сначала
+#1=>2;5=85  -8=D>@<0F88 A=0G0;0
 # Due to BUG https://bugzilla.redhat.com/show_bug.cgi?id=449201 use option -C is not possible now
-#nice -n 19 createrepo -Cvpd -o "$1" "$2" | tee -a "$3"
-nice -n 19 createrepo -vpd -o "$1" "$2" | tee -a "$3"
+nice -n 19 createrepo -Cvpd -o "$1" "$2" | tee -a "$3"
+#nice -n 19 createrepo -vpd -o "$1" "$2" | tee -a "$3"
 }
 
 	for distr in ${REPOS[*]}
