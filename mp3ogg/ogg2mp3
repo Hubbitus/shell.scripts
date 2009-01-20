@@ -1,0 +1,119 @@
+#! /usr/bin/python
+# Based on MP3/OGG -> MP3 converting script
+# by Nikola Kotur <kotnik _AT_ ns-linux.org
+#
+# ogg2mp3.py
+# by Srdjan Andjelkovic <srdjan . andjelkovic _AT_ gmail . com>
+
+import os, sys
+import dircache
+import string
+
+#Modify following.
+# Output bitrate:
+BR=128
+# Temporary directory:
+TMP="/tmp/"
+#Delete .ogg
+Delete=False
+
+# Do not touch beyond this.
+mp3=[]
+ogg=[]
+
+class Conv:
+
+	def __init__(self):
+		if len(sys.argv) > 1:
+			if sys.argv[1].startswith('--'):
+				opt=sys.argv[1][2:]
+				if opt=="version":
+					print "Version 0.1"
+					sys.exit()
+				if opt=="help":
+					print '''Easy convert .ogg to .mp3
+python ogg2mp3.py [--options] [file names]
+--help    : Prints this message and exits
+--version : Prints the version number and exits
+'''
+					sys.exit()
+			else:
+				self.Popuni(sys.argv)
+				self.StPr()
+		else:
+			a=dircache.listdir(os.getcwd())
+			a=a[:]
+			self.Popuni(a)
+			self.StPr()
+
+	def __del__(self):
+		if Delete==True:
+			print "Deleteing ..."
+			for name in ogg:
+				com="rm -f " + "'"+name+"'"
+				os.system(com)
+			print "All Done."
+	def Popuni(self,X):
+		for name in X:
+			if name.endswith('.mp3'):
+				mp3.append(name)
+			if name.endswith('.ogg'):
+				ogg.append(name)
+	def MP3Conv(self):
+		for name in mp3:
+			print ""
+			print "Operating:  " + name
+			print ""
+			print "   decoding..."
+			com= "nice -n 10 mpg321 -q -w " + TMP + "temp.wav " +"'" +name+"'"
+			print ""
+			os.system(com)
+			print "   normalizing..."
+			com="nice -n 10 normalize --no-progress " + TMP +"temp.wav"
+			print ""
+			os.system(com)
+			print "   encoding..."
+			com= "nice -n 10 lame -q 7 --nohist --abr " + str(BR) + " " + TMP + "temp.wav " + name
+			print ""
+			os.system(com)
+			com = "rm -f " + TMP +"temp.wav"
+			print ""
+			os.system(com)
+			print "DONE!"
+	def OGGConv(self):
+		for name in ogg:
+			print ""
+			print "Operating:  " + name
+			print ""
+			print "   decoding..."
+			com="nice -n 10 oggdec -Q -o " + TMP + "temp.wav " + "'" +name+"'"
+			print ""
+			os.system(com)
+			print "   normalizing..."
+			com="nice -n 10 normalize --no-progress " + TMP + "temp.wav"
+			print ""
+			os.system(com)
+			print "   encoding..."
+			name=string.rstrip(name, '.ogg')
+			name=name+'.mp3'
+			com ="nice -n 10 lame -q 7 --nohist --abr " + str(BR) + " " + TMP + "temp.wav " + name
+			print ""
+			os.system(com)
+			com = "rm -f " + TMP +"temp.wav"
+			print ""
+			os.system(com)
+			print "DONE!"
+	def StPr(self):
+		print "Changeing premissions ..."
+		for name in mp3:
+			com="chmod 666 " + "'"+name+"'"
+			os.system(com)
+		for name in ogg:
+			com="chmod 666 " + "'"+name+"'"
+			os.system(com)
+		print "DONE!"
+		self.MP3Conv()
+		self.OGGConv()
+
+start=Conv()
+
