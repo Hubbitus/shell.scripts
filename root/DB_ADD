@@ -9,7 +9,7 @@
 	fi
 
 echo "
-CREATE DATABASE $1;
+CREATE DATABASE \`$1\`;
 CREATE USER '${1}_u'@'localhost' IDENTIFIED BY '$Pass';
 
 GRANT ALL PRIVILEGES ON \`${1}\`.* TO '${1}_u'@'%';
