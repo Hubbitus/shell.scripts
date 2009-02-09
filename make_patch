@@ -63,4 +63,4 @@ orig_dir=''
 	fi
 
 #diff -k$suff -Naur $1 > $2
-diff $orig_dir $1 -NaurEbBH > $2
+diff $orig_dir $1 -NaurEbBH $addon_diff_options > $2
