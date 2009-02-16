@@ -13,7 +13,8 @@
 	exit
 	fi
 
-SSH_AUTH_SOCK=$( ls /tmp/ssh-*/agent.* 2>/dev/null )
+#SSH_AUTH_SOCK=$( ls /tmp/ssh-*/agent.* 2>/dev/null )
+SSH_AUTH_SOCK=$( find /tmp -wholename '/tmp/ssh-*/agent.*' -user `id -u` 2>/dev/null )
 	if [[ ! "$SSH_AUTH_SOCK" && ${SSH_AGENT_REUSE=true} != false ]]; then
 	eval `/usr/bin/ssh-agent -s | grep SSH_AUTH_SOCK`
 	fi
