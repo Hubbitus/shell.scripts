@@ -183,7 +183,7 @@ $nonopts = $opts->getNonOpts(1);
 //-	$inplace	= EMPTY_VAR(@$options[0]['i'], @$options[0]['--in-place'], false);
 	}
 	catch(VariableRequiredException $vre){
-	exit('Missed mandatory parameter: '.$vre->getMessage().$vre->tok->getArg(0)."\n");
+	exit('Missed mandatory parameter: '.$vre->varName()."\n");
 	}
 
 	if (!isset($nonopts->{0})) $nonopts->{0} = 'php://stdin';
