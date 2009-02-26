@@ -1,10 +1,20 @@
 #!/usr/bin/php -q
 <?
+/**
+*
+* @version 1.0.1
+*
+* @changelog
+*	* 2009-02-26 16:34 ver 1.0 to 1.0.1
+*	- Check fo --to (-t) parameter replaced from REQUIRED_VAR to more strict REQUIRED_NOT_NULL. So, empty values is allowed!
+**/
+
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__));
 
 require_once('System/Console/HuGetopt.php');
 
 include_once('macroses/REQUIRED_VAR.php');
+include_once('macroses/REQUIRED_NOT_NULL.php');
 include_once('macroses/EMPTY_VAR.php');
 
 include_once('Filesystem/file_base.php');
@@ -179,7 +189,8 @@ $opts->readPHPArgv()->parseArgs();
 $nonopts = $opts->getNonOpts(1);
 	try{
 	REQUIRED_VAR(EMPTY_VAR($opts->get('what')->Val->{0}, $opts->get('after')->Val->{0}), '--what or --after');
-	REQUIRED_VAR($opts->get('to')->Val->{0}, '--to');
+	#REQUIRED_VAR($t = !is_null($opts->get('to')->Val->{0}), '--to');
+	REQUIRED_NOT_NULL($opts->get('to')->Val->{0}, '--to');
 //-	$inplace	= EMPTY_VAR(@$options[0]['i'], @$options[0]['--in-place'], false);
 	}
 	catch(VariableRequiredException $vre){
