@@ -174,9 +174,9 @@ $opts = new HuGetopt(
 		array('e', 'escape'),
 	)
 );
+
 $opts->readPHPArgv()->parseArgs();
 $nonopts = $opts->getNonOpts(1);
-
 	try{
 	REQUIRED_VAR(EMPTY_VAR($opts->get('what')->Val->{0}, $opts->get('after')->Val->{0}), '--what or --after');
 	REQUIRED_VAR($opts->get('to')->Val->{0}, '--to');
@@ -250,7 +250,6 @@ $nonopts = $opts->getNonOpts(1);
 	);
 
 	$outFile = new file_base;
-	$outFile->setPath($outFileName)->setContentFromString($re->replace());
-	$outFile->writeContents();
+	$outFile->setPath($outFileName)->setContentFromString($re->replace())->writeContents();
 	}
 ?>
