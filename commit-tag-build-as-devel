@@ -7,5 +7,4 @@ yes | cp ../devel/*.spec ./
 	else
 	cvs commit
 	fi
-#make tag
-#make build
+make tag build
