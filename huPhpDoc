@@ -1,10 +1,15 @@
 #!/bin/bash
 
-: ${1?"Порядок использования: `basename $0` file.php"}
+#: ${1?">@O4>: 8A?>;L7>20=8O: `basename $0` file.php"}
+: ${1?">@O4>: 8A?>;L7>20=8O: `basename $0` dir_to_process,dir2,dir3"}
 
 #SEARCH_DIR
 
 #	if 
 
 #phpdoc -f /var/www/_SHARED_/debug.php -t /var/www/temp/DOCS/ -s -o HTML:Smarty:PHP
-phpdoc -f $1 -t /var/www/temp/DOCS/ -s -o HTML:Smarty:PHP
+#phpdoc -f $1 -t /var/www/temp/DOCS/ -s -o HTML:Smarty:PHP
+phpdoc -d "$1" -t /var/www/temp/DOCS/ --undocumentedelements on \
+	--title "Pavel Alexeev aka Pahan-Hubbitus framework documentation" \
+	--customtags '@changelog' --sourcecode on \
+	-s -o HTML:Smarty:PHP
