@@ -1,5 +1,7 @@
 #!/bin/bash
 
+: ${LEAVE_AMOUNT=$2}	#ENV or $2
+
 #Amount of backaups what must be leaved.
 : ${LEAVE_AMOUNT?'You must provide config variables like LEAVE_AMOUNT, $1 - dir to process!'}
 : ${1?'You must provide config variables like LEAVE_AMOUNT, $1 - dir to process!'}
