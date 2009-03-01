@@ -1,0 +1,2 @@
+#Simple script to extract URL from scr="" and href='' fields of standard input
+sed -r "s/.*(href|src)=([\"'])([^\2]+)\2.*/\3/g;"
