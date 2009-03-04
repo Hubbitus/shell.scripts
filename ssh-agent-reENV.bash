@@ -13,17 +13,22 @@
 	exit
 	fi
 
-SSH_AUTH_SOCK=''
-
 #D ECHO_DEBUG=true
 function echo_debug(){
 	[ "$ECHO_DEBUG" ] && echo "$@"
 }
 
-	ls "$SSH_AUTH_SOCK" &>/dev/null && exit 0 ; #All seems OK, search and ReEnv not needed
+	if ls "$SSH_AUTH_SOCK" &>/dev/null ; then
+	echo_debug Ssh-agent already running. Exit.
+	exit 0 ; #All seems OK, search and ReEnv not needed
+	else
+	echo_debug "Ssh-agent socket [$SSH_AUTH_SOCK] seems to not exist? Search will be performed."
+	fi
 
-#SSH_AUTH_SOCK=$( ls /tmp/ssh-*/agent.* 2>/dev/null )
-#SSH_AUTH_SOCK=$( find /tmp -wholename '/tmp/ssh-*/agent.*' -user `id -u` 2>/dev/null )
+#Start searching
+SSH_AUTH_SOCK=''
+SSH_AGENT_PID=''
+
 find /tmp -wholename '/tmp/ssh-*/agent.*' -user `id -u` 2>/dev/null | (	# About "(" Read http://bappoy.pp.ru/2008/12/18/bash-pitfalls-part02.html item #7 why we need it!!!
 															# We need set SSH_AUTH_SOCK in while-cycle.
 	while read socket ; do # Check all, cleanup dead
