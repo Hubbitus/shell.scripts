@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#exit 10
+
+alias ttt='date +"%Y"'
+
+#which ttt
+
+alias ttt
+
+ttt
+	# 127 - command notfound
+	#[ 127 -eq $? ] && $( alias ttt | sed -r "s/^alias ttt='(.*)'/\1/" )
+	[ alias ttt &>/dev/null ] && $( alias ttt | sed -r "s/^alias ttt='(.*)'/\1/" )
