@@ -12,7 +12,6 @@ DONECMD=${4-'wget -c http://temp/web_play.php -q -O /dev/null'}
 	while ! eval $1 ; do
 	date;
 	sleep $INTERVAL;
-	eval 'test '$1
 	done;
 
 	if [ "$MESSAGE" ]; then
