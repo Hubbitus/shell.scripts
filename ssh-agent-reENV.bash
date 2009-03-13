@@ -48,7 +48,7 @@ find /tmp -wholename '/tmp/ssh-*/agent.*' -user `id -u` 2>/dev/null | (	# About 
 	done
 
 	if [[ ! "$SSH_AUTH_SOCK" && ${SSH_AGENT_REUSE=true} != false ]]; then
-	echo 'Start new ssh-agent'
+	echo_debug 'Start new ssh-agent'
 	eval `/usr/bin/ssh-agent -s`
 	fi
 
