@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?
-include('Strings/translit_class.php');
+include('Vars/Strings/trans.class.php');
 
 echo trans::translit(file_get_contents('php://stdin'));
 ?>
