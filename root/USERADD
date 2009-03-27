@@ -44,14 +44,8 @@ echo 'Создавать для пользователя VirtualHost? [Y/n]'
 	echo "DON'T REMEMBER restart WebServer!"
 	fi
 
-echo 'Теперь необходимо установить пароль для пользователя:'
-echo 'Если фантазии не хватает, то можно использовать один из этих:'
-#http://www.google.ru/url?sa=t&ct=res&cd=1&url=http%3A%2F%2Fwww.osix.net%2Fmodules%2Farticle%2F%3Fid%3D570&ei=2WBPR9f6OY76wQGm8r2_Bw&usg=AFQjCNFtjmHwcfia-azJvbGMyOXX5UDV8Q&sig2=uWKnYIFTv9o8eO-d3b3Ofg
-genpass
-read Passwd
-echo "$Passwd" | passwd --stdin "$USERNAME"
-
-echo "$Passwd" >> /root/USERS/$USERNAME
+#Set password
+PASSWD
 
 echo "Http server restart to take effect:"
 service httpd restart
