@@ -17,7 +17,7 @@ include_once('macroses/REQUIRED_VAR.php');
 include_once('macroses/REQUIRED_NOT_NULL.php');
 include_once('macroses/EMPTY_VAR.php');
 
-include_once('Filesystem/file_base.php');
+include_once('Filesystem/file_inmem.php');
 include_once('RegExp/RegExp_pcre.php');
 
 function usage(){
@@ -251,7 +251,7 @@ $nonopts = $opts->getNonOpts(1);
 
 	foreach ($nonopts->getArray() as $file){
 		if ($opts->get('i')->Val->_last_) $outFileName = $file;
-	$fileCont = new file_base($file);
+	$fileCont = new file_inmem($file);
 	$fileCont->loadContent();
 
 	$re = new RegExp_pcre(
@@ -260,7 +260,7 @@ $nonopts = $opts->getNonOpts(1);
 		$to->getArray()
 	);
 
-	$outFile = new file_base;
-	$outFile->setPath($outFileName)->setContentFromString($re->replace())->writeContents();
+	$outFile = new file_inmem;
+	$outFile->setPath($outFileName)->setContentFromString($re->replace())->writeContent();
 	}
 ?>
