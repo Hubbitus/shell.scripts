@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cvs up
 #-f not enought :(
 yes | cp ../devel/*.spec ./
 	if [ "$1" ]; then
