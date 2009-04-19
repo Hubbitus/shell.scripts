@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo До очистки были:
+echo Р”Рѕ РѕС‡РёСЃС‚РєРё Р±С‹Р»Рё:
 ipcs -q
 ipcs -q | grep 0x | cut -d' ' -f1 | xargs -i{} ipcrm -Q {}
-echo Вроде все очистилось:
+echo Р’СЂРѕРґРµ РІСЃРµ РѕС‡РёСЃС‚РёР»РѕСЃСЊ:
 ipcs -q
 
