@@ -45,7 +45,7 @@ echo 'Создавать для пользователя VirtualHost? [Y/n]'
 	fi
 
 #Set password
-PASSWD
+PASSWD "$USERNAME"
 
 echo "Http server restart to take effect:"
 service httpd restart
