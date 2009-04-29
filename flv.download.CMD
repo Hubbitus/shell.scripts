@@ -73,7 +73,7 @@ i=0
 			if [ "$2" = $file -a ${#tmp[@]} -gt 1 ] ; then
 			file="${2%\.*}_$i.${2##*\.}"
 			fi
-		echo "Download URL=$url to file=$file"
+		echo "Downloading (in background) URL=$url to file=$file"
 
 		wget -c "$url" -O "$file" &
 
