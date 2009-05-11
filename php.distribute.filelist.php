@@ -7,7 +7,7 @@
 	}
 
 include_once('RegExp/RegExp_pcre.php');
-include_once('Filesystem/file_base.php');
+include_once('Filesystem/file_inmem.php');
 include_once('Vars/HuArray.php');
 
 $files = array();
@@ -24,7 +24,7 @@ $files = array();
 
 		if (!$info->isDir()){
 		echo "Process $file\n";
-		$f = new file_base($file);
+		$f = new file_inmem($file);
 		$f->loadContent();
 		$re = new RegExp_pcre(
 			'/(?:include|require|tryIncludeByClassName)(?:_once)?[\s\(]*([\'"])(.*?)\1/i',
