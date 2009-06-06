@@ -4,7 +4,7 @@
 LOCAL_REPO_DIR=/mnt/seagate/Hubbitus.Repo/
 
 #REPOS=( Fedora7 Fedora8 Fedora9 )
-REPOS=( Fedora9 )
+REPOS=( Fedora9 Fedora10 )
 
 ############################################################
 
