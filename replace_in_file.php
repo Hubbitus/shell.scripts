@@ -11,14 +11,11 @@
 
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__));
 
-require_once('System/Console/HuGetopt.php');
+include_once('autoload.php');
 
 include_once('macroses/REQUIRED_VAR.php');
 include_once('macroses/REQUIRED_NOT_NULL.php');
 include_once('macroses/EMPTY_VAR.php');
-
-include_once('Filesystem/file_inmem.php');
-include_once('RegExp/RegExp_pcre.php');
 
 function usage(){
 echo <<<HEREDOC
