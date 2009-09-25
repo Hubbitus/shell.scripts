@@ -10,4 +10,4 @@
 NICE=16	#С каким приоритетом, м.б. очень долгим и затратным процессом, в зависимости от размера архива
 
 nice -n $NICE \
-	7za x $ZIP7_OPTIONS_ADDON -so $1 | tar --list
+	7za x $ZIP7_OPTIONS_ADDON -so "$1" | tar --list
