@@ -1,0 +1,35 @@
+#!/bin/bash
+
+NICE=16
+
+
+	if [ -z "$1" ] ; then
+	#Поумолчанию что бакапить
+	WHAT_BACKUP="/"
+	else
+	WHAT_BACKUP="$1"
+	fi
+
+EXCLFILE="/etc/backups/exclude"
+#BACKPATH="/home/"
+#BACKPATH="/"
+BACKPATH="/mnt/virtuals/BAK/`date +'%Y-%m-%d'`/"
+BACKUP_FILE="linux${WHAT_BACKUP//\//_}_(o-range.ru).BAK.`date +'%Y-%m-%d'`.tar.7z"
+echo BACKUP_FILE="$BACKPATH/$BACKUP_FILE"
+
+#Так нельзя, 7zip не сохраняет ни владельцев, ни прав... Надо после ТАРа его только
+#7za a -t7z -m9=BZip2 $BACKPATH/linux_desktop_BAK.`date '+%d.%m.%Y'`.tar.7z $WHAT_BACKUP/*
+
+nice -n $NICE tar -cp -f - $WHAT_BACKUP  \
+--exclude-from $EXCLFILE \
+--exclude "$BACKPATH/$BACKUP_FILE" \
+--absolute-names \
+--force-local \
+--one-file-system \
+--check-links \
+--totals \
+--seek \
+--sparse \
+| nice -n $NICE 7za a -t7z -m0=LZMA -mx=6 "$BACKPATH/$BACKUP_FILE" -si
+#Параметры 7z подобраны тчщательно, смотри тесты 7ZIP!!!!
+#7za a -t7z -m1=LZMA $BACKPATH/linux_desktop_BAK.`date '+%d.%m.%Y'`.tar.7z $WHAT_BACKUP/*

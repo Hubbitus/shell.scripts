@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#chmod 0777 /dev/hdc
+chmod 0777 /dev/sr0
+
+chmod 0777 /dev/null
+
+chmod 0777 /dev/dsp
+chmod 0777 /dev/mixer
+chmod 0777 /dev/audio
+chmod -R 0777 /dev/snd
+
+chmod -R 0777 /dev/bus/usb
+
+#Почему-то не всегда клавиша WIN работает :(
+#http://linuxforum.ru/index.php?showtopic=21731
+xmodmap -e "add Mod4 = Super_L"
+xmodmap -e "add Mod4 = Super_R"

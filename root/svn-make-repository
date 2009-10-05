@@ -1,0 +1,23 @@
+#!/bin/bash
+
+: ${1?"Порядок использования: `basename $0` new-svn-name [AnyToNOTCreateDirs trunk branches tags]"}
+
+#http://www.opennet.ru/docs/RUS/blfs6/server/svnserver.html
+
+export SVN="/svn/$1"
+
+install -d -m0755 -o svn -g svn $SVN
+svnadmin create --fs-type fsfs $SVN
+
+mkdir newDirToImport
+pushd newDirToImport
+	[ ! "$2" ] && mkdir trunk branches tags
+svn import -m "Initial import." . file://$SVN
+popd
+rm -r newDirToImport
+
+chown -R svn:svntest $SVN
+chmod -R g+w $SVN
+chmod g+s $SVN/db
+groupadd "svn$1"
+usermod -a -G svn,"svn$1" pasha
