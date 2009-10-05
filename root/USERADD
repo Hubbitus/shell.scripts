@@ -48,6 +48,6 @@ echo 'Создавать для пользователя VirtualHost? [Y/n]'
 PASSWD "$USERNAME"
 
 echo "Http server restart to take effect:"
-service httpd restart
+service httpd reload
 
 echo 'НЕ забудьте перезапустить сервисы вроде proftpd, чтобы изменения вступили в силу!'
