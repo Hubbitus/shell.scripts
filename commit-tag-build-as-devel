@@ -3,10 +3,12 @@
 cvs up
 #-f not enought :(
 yes | cp ../devel/*.spec ./
-	if [ "$1" ]; then
+	if [ -e "$1" ]; then
+	cvs commit -F "$1"
+	else if [ "$1" ]; then
 	cvs commit -m "$1"
 	else
 	cvs commit
-	fi
+	fi fi
 make tag
 make build
