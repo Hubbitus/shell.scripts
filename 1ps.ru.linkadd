@@ -1,0 +1,6 @@
+#!/bin/bash
+
+: ${1?"Порядок использования: `basename $0` domain Full-text-Link"}
+: ${2?"Порядок использования: `basename $0` domain Full-text-Link"}
+
+echo "<!--(Hu)$(echo $1 | tr 'A-Z' 'a-z')--><li>$2<!--/$(echo $1 | tr 'A-Z' 'a-z')(Hu)-->"
