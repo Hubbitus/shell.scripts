@@ -19,6 +19,6 @@ rm -r newDirToImport
 chown -R svn:svntest $SVN
 chmod -R g+w $SVN
 chmod g+s $SVN/db
-groupname=svn$( echo $1 | sed 's/[-_.]//g' )
+groupname=` echo svn$( echo $1 | sed 's/[-_.]//g' ) | head -c16`
 groupadd "$groupname"
 usermod -a -G svn,"$groupname" pasha
