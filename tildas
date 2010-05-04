@@ -1,0 +1,9 @@
+#!/bin/sh
+
+sleep 10
+
+# First
+tilda &
+# After second next to do not race to configs and keys
+sleep 4
+tilda
