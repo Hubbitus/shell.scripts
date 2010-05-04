@@ -1,1 +1,1 @@
-watch.update "! wget -qO- http://live.sweb.ru/?support | egrep -o '/img/switcher/support_label.gif.+</span>' | grep 'Все сотрудники заняты' &>/dev/null" 'Sweb.ru tech support available now!' 10
+watch.update "! wget -qO- http://live.sweb.ru/?support | egrep -A1 '/img/switcher/support_label.gif' | grep 'Все сотрудники заняты' &>/dev/null" 'Sweb.ru tech support available now!' 10
