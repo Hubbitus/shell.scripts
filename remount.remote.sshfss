@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Script usefull after computer hibernate and wake up in other connection.
+# It tries remount all sshfs filesystem with arguments what it was be mounted before
+
+mount | grep @ | \
+	while read WHAT null MNT null TYPE OPTIONS; do
+	echo $WHAT:::$MNT:::$TYPE:::$OPTIONS;
+	fusermount -u "$MNT"
+	sshfs "$WHAT" "$MNT" -o $( echo $OPTIONS | sed -r 's/[\(\)]|,user=\w+//g' )
+	done
