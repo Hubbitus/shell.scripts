@@ -3,6 +3,8 @@
 # Script usefull after computer hibernate and wake up in other connection.
 # It tries remount all sshfs filesystem with arguments what it was be mounted before
 
+killall sshfs -9
+
 mount | grep @ | \
 	while read WHAT null MNT null TYPE OPTIONS; do
 	echo $WHAT:::$MNT:::$TYPE:::$OPTIONS;
