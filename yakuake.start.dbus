@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# http://greybeardedgeek.net/?p=45 D-BUS version in comment
+
+#sess=`qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.activeSessionId`
+#qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand ‘cd /opt/tomcat && bin/startup.sh’
+#qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.splitSessionLeftRight $sess
+#qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand ‘cd /opt/tomcat && tail -f logs/catalina.out’
+#qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle $sess ‘tomcat’
+
+# Function by link from the comments in page linkedd before - http://88.191.25.234/wordpress/2009/05/09/yakuake-launch-on-start/
+function newTab() {
+	sessionId="${1}"
+	name="${2}"
+	cmdString="${3}"
+
+	#(for debug) echo "sessionId:${sessionId},name=${name},cmdString=${cmdString}"
+	qdbus org.kde.yakuake /yakuake/sessions addSession
+	qdbus org.kde.yakuake /yakuake/tabs setTabTitle "${sessionId}" "${name}"
+		if [ "${cmdString}" != "" ] ; then
+		qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal "${sessionId}" "${cmdString}"
+		fi
+}
+
+id=-1
+# Examples:
+# newTab (( ++id))  tunnel
+# newTab (( ++id)) mutt "mutt"
+# newTab (( ++id)) apps "firefox &"
+# newTab (( ++id)) irssi "irssi --connect=irc.freenode.net --nick=rpelisse"
+# newTab (( ++id)) xradar "cd /perso/workspace/git-xradar/xradar"
+# newTab (( ++id)) testproject "cd /perso/workspace/git-xradar/xradar/src/test/projects/testproject/"
+# newTab (( ++id)) rss "snownews --update"
+# newTab (( ++id)) mplayer "cd /perso/music/"
+# newTab (( ++id)) nuxeo "cd /home/rpelisse/workspaces/nuxeo"
+
+# Start one instance, if needed
+killall -0 yakuake || yakuake
+
+# Run command in initial tab
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'ssh -XR 9001:localhost:9001 pasha@x-www.info'
+qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 'pasha@x-www.info'
+# Add new one
+newTab 1 'root@x-www.info' 'ssh -C root@x-www.info'

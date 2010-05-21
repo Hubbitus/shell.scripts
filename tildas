@@ -1,9 +1,13 @@
 #!/bin/sh
 
-sleep 10
-
+# To allow initialize desktop and therefor got transparent backgraund
+sleep 11
 # First
 tilda &
+
 # After second next to do not race to configs and keys
-sleep 4
-tilda
+#sleep 5
+#tilda
+
+# Second start Yakuake, as it allow rename and move tabs what is very usefull in many tabs to remote servers!
+yakuake.start.dbus
