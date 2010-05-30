@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCHES=${BRANCHES:-'F-10 F-11 F-12 EL-5'}
+BRANCHES=${BRANCHES:-'F-11 F-12 F-13 EL-5 EL-6'}
 
 	for b in $BRANCHES; do
 	pushd $b
