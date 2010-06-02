@@ -4,7 +4,7 @@
 LOCAL_REPO_DIR=/mnt/Media/Hubbitus.Repo/
 
 #REPOS=( Fedora7 Fedora8 Fedora9 )
-REPOS=( Fedora11 EL5 )
+REPOS=( Fedora11 Fedora13 EL5 )
 
 ############################################################
 
