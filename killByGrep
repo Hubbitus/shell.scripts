@@ -12,7 +12,7 @@ SIGNAL=''
 	fi
 
 echo Подходящие под маску процессы:
-ps aux | grep $1 | grep -Ev "grep|`basename $0` +$1"
+ps aux | grep -Ev "grep|`basename $0` +$1" | grep $1 --color
 
 #количество выведенных строк. Чтобы не справшивать, если убивать нечего
 COUNT=$( ps aux | grep $1 | grep -Ev "grep|`basename $0` +$1" | wc -l )
