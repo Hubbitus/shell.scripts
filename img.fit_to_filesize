@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Fit image to desired filesize by iteratively decrease size
+
+: ${1?"Порядок использования: `basename $0` filename size_in_Kb [%step=5%]"}
+: ${2?"Порядок использования: `basename $0` filename size_in_Kb [%step=5]"}
+
+# Percent to step
+STEP=${3:-5}
+# Only digits, no %!
+STEP=$( echo $STEP | sed -r 's/[^[:digit:]]*([[:digit:]]+)[^[:digit:]]*/\1/' ) # '
+echo STEP=$STEP%
+
+i=0
+	while [ $( stat --format='%s' "$1" ) -gt $[ $2 * 1024 ] ]; do
+	(( i++ ))
+	echo "Pass $i";
+	convert -resize $[ 100 - $STEP ]% "$1" - | sponge "$1"
+	done
+
+#echo "Final size is: "$[100-]"%"
