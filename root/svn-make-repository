@@ -16,7 +16,7 @@ svn import -m "Initial import." . file://$SVN
 popd
 rm -r newDirToImport
 
-chown -R svn:svntest $SVN
+chown -R svn:svngroup $SVN
 chmod -R g+w $SVN
 chmod g+s $SVN/db
 groupname=` echo svn$( echo $1 | sed 's/[-_.]//g' ) | head -c16`
