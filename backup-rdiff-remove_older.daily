@@ -2,12 +2,12 @@
 
 : ${LEAVE_AMOUNT=$2}	#ENV or $2
 
-#Amount of backaups what must be leaved.
+#Amount of backups what must be leaved.
 : ${LEAVE_AMOUNT?'You must provide config variables like LEAVE_AMOUNT, $1 - dir to process!'}
 : ${1?'You must provide config variables like LEAVE_AMOUNT, $1 - dir to process!'}
 
-echo \$1=$1
+#echo LEAVE_AMOUNT=$LEAVE_AMOUNT
+#echo \$1=$1
 
-
-rdiff-backup --check-destination-dir "$1"
+rdiff-backup --check-destination-dir "$1" 2>/dev/null
 rdiff-backup --force --remove-older-than $( rdiff-backup -l "$1" | egrep -v 'Found [[:digit:]]+ increments:|Current mirror: ' | sort -bMr | head -n$LEAVE_AMOUNT | tail -n 1 | grep -oP '(?<=increments\.).+(?=\.dir)' ) "$1"
