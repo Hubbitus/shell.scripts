@@ -23,6 +23,7 @@ sudo ionice -c$IONICE -p$$
 	rdiff-backup $RDIFF_SHARED_OPTIONS \
 		--include-globbing-filelist=${INCLUDE_LIST_FILE-include} --exclude-globbing-filelist=${EXCLUDE_LIST_FILE-exclude} \
 		--remote-schema "$SCHEMA" \
+		--print-statistics \
 		"$WHAT_BACKUP" ${TO_BACKUP-'./_content/'}
 	} 2> >( tee "${LOGDIR:-LOGS/}${LOG_filename_ERR-log_$( date +'%Y-%m-%d_%H:%M:%S' ).ERR}" ) | tee "${LOGDIR:-LOGS/}${LOG_filename_ACS-log_$( date +'%Y-%m-%d_%H:%M:%S' ).LOG}"
 
