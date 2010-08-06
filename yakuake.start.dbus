@@ -22,7 +22,7 @@ function newTab() {
 		fi
 }
 
-id=-1
+id=0
 # Examples:
 # newTab (( ++id))  tunnel
 # newTab (( ++id)) mutt "mutt"
@@ -37,8 +37,18 @@ id=-1
 # Start one instance, if needed
 killall -0 yakuake || yakuake
 
+ssh-agent
+ssh-add -l || ssh-add
+
 # Run command in initial tab
-qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'ssh -XR 9001:localhost:9001 pasha@x-www.info'
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'whilessh -tXR 9001:localhost:9001 pasha@x-www.info "screen -x || screen"'
 qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 'pasha@x-www.info'
 # Add new one
-newTab 1 'root@x-www.info' 'ssh -C root@x-www.info'
+newTab $(( ++id )) 'root@x-www.info' 'whilessh -tC root@x-www.info "screen -x || screen"'
+newTab $(( ++id )) 'backups@' 'sshs backups@xen.rupeks.local'
+newTab $(( ++id )) 'ug.' 'sshs ug.rupeks.ru'
+newTab $(( ++id )) 'stroydostavka_com@' 'sshs stroydostavka_com@stroydostavka.com'
+newTab $(( ++id )) 'sugar@sugar.rupeks' 'sshs sugar@sugar.rupeks'
+newTab $(( ++id )) 'sugar.rupeks' 'sshs sugar.rupeks'
+newTab $(( ++id )) 'hostgator' 'ssh hostgator'
+newTab $(( ++id )) 'joom.rupeks.ru' 'sshs joom_rupeks_ru@sugar.rupeks'
