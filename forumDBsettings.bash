@@ -27,12 +27,12 @@ local opt=$2
 		sql_host		) opt='servername';;
 		sql_pass		) opt='password';;
 		sql_database	) php -r "include_once('$1'); echo \$config['Database']['dbname'];"; return 0;;
-#		*     ) echo "Выбран недопустимый ключ.";;   # ПО-УМОЛЧАНИЮ
+		*			) echo "Выбран недопустимый ключ.";;   # ПО-УМОЛЧАНИЮ
 	esac
 
 php -r "include_once('$1'); echo \$config['MasterServer']['$opt'];"
 }
-#getConfIPBVB $FROM_phpConf sql_user
+#getConfIPB $FROM_phpConf sql_user
 
 function getConfXcart(){
 # $1 - PHP File (conf_global.php) with full enought path.
@@ -44,14 +44,35 @@ local opt=$2
 
 	# This was written after getConf[IPB]. So, for compatability provide IPB0names translation
 	case $2 in                                                                                                           
-		sql_pass	) opt='sql_password';;
+		sql_pass		) opt='sql_password';;
 		sql_database	) opt='sql_db';;
-#		*     ) echo "Выбран недопустимый ключ.";;   # ПО-УМОЛЧАНИЮ
+		*			) echo "Выбран недопустимый ключ.";;   # ПО-УМОЛЧАНИЮ
 	esac
 
 php -r "define('XCART_START', 1); error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING); include_once('$1'); echo \$$opt;"
 }
 #getConfXcart $FROM_phpConf sql_user
+
+function getConfSugarCRM(){
+# $1 - PHP File (conf_global.php) with full enought path.
+# $2 - index in $INFO array. (Ex: sql_user)
+
+# Fields are: servername, port, username, password, usepconnect
+local opt=$2
+
+	# This was written after getConf[IPB]. So, for compatability provide IPB0names translation
+	case $2 in                                                                                                           
+		sql_user		) opt='db_user_name';;
+		sql_host		) opt='db_host_name';;
+		sql_pass		) opt='db_password';;
+		sql_database	) opt='db_name';;
+		*			) echo "Выбран недопустимый ключ.";;   # ПО-УМОЛЧАНИЮ
+	esac
+
+php -r "include_once('$1'); echo \$sugar_config['dbconfig']['$opt'];"
+}
+#getConfSugarCRM $FROM_phpConf sql_user
+
 
 #Common use:
 # DBType=$DBType
