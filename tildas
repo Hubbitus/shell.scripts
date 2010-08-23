@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # To allow initialize desktop and therefor got transparent backgraund
-sleep 11
+sleep 13
 # First
 tilda &
 
