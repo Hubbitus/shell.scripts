@@ -2,11 +2,14 @@
 <?
 /**
 *
-* @version 1.0.1
+* @version 1.1
 *
 * @changelog
 *	* 2009-02-26 16:34 ver 1.0 to 1.0.1
 *	- Check fo --to (-t) parameter replaced from REQUIRED_VAR to more strict REQUIRED_NOT_NULL. So, empty values is allowed!
+*
+*	* 2010-09-28 22:46 ver 1.0.1 to 1.1
+*	- Add -c (--comment) option support.
 **/
 
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__));
@@ -50,6 +53,10 @@ Options:
 -e
 --escape
 	Opt. Enable interpretation of backslash escapes (\\n, \\r, \\t etc...).
+
+-c
+--comment
+	Opt. Just for comments instruction because shell does not accept it inside one comment. Just ignored.
 
 Author: Pavel Alexeev aka Pahan-Hubbitus.
 On all suggestions, questions, feature requests, BUG-reports - welcome on http://ru.bir.ru/ ( http://ru.bir.ru/viewtopic.php?f=25&t=652 )
@@ -179,6 +186,7 @@ $opts = new HuGetopt(
 		array('i', 'in-place'),
 		array('p', 'plain'),
 		array('e', 'escape'),
+		array('c', 'comment', ':'),
 	)
 );
 
