@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Script to insert current date via short cut keys (Super+d by default)
+xte "str $( date +'%F %R' )"
