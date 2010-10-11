@@ -1,4 +1,4 @@
-#!/usr/bin/php -q
+#!/usr/bin/env php
 <?
 /**
 * HuRegRep. Utility to make regular replacemnts in files.
@@ -15,7 +15,13 @@
 *
 *	* 2010-09-28 22:46 ver 1.0.1 to 1.1
 *	- Add -c (--comment) option support.
+*
+*	* 2010-10-11 19:47 ver 1.1 to 1.2
+*	- Replace sha-bang from path to php to call via env.
+*	- define VERSION and use it in usage().
 **/
+
+$VERSION = '0.2';
 
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__));
 
@@ -33,6 +39,7 @@ include_once('macroses/EMPTY_VAR.php');
 **/
 function usage(){
 echo <<<HEREDOC
+HuRegRep version {$GLOBALS['VERSION']}
 Usage:
 
 {$GLOBALS['argv'][0]} -w '/what/' -t 'text to' [file1 file2...]
