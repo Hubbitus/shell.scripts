@@ -1,8 +1,13 @@
 #!/usr/bin/php -q
 <?
 /**
+* HuRegRep. Utility to make regular replacemnts in files.
 *
 * @version 1.1
+* @package HuRegRep
+* @author Pahan-Hubbitus (Pavel Alexeev) <Pahan [at] Hubbitus [ dot. ] info>
+* @copyright Copyright (c) 2010, Pahan-Hubbitus (Pavel Alexeev)
+* @license GPLv2+
 *
 * @changelog
 *	* 2009-02-26 16:34 ver 1.0 to 1.0.1
@@ -20,6 +25,12 @@ include_once('macroses/REQUIRED_VAR.php');
 include_once('macroses/REQUIRED_NOT_NULL.php');
 include_once('macroses/EMPTY_VAR.php');
 
+
+/**
+* Prints usage description.
+*
+* @return nothing
+**/
 function usage(){
 echo <<<HEREDOC
 Usage:
@@ -64,120 +75,10 @@ On all suggestions, questions, feature requests, BUG-reports - welcome on http:/
 HEREDOC;
 }#f usage
 
-//$argv = array(
-//  0 => "./replace_in_file.php",
-//  1 => "--what",
-//  2 => "test",
-//  3 => '--to=="ZAQ"=',
-//  4 => "-p",
-//  5 => '/home/pasha/bin/replace_in_file.test.text'
-//);
-
-//var_export($argv);
-//$argv = array (
-//  0 => 'replace_in_file.php',
-//  1 => '-w',
-//  2 => '/text/',
-//  3 => '-t',
-//  4 => 'QAZ',
-//  5 => '/home/pasha/bin/replace_in_file.test.text',
-//);
-
-//$argv = array (
-//  0 => 'replace_in_file.php',
-//  1 => '-t',
-//  2 => 'text',
-//  3 => '-w',
-//  4 => '/QAZ/',
-//  5 => '/home/pasha/bin/replace_in_file.test.text',
-//);
-
-//$argv = array (
-//  0 => '/home/pasha/bin/replace_in_file.php',
-////  1 => '--after',
-////  2 => 'text',
-////  3 => '-t',
-////  4 => '=\\1=\nQAZ',
-//// 5 => '/home/pasha/bin/replace_in_file.test.text'
-// 1 => '-ipx'
-//);
-
-//$argv = array (
-//	0 => '/home/pasha/bin/replace_in_file.php',
-// 1 => '--after',
-//// 2 => '/test/',
-// 2 => 'test',
-//// 2 => '/line.*/',
-// 3 => '--to=QAZ\n',
-// 4 => '-pl',
-// 5 => '/home/pasha/bin/replace_in_file.test.text',
-//);
-
-//$argv = array(
-//  0 => "/home/pasha/bin/replace_in_file",
-//  1 => "-i",
-//  2 => "/usr/src/redhat/SPECS/kernel.Hu.spec",
-//  3 => "--what",
-//  4 => "/Patch0(\d+):/",
-//  5 => "--to",
-//  6 => "Patch$1:",
-//);
-
-//$argv = array(
-//  0 => "/home/pasha/bin/replace_in_file",
-//  1 => "-i",
-//  2 => "/usr/src/redhat/SPECS/kernel.Hu.spec",
-//  3 => "-pl",
-//  4 => "--after",
-//  5 => "%define with_bootwrapper %{?_without_bootwrapper: 0} %{!?_without_bootwrapper: 1}",
-//  6 => "--to",
-//  7 => '
-//#+Hu2 Apply Hubbitus config options, if it does not disabled
-//%define with_huconfig  %{?_without_huconfig:    0} %{!?_without_huconfig:   1}
-//',
-//  8 => '--after=#if a rhel kernel, apply the rhel config options
-//%if 0%{?rhel}
-//  for i in %{all_arch_configs}
-//  do
-//    mv $i $i.tmp
-//    ./merge.pl config-rhel-generic $i.tmp > $i
-//    rm $i.tmp
-//  done
-//  for i in kernel-%{version}-{i586,i686,i686-PAE,x86_64}*.config
-//  do
-//    echo i is this file  $i
-//    mv $i $i.tmp
-//    ./merge.pl config-rhel-x86-generic $i.tmp > $i
-//    rm $i.tmp
-//  done
-//%endif',
-//  9 => "--to",
-//  10 => '
-//#+Hu2+15 Apply Hubbitus config options, if it does not disabled.
-//# Doing by example of applying rhel config options
-//%if %{with_huconfig}
-//        for i in %{all_arch_configs}; do
-//        mv $i $i.tmp
-//        %{SOURCE15} config-hubbitus-generic $i.tmp > $i
-//        rm $i.tmp
-//        done
-//
-//        for i in kernel-%{version}-{i586,i686,i686-PAE,x86_64}*.config ; do
-//        echo i is this file $i
-//        mv $i $i.tmp
-//        %{SOURCE15} config-hubbitus-x86-generic $i.tmp > $i
-//        rm $i.tmp
-//        done
-//%endif
-//
-// '
-//);
-//$argc = sizeof($argv);
-//dump::a($argv);
-
+	/** Start options setup and parsing **/
 	if (1 == $argc) exit(usage());
 
-$opts = new HuGetopt(
+$opts = new HuGetopt( # Array of recognized options
 	array(
 		array('a', 'after', ':'),
 		array('l', 'line-after'),
@@ -194,9 +95,7 @@ $opts->readPHPArgv()->parseArgs();
 $nonopts = $opts->getNonOpts(1);
 	try{
 	REQUIRED_VAR(EMPTY_VAR($opts->get('what')->Val->{0}, $opts->get('after')->Val->{0}), '--what or --after');
-	#REQUIRED_VAR($t = !is_null($opts->get('to')->Val->{0}), '--to');
 	REQUIRED_NOT_NULL($opts->get('to')->Val->{0}, '--to');
-//-	$inplace	= EMPTY_VAR(@$options[0]['i'], @$options[0]['--in-place'], false);
 	}
 	catch(VariableRequiredException $vre){
 	exit('Missed mandatory parameter: '.$vre->varName()."\n");
@@ -252,8 +151,9 @@ $nonopts = $opts->getNonOpts(1);
 	$what = new HuArray($newWhat);
 	}
 
-/////////////////////////
-
+	/**
+	* Main loop of processing
+	**/
 	foreach ($nonopts->getArray() as $file){
 		if ($opts->get('i')->Val->_last_) $outFileName = $file;
 	$fileCont = new file_inmem($file);
