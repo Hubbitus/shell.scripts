@@ -3,7 +3,7 @@
 /**
 * HuRegRep. Utility to make regular replacemnts in files.
 *
-* @version 1.1
+* @version 1.2.1
 * @package HuRegRep
 * @author Pahan-Hubbitus (Pavel Alexeev) <Pahan [at] Hubbitus [ dot. ] info>
 * @copyright Copyright (c) 2010, Pahan-Hubbitus (Pavel Alexeev)
@@ -19,11 +19,18 @@
 *	* 2010-10-11 19:47 ver 1.1 to 1.2
 *	- Replace sha-bang from path to php to call via env.
 *	- define VERSION and use it in usage().
+*
+*	* 2010-10-17 13:19 ver 1.2 to 1.2.1
+*	- Add ini_sets 'pcre.backtrack_limit' and 'memory_limit' to allow proceed big files.
 **/
 
 $VERSION = '0.2';
 
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . dirname(__FILE__));
+
+# http://www.php.net/manual/en/pcre.configuration.php
+ini_set('pcre.backtrack_limit', 1000000000);
+ini_set('memory_limit', '512M');
 
 include_once('autoload.php');
 
