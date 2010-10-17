@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# After save HTML page from Google Chrome browser in about:cache with content it script allow cut real content from it.
+
+: ${1?"You must provide file argument: `basename $0` target-file"}
+
+unset comment
+replace_in_file \
+	-w '#.*?(?:<pre>.+?</pre><hr>){2}<pre>(.*?)</pre>.*?$#s' -t '$1' \
+	-w '/^.{11}(.{64}).*?$/ms' -t '$1' ${comment:'Remove offsets and ASCII representation'} \
+	-w '/\n/' -t '' ${comment:'In one long line'} \
+	-w '/   *$/' -t '  ' ${comment:'Delete spaces from last string what is aligment'} \
+	-w '/([\da-f]{2})  /ie' -t 'chr(hexdec("$1"))' ${comment:'Only from HEX codes we can reproduce full binary source'} \
+	"$1" > "$1.content"
