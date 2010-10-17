@@ -18,7 +18,8 @@ function repoUpdate(){
 #1=>2;5=85  -8=D>@<0F88 A=0G0;0
 # Due to BUG https://bugzilla.redhat.com/show_bug.cgi?id=449201 use option -C is not possible now
 # New BUG - https://bugzilla.redhat.com/show_bug.cgi?id=512610
-nice -n 19 createrepo -Cvpd -o "$1" "$2" | tee -a "$3"
+# --checksum sha for compatability with EPEL5
+nice -n 19 createrepo --update --checksum sha -Cvpd -o "$1" "$2" | tee -a "$3"
 #nice -n 19 createrepo -vpd -o "$1" "$2" | tee -a "$3"
 }
 
