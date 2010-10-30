@@ -43,11 +43,11 @@ ssh-add -l || ssh-add
 # Run command in initial tab
 qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'whilessh -tXR 9001:localhost:9001 pasha@x-www.info "screen -x || screen"'
 qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 'pasha@x-www.info'
-# Add new one
+
 newTab $(( ++id )) 'root@x-www.info' 'whilessh -tC root@x-www.info "screen -x || screen"'
 #newTab $(( ++id )) 'backups@' 'sshs backups@xen.rupeks.local'
 #newTab $(( ++id )) 'ug.' 'sshs ug.rupeks.ru'
-newTab $(( ++id )) 'stroydostavka_com@' 'sshs stroydostavka_com@stroydostavka.com'
+newTab $(( ++id )) 'stroydostavka_com@' 'sshs -CR 9001:localhost:9001 stroydostavka_com@stroydostavka.com'
 newTab $(( ++id )) 'root@stroydostavka.com' 'sshs root@stroydostavka.com'
 #newTab $(( ++id )) 'sugar.rupeks' 'sshs sugar.rupeks'
 #newTab $(( ++id )) 'sugar@sugar.rupeks' 'sshs sugar@sugar.rupeks'
