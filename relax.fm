@@ -1,1 +1,3 @@
-mplayer -cache $[ 1 * 1024 ] 'mms://91.121.110.48/c15_3_128?st=017040600121801240420080806'
+#mplayer -cache $[ 1 * 1024 ] 'mms://91.121.110.48/c15_3_128?st=017040600121801240420080806'
+
+mplayer -cache $[ 1 * 1024 ] -aid 1 'mms://87.242.72.62/relaxfm?WMBitrate=41600&WMContentBitrate=41600'

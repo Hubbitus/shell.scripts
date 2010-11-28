@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#INDIR=skin_images
+#OUTDIR=skin_images.small
+
+#INDIR='/mnt/_NET/Server-red/Ирина Старосельцева/МАГАЗИН/КАМИНЫ/Jotul/ДИСК'
+#OUTDIR='/mnt/_NET/Server-red/Ирина Старосельцева/МАГАЗИН/КАМИНЫ/Jotul/ДИСК.small'
+
+INDIR='/mnt/_NET/Server-red/СОТРУДНИКИ/Pasha/_Irina/Images'
+OUTDIR='/mnt/_NET/Server-red/СОТРУДНИКИ/Pasha/_Irina/Images.small'
+
+# 0-terminated list of files: http://stackoverflow.com/questions/513611/xargs-doesnt-recognize-bash-aliases
+shopt -s extquote
+
+
+time find "$INDIR" -iname '*.jpg' -print0 | \
+	while read -d $'\0' file; do
+	trfile="$(echo `basename "$file"` | translit | tr ' ' '_' | sed 's#\.JPG#.jpg#g;s#\.jpg\.jpg#.jpg#g')"
+	subdir=$( echo `dirname "$file"` | sed "s#^$INDIR##" )
+	echo "Processing $file ($OUTDIR/$subdir/$trfile)"
+#	echo trfile=$trfile
+#	echo subdir=$subdir
+	mkdir -p "$OUTDIR/$subdir"
+	gm convert -resize 350x350 "$file" "$OUTDIR/$subdir/$trfile"
+	done

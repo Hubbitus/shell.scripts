@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#set -x
+
 #Used variables: May be set outside
 #SSH_AGENT_REUSE[=true]
 #SSH_AGENT_REUSE_MUST_BE_SOURCED[=true] - By default, when script is runned as regular user, we have not any
@@ -34,10 +36,8 @@ find /tmp -wholename '/tmp/ssh-*/agent.*' -user `id -u` 2>/dev/null | (	# About 
 	while read socket ; do # Check all, cleanup dead
 	agent_pid=$[ ${socket##*.} + 1 ] # I don't known why +1 needed!
 	echo_debug socket=$socket
-	echo_debug agent_pid=$agent_pid #Agent PID
-	echo_debug agent_running_name=$( ps -p $agent_pid -o comm= )
-		#Check PID ( http://linsovet.com/check-pid-with-kill )
-		if ! kill -0 $agent_pid 2>/dev/null || [ $( ps -p $agent_pid -o comm= ) != "ssh-agent" ] ; then
+	SSH_AUTH_SOCK="$socket" ssh-add -l &>/dev/null # 0 and 1 ("The agent has no identities.") status is good for us.
+		if ! [[ $? -eq 0 || $? -eq 1 ]] ; then
 		echo_debug 'Process dead! Cleanup it.'
 		rm "$socket"
 		else
@@ -48,8 +48,11 @@ find /tmp -wholename '/tmp/ssh-*/agent.*' -user `id -u` 2>/dev/null | (	# About 
 	done
 
 	if [[ ! "$SSH_AUTH_SOCK" && ${SSH_AGENT_REUSE=true} != false ]]; then
+	# We there if no working sockets found. So, for ensurance cleanup all process:
+	killall --user $USER ssh-agent &>/dev/null
+
 	echo_debug 'Start new ssh-agent'
-	eval `/usr/bin/ssh-agent -s`
+	eval `/usr/bin/ssh-agent -s | grep -v echo`
 	fi
 
 	if [ ! $SSH_AGENT_REUSE_MUST_BE_SOURCED ]; then #For aliasing

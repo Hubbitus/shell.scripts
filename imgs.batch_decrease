@@ -1,0 +1,10 @@
+#!/bin/bash
+
+: ${1?"Wrong arguments: `basename $0` DIR_to_process WIDTHxHEIGHT"}
+: ${2?"Wrong arguments: `basename $0` DIR_to_process WIDTHxHEIGHT"}
+
+find "$1" -iname '*.jpg' -or -iname '*.bmp' -or -iname '*.gif' -or -iname '*.png' | \
+	while read file; do
+	echo "Process file: $file : $( identify -format "%w*%h (size %b)" "$file" )"
+	convert -adaptive-resize "$2>" "$file" - | sponge "$file"
+	done
