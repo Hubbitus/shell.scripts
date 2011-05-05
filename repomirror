@@ -3,7 +3,7 @@
 #LOCAL_REPO_DIR=/mnt/virtuals/Hubbitus.Repo/
 LOCAL_REPO_DIR=/mnt/Media/Hubbitus.Repo/
 
-REPOS=( Fedora13 Fedora14 EL5 )
+REPOS=( Fedora14 Fedora15 EL5 )
 
 ############################################################
 
