@@ -3,6 +3,9 @@
 #LOCAL_REPO_DIR=/mnt/virtuals/Hubbitus.Repo/
 LOCAL_REPO_DIR=/mnt/Media/Hubbitus.Repo/
 
+# All
+#REPOS=( $( ls "$LOCAL_REPO_DIR" ) )
+# Fresh
 REPOS=( Fedora14 Fedora15 EL5 )
 
 ############################################################
@@ -14,7 +17,6 @@ function repoUpdate(){
 #$2 - Out dir where placed repodata directory
 #$3 - Logfile.
 
-#1=>2;5=85  -8=D>@<0F88 A=0G0;0
 # Due to BUG https://bugzilla.redhat.com/show_bug.cgi?id=449201 use option -C is not possible now
 # New BUG - https://bugzilla.redhat.com/show_bug.cgi?id=512610
 # --checksum sha for compatability with EPEL5
@@ -67,4 +69,5 @@ nice -n 19 createrepo --update --checksum sha -Cvpd -o "$1" "$2" | tee -a "$3"
 #echo 'Repo ph-li updated'
 
 RSYNC_SHARED_OPTIONS='-arlDSzv --stats --human-readable --partial --progress --itemize-changes'
-rsync $RSYNC_SHARED_OPTIONS --delete -e 'ssh -p 2222' "$LOCAL_REPO_DIR" 'hubbitus@hubbitus.net.ru:/home/hubbitus/_SITES/hubbitus.net.ru/rpm/' | tee /home/pasha/rsync_mirror.log
+#rsync $RSYNC_SHARED_OPTIONS --delete -e 'ssh -p 2222' "$LOCAL_REPO_DIR" 'hubbitus@hubbitus.net.ru:/home/hubbitus/_SITES/hubbitus.net.ru/rpm/' | tee /home/pasha/rsync_mirror.log
+rsync $RSYNC_SHARED_OPTIONS --delete "$LOCAL_REPO_DIR" "host1plus:/home/cookeeor/domains/hubbitus.info/public_html/rpm/" | tee /home/pasha/rsync_mirror.log
