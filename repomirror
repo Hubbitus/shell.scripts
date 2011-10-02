@@ -6,7 +6,7 @@ LOCAL_REPO_DIR=/mnt/Media/Hubbitus.Repo/
 # All
 #REPOS=( $( ls "$LOCAL_REPO_DIR" ) )
 # Fresh
-REPOS=( Fedora14 Fedora15 EL5 )
+REPOS=( Fedora15 Fedora16 EL5 )
 
 ############################################################
 
