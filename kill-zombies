@@ -1,0 +1,8 @@
+#!/bin/sh
+
+ps ax -o pid,state,ppid | \
+	fgrep ' Z ' | \
+		while read pid state ppid; do
+			echo "Kill process $pid with parent $ppid";
+			kill $ppid;
+		done
