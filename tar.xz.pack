@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#$1 - Что паковать
+#$2 - Куда, имя архива
+
+: ${1?"Not enouth arguments: `basename $0` source-dir archiv.file"}
+: ${2?"Not enouth arguments: `basename $0` source-dir archiv.file"}
+
+# By default max compression level
+
+#nice -n${NICE:-19} \
+#	tar $TAR_OPTIONS_ADDON -vcp -f - "$1" \
+#		--absolute-names \
+#		--force-local \
+#		--one-file-system \
+#		--check-links \
+#		--totals \
+#		--seek \
+#		--sparse \
+#			| xz --compress ${XZ_OPTIONS:--check=crc32 -9 --extreme --memory=80% --verbose} $XZ_OPTIONS_ADDON --stdout > "$2"
+
+XZ_OPT="${XZ_OPTIONS:-9 --extreme --check=crc32 --memory=80% --verbose} $XZ_OPTIONS_ADDON -" nice -n${NICE:-19} \
+	tar $TAR_OPTIONS_ADDON -vcpJf "$2" "$1" \
+		--absolute-names \
+		--force-local \
+		--one-file-system \
+		--check-links \
+		--totals \
+		--seek \
+		--sparse \
