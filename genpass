@@ -1,7 +1,8 @@
 #!/bin/bash
 
 	for (( i=0; i<${2-5}; i++ )); do
-	head -c ${1-10} /dev/random | base64 | sed 's/==$//'
+	head -c ${1-10} /dev/random | base64 | sed 's/==$//' | head -c ${1-10}
+	echo
 	done
 #head -c ${1-10} /dev/random | base64 | sed 's/==$//'
 #head -c ${1-10} /dev/random | base64 | sed 's/==$//'

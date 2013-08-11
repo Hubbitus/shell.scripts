@@ -68,4 +68,4 @@ orig_dir=''
 # Eval to allow in $addon_diff_options any options including arguments with spaces in quotes.
 # see http://www.linuxquestions.org/questions/programming-9/bash-generating-a-string-containing-options-and-using-with-kdialog-648873/
 # But -u do NOT overrided by -U<n> and uses 3 lines of context. Futhermore, second -U<n> also do not have any effect :(
-eval diff ${DIFF_OPTIONS:-'-NaurEbBH'} $addon_diff_options $orig_dir $1 > $2
+eval diff ${DIFF_OPTIONS:-'-NurEbBH'} $addon_diff_options $orig_dir $1 > $2

@@ -41,17 +41,13 @@ ssh-agent
 ssh-add -l || ssh-add
 
 # Run command in initial tab
-qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'whilessh -tXR 9001:localhost:9001 pasha@x-www.info "screen -x || screen"'
-qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 'pasha@x-www.info'
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'screen -x || screen'
+qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 'main'
 
-newTab $(( ++id )) 'root@x-www.info' 'whilessh -tC root@x-www.info "screen -x || screen"'
-#newTab $(( ++id )) 'backups@' 'sshs backups@xen.rupeks.local'
-#newTab $(( ++id )) 'ug.' 'sshs ug.rupeks.ru'
-newTab $(( ++id )) 'stroydostavka_com@' 'sshs -CR 9001:localhost:9001 stroydostavka_com@stroydostavka.com'
-newTab $(( ++id )) 'root@stroydostavka.com' 'sshs root@stroydostavka.com'
-#newTab $(( ++id )) 'sugar.rupeks' 'sshs sugar.rupeks'
-#newTab $(( ++id )) 'sugar@sugar.rupeks' 'sshs sugar@sugar.rupeks'
-#newTab $(( ++id )) 'pasha@sugar.rupeks' 'sshs pasha@sugar.rupeks'
-newTab $(( ++id )) 'hostgator' 'ssh hostgator'
-#newTab $(( ++id )) 'xen.rupeks.local' 'sshs root@xen.rupeks.local'
-#newTab $(( ++id )) 'server1c-test' 'sshs root@server1c.rupeks'
+newTab $(( ++id )) 'ROOT' 'sus'
+newTab $(( ++id )) 'pasha@x-www.info' 'sshs -XC pasha@x-www.info'
+newTab $(( ++id )) 'pasha@1C' 'sshs pasha@linux'
+newTab $(( ++id )) 'ant@1C' 'sshs ant@linux'
+newTab $(( ++id )) 'root@1C' 'sshs root@linux'
+newTab $(( ++id )) 'pasha@x-www.info Remotes' 'ssh -t pasha@x-www.info screen-remote'
+newTab $(( ++id )) 'ant@mrg.rgc' 'ssh -L1521:10.4.242.203:1521 mrg.rgc'

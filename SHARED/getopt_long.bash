@@ -33,7 +33,7 @@ long_getopt_parse(){
 #NO_ARGS=0
 #E_OPTERROR=65
 
-set -- `$getopt_CMD -u --options "$GETOPT_STRING" --longoptions "$LONG_GETOPT_STRING" "$@"`
+set -- `$getopt_CMD -u --options "$GETOPT_STRING" --longoptions "$LONG_GETOPT_STRING" -- "$@"`
 #set -- `/usr/bin/getopt --options c: --longoptions longopt "$@"`
 
 	while [ ! -z "$1" -a "$1" != '--' ]; do
