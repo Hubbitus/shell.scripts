@@ -1,12 +1,12 @@
 #!/bin/sh
 
-ps ax -o pid,state,ppid | \
+ps ax -o pid,state,ppid,cmd | \
 	fgrep ' Z ' | \
-		while read pid state ppid; do
+		while read pid state ppid cmd; do
 			if [ $ppid -eq 1 ]; then
-				echo "Zombie process $pid have parent 1. Skiping kill init!"
+				echo "Zombie process $pid {$cmd} have parent 1. Skiping kill init!"
 			else
-				echo "Kill process $pid with parent $ppid";
+				echo "Kill process $pid {$cmd} with parent $ppid";
 				kill $ppid;
 			fi
 		done
