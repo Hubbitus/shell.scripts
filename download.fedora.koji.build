@@ -1,0 +1,12 @@
+#!/bin/bash
+
+: ${1?"Not enough arguments: `basename $0` target-file"}
+
+wget -q -O- "$1" | grep -Po '(?<=<a href=")http://kojipkgs.fedoraproject.org//work/tasks/[^"]*?\.rpm' \
+	| while read url; do
+		echo "Downloading from $url";
+#		wget -q --progress=bar:force -c "$url";
+		curl -O "$url";
+	done
+
+#	| xargs -rI{} sh -c ''
