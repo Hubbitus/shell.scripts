@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#ionice -c3 mvn2 install -Dmaven.test.skip=true -Pcopy-dep "$@"
+
+# maven2 works with it, but maven3 fails with -Dmaven.test.skip=true option randomly
+# (see BUG https://bugzilla.redhat.com/show_bug.cgi?id=750203 and Jabber disscusion with Danila)
+#ionice -c3 mvn2 install -Dmaven.test.skip=true -DskipTests=true -Pcopy-dep "$@"
+#nice -n19 ionice -c3 mvn install -DskipTests=true -Pcopy-dep -P '!jdk7' "$@"
+#nice -n19 ionice -c3 mvn install -DskipTests=true -P '!jdk7' "$@"
+# Memory: http://stackoverflow.com/questions/3101128/java-lang-outofmemoryerror-permgen-space
+MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=128m" nice -n19 ionice -c3 mvn install -DskipTests=true "$@"
+
+# mvn clean install -DskipTests=true

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd /home/pasha/imus/IdeaProjects/imus/ascug-maket/ascug-esb-modules/imus-ais-adapter/
+
+rm -f target/imus-ais-adapter-*-SNAPSHOT*.jar ; mdep -Pcopy-dep && \
+	cp -fb target/imus-ais-adapter-*-SNAPSHOT-rev[0-9][0-9][0-9][0-9][0-9].jar /home/pasha/imus/fileSets/jar/ && \
+	cp -fb target/imus-ais-adapter-*-SNAPSHOT-rev[0-9][0-9][0-9][0-9][0-9].jar /mnt/net/p/users/Pasha/jar/
+
+rm -f /home/pasha/imus/IdeaProjects/imus/ascug-maket/ascug-esb-modules/imus-esb-core/target/dep/imus-ais-adapter-*-SNAPSHOT-rev[0-9][0-9][0-9][0-9][0-9].jar
+cp -vfb target/imus-ais-adapter-*-SNAPSHOT-rev[0-9][0-9][0-9][0-9][0-9].jar /home/pasha/imus/IdeaProjects/imus/ascug-maket/ascug-esb-modules/imus-esb-core/target/dep/
