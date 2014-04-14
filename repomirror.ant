@@ -1,0 +1,27 @@
+#!/bin/bash
+
+LOCAL_REPO_DIR=/home/pasha/temp/repo.local/
+FROM=/home/pasha/imus/IdeaProjects/imus/
+
+find $FROM -name '*.noarch.rpm' -exec mv {} $LOCAL_REPO_DIR \;
+
+set -x
+
+function repoUpdate(){
+#$1 - In repodir.
+#$2 - Out dir where placed repodata directory
+#$3 - Logfile.
+
+# Due to BUG https://bugzilla.redhat.com/show_bug.cgi?id=449201 use option -C is not possible now
+# New BUG - https://bugzilla.redhat.com/show_bug.cgi?id=512610
+# --checksum sha for compatability with EPEL5
+nice -n 19 createrepo --update --checksum sha -Cvpd -o "$1" "$2" | tee -a "$3"
+#nice -n 19 createrepo -vpd -o "$1" "$2" | tee -a "$3"
+}
+
+repoUpdate "$LOCAL_REPO_DIR" "$LOCAL_REPO_DIR" "/home/pasha/repomirror.log"
+
+RSYNC_SHARED_OPTIONS='-arlDSzv --stats --human-readable --partial --progress --itemize-changes'
+# Local
+#rsync $RSYNC_SHARED_OPTIONS --delete "$LOCAL_REPO_DIR" "/var/www/html/repo/" | tee /home/pasha/rsync_mirror.log
+rsync $RSYNC_SHARED_OPTIONS --delete "$LOCAL_REPO_DIR" "pasha@192.168.100.118:/var/www/html/repo/" | tee /home/pasha/rsync_mirror.log
