@@ -2,15 +2,24 @@
 
 : ${1?"Not enough arguments: `basename $0` target-file"}
 
-wget -q -O- "$1" \
-	| grep buildArch \
-	| sed -r "s@.*(taskinfo\?taskID=[0-9]+).*, (.*)\)</a>@\1 \2@" \
-	| while read url arch; do
-		echo "Process arch [$arch] ($url)"
-		mkdir $arch
-		pushd $arch
-		download.fedora.koji.build "http://koji.fedoraproject.org/koji/$url"
-		popd
-	done
+echo "$1" > koji.build.url
 
-mv x86_64/*.src.rpm .
+if echo "$1" | grep -q buildinfo ; then
+	echo 'Process -Information for build-'
+	PAGE_URL="http://koji.fedoraproject.org/koji/$( wget -q -O- "$1" | grep -oP 'taskinfo\?taskID=\d+' )"
+else
+	PAGE_URL="$1"
+fi
+
+echo 'Process -Information for task-'
+wget -q -O- "$PAGE_URL" \
+	| sed -rn 's@.*(taskinfo\?taskID=[0-9]+).+buildArch.+, (.+)\)</a>@\1 \2@p' \
+		| while read url arch; do
+			echo "Process arch [$arch] ($url)"
+			mkdir $arch
+			pushd $arch
+			download.fedora.koji.task "http://koji.fedoraproject.org/koji/$url"
+			popd
+		done
+
+mv */*.src.rpm .
