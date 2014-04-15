@@ -1,0 +1,53 @@
+#!/bin/bash
+
+GROUP='users'
+
+	if [ ! "$1" ]; then
+	echo 'NAME is required!';
+	exit;
+	fi
+
+function checkYN(){
+read ANS
+	if [[ "$ANS" == 'Y' || "$ANS" == 'y' || "$ANS" == '' ]]; then
+	RES=1
+	else
+	RES=0
+	fi
+echo $RES;
+}
+
+USERNAME=$(echo "$1" | tr 'A-Z.-' 'a-z__' )
+echo 'Будет использоваться следующее имя пользователя, проверьте: '$USERNAME". Продолжаем? [Y/n]"
+	if [ $( checkYN ) -eq 0 ]; then
+	echo "Хм... Выходим"
+	exit 1
+	fi
+
+#/usr/sbin/useradd -c "Для заливки игры" -d /home/ -g 100 -s /bin/scp -n imho
+/usr/sbin/useradd -n -m -d /home/$USERNAME -g $GROUP -s /bin/bash $USERNAME
+#Иначе апач говорит что прав нету на документы :(
+chmod 0711 /home/$USERNAME
+chcon -u system_u -t tmp_t /home/$USERNAME/._tmp/
+chcon -u system_u -r object_r -t httpd_log_t /home/$USERNAME/.logs/
+
+echo 'Создавать для пользователя VirtualHost? [Y/n]'
+	if [ $( checkYN ) -eq 1 ]; then
+	Server_Name=$(echo "$1" | tr 'A-Z' 'a-z' )
+	echo "Использовать $Server_Name в качестве имени виртуального хоста (адреса)?? [Y/n]"
+		if [ $( checkYN ) -eq 0 ]; then
+		echo 'тогда введите желаемое:'
+		read Server_Name
+		fi
+		
+	sed "s/{USERNAME}/$USERNAME/g;s/{SERVER_NAME}/$Server_Name/g" /etc/httpd/conf.d/_skel.vhost | grep -v '#This is SKELETON for create virtualHosts for users' > /etc/httpd/conf.d/vhosts.d/$USERNAME.vhost
+	echo "DON'T REMEMBER restart WebServer!"
+	fi
+
+#Set password
+PASSWD "$USERNAME"
+
+echo "Http server restart to take effect:"
+service httpd reload
+
+echo 'НЕ забудьте перезапустить сервисы вроде proftpd, чтобы изменения вступили в силу!'

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+: ${1?"Module name required: `basename $0` moduleName logFile"}
+: ${2?"Module name required: `basename $0` moduleName logFile"}
+
+MOD=$1
+
+audit2allow -M "$MOD" < "$2"
+# Создается новый type enforcment файл: $MOD.te
+# Компиляция политики:
+checkmodule -M -m -o "$MOD.mod" "$MOD.te"
+# Создание пакета:
+semodule_package -o "$MOD.pp" -m "$MOD.mod"
+
+# ******************** В А Ж Н О ***********************
+# Для того, чтобы загрузить только что созданный пакет политики в ядро, вам необходимо выполнить команду
+semodule -i "$MOD.pp"

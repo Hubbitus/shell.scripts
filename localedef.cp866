@@ -1,0 +1,2 @@
+
+localedef -c -i ru_RU -f IBM866 ru_RU.cp866

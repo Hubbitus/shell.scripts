@@ -1,0 +1,19 @@
+#!/bin/bash
+
+: ${1?"Порядок использования: `basename $0` db_name"} 
+
+	if [ ! "$2" ]; then
+	echo 'Введите пароль. Если с фантазией туго, могу предложить сгенерированные:'
+	genpass
+	read Pass
+	fi
+
+echo "
+CREATE DATABASE \`$1\`;
+CREATE USER '${1}_u'@'localhost' IDENTIFIED BY '$Pass';
+
+GRANT ALL PRIVILEGES ON \`${1}\`.* TO '${1}_u'@'localhost';
+" | mysql -u root -p
+
+    [ ! -d "/root/USERS/db" ] && mkdir "/root/USERS/db"
+echo "$Pass" >> "/root/USERS/db/${1}_u"

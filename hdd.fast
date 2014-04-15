@@ -3,13 +3,17 @@ HDD=/dev/sda
 
 hdparm -B254 $HDD
 hdparm -m16 --yes-i-know-what-i-am-doing $HDD
-hdparm -a1024 $HDD
+#hdparm -a1024 $HDD
+# http://freesource.info/wiki/TonkajaNastrojjkaDiska
+hdparm -a16 $HDD
 hdparm -M254 $HDD
 hdparm -Q100 $HDD
 # http://optimization.hardlinux.ru/?page_id=75
 hdparm -c1 $HDD
 
-echo 20 > /proc/sys/vm/swappiness
+
+
+echo 80 > /proc/sys/vm/swappiness
 
 # http://leolik.blogspot.com/2008/02/blog-post.html
 echo 1000 > /proc/sys/vm/vfs_cache_pressure
