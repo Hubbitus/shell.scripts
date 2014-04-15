@@ -1,0 +1,66 @@
+#! /bin/sh
+
+###
+# Script to grab data from torrents.ru tracker
+#
+# @version 1.0
+# @author Pahan-Hubbitus (Pavel Alexeev) <Pahan [at] Hubbitus [ dot. ] info>
+# @copyright Copyright (c) 2008, Pahan-Hubbitus (Pavel Alexeev)
+###
+
+: ${USERNAME?"For function properly script require set environment vars USERNAME and PASSWORD set"}
+: ${PASSWORD?"For function properly script require set environment vars USERNAME and PASSWORD set"}
+: ${1?"НЕОБХОДИМО передать аргумент, указывающий на файл содержащий ссылку (rutracker.org.URL) или просто саму ссылку на тему"}
+
+FILE_FIRST=info.first.htm
+#BASE_URL='http://torrents.ru/forum/'
+BASE_URL='http://rutracker.org/forum/'
+
+###################################################################################
+# DO NOT change anything after that in untill you are really known what you doing #
+###################################################################################
+
+LOGIN_URL='http://login.rutracker.org/forum/login.php'
+
+#LOG='--trace-ascii LOG'
+LOG=''
+
+	if [ -e "$1" ]; then
+		URL="$( cat $1 )"
+	else
+		URL="$1"
+	fi
+
+# Log in to the server.  This can be done only once.
+curl -L $LOG "$LOGIN_URL" --cookie-jar cook.file --cookie cook.file \
+	--data "login_username=${USERNAME}&login_password=${PASSWORD}&login=login" -o - | grep Hubbitus &>/dev/null || { echo 'Error login! Check login/password'; return 1; }
+
+#1. Load first page-description
+curl -L -C - -L $LOG --cookie cook.file "$URL" -o $FILE_FIRST
+
+enconv $FILE_FIRST
+
+#2. Load image-cover
+#<div class="postImg-wrap" style="padding: 4px 4px 2px; float: right; clear: right;"><img src="http://sec.web-da.ru/1000021918.jpg" id="postImgAligned" class="postImg" alt="pic"></div>
+IMG_URLS=( `fgrep '<var class="postImg' $FILE_FIRST | sed -r 's/.*title="([^"]+?)".*/\1/'` )
+
+	for (( i=0; i<${#IMG_URLS[*]}; i++ )); do
+	echo $i - ${IMG_URLS[$i]}
+	wget --timeout=15 --tries=1 "${IMG_URLS[$i]}" -O info$i.jpg
+	done
+
+#3.1. Extract torrent-file URL
+#<p><a href="download.php?id=88138" class="genmed"><b>Download</b></a></p>
+TORRENT_URL=`fgrep 'class="dl-stub dl-link"' $FILE_FIRST | sed -r 's/.*href="([^"]+)".*/\1/'`
+echo TORRENT_URL=$TORRENT_URL
+
+#3.2. Filename do not extracted properly from HTTP-headers! Do it manualy
+#Перестали писать имя торрент-файла :) Теперь он просто как download.php?id=523865.torrent значится :(
+TORRENT_filename=$( basename "`pwd`" | tr ' ' '_' | translit )".torrent"
+echo '$TORRENT_filename='$TORRENT_filename
+
+#3 Now grab the torrent file itself
+curl -L $LOG --cookie cook.file --referer "$URL" --cookie bb_dl=$( echo $TORRENT_URL | grep -oP '\d+$' ) -o "$TORRENT_filename" "$TORRENT_URL"
+
+#4 Make symlink in ~/Torents/
+ln -s "$(pwd)" ~/Torents/"${TORRENT_filename%%.torrent}"
