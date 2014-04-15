@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#
+# Obtain process start command line by PID
 
 	if [ ! "$1" ]; then
 	echo NEED 1 argement - pid

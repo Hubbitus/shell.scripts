@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Capture some network traffic on remote host (via ssh) and live analize it in GUI
+
 : ${1?"You should provide at least 1 argument: `basename $0` target-ssh-host [<remote capture parameters and filters>]"}
 
 HOST="$1"

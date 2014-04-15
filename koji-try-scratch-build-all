@@ -2,7 +2,7 @@
 
 : ${1?"You must provide at least pachage-name.src.rpm: `basename $0` package.src.rpm"}
 
-	for branch in f12 f13 f14 5E-epel 6E-epel; do
+	for branch in f20 f21 5E-epel 6E-epel epel7; do
 	echo "Try build for ===${branch}==="
 	koji build --scratch dist-$branch $@
 	done

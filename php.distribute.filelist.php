@@ -2,8 +2,8 @@
 <?
 	if (isset($argv[1])) $dir = $argv[1];
 	else{
-	echo 'Warning. Directory not provided. Using "./"'."\n";
-	$dir = './';
+		echo 'Warning. Directory not provided. Using "./"'."\n";
+		$dir = './';
 	}
 
 include_once('RegExp/RegExp_pcre.php');

@@ -22,7 +22,7 @@ function getConfVB(){
 local opt=$2
 
 	# This was written after getConf[IPB]. So, for compatability provide IPB0names translation
-	case $2 in                                                                                                           
+	case $2 in
 		sql_user		) opt='username';;
 		sql_host		) opt='servername';;
 		sql_pass		) opt='password';;
@@ -43,7 +43,7 @@ function getConfXcart(){
 local opt=$2
 
 	# This was written after getConf[IPB]. So, for compatability provide IPB0names translation
-	case $2 in                                                                                                           
+	case $2 in
 		sql_pass		) opt='sql_password';;
 		sql_database	) opt='sql_db';;
 		*			) echo "Выбран недопустимый ключ.";;   # ПО-УМОЛЧАНИЮ
@@ -61,7 +61,7 @@ function getConfSugarCRM(){
 local opt=$2
 
 	# This was written after getConf[IPB]. So, for compatability provide IPB0names translation
-	case $2 in                                                                                                           
+	case $2 in
 		sql_user		) opt='db_user_name';;
 		sql_host		) opt='db_host_name';;
 		sql_pass		) opt='db_password';;

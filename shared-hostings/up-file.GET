@@ -1,19 +1,19 @@
 #!/bin/bash
 
-#1 грузим саму страницу с линком
+#1 РіСЂСѓР·РёРј СЃР°РјСѓ СЃС‚СЂР°РЅРёС†Сѓ СЃ Р»РёРЅРєРѕРј
 wget http://up-file.com/download/a6a59f649802/Morcheeba.rar.html -O link.htm --save-cookie cook.FILE
 
-#2 выдрали ссылку
+#2 РІС‹РґСЂР°Р»Рё СЃСЃС‹Р»РєСѓ
 cat link.htm | grep 'Generating by up-file' \
 	| sed -n 'H;${x;s/\n//g;s/ [hH][rR][eE][fF]=/\n/g;p}' | sed 's/[ >].*//;s/"//g' \
 	| grep '/download2' > links
 
-#3 грузим эту страницу (относительная ссылка)
+#3 РіСЂСѓР·РёРј СЌС‚Сѓ СЃС‚СЂР°РЅРёС†Сѓ (РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅР°СЏ СЃСЃС‹Р»РєР°)
 wget http://up-file.com`cat links` -O ttt1.htm --load-cookies cook.FILE --save-cookie cook.FILE
 
-#4 Выдираем из нее уже конечную ссылку:
+#4 Р’С‹РґРёСЂР°РµРј РёР· РЅРµРµ СѓР¶Рµ РєРѕРЅРµС‡РЅСѓСЋ СЃСЃС‹Р»РєСѓ:
 cat ttt1.htm | grep '/download3' \
 	| sed -n '{s/.* [hH][rR][eE][fF]="\?//g;s/"\?>.*//g;p}' > links1
 
-#5 грузим наконец что хотели (относительная ссылка)
+#5 РіСЂСѓР·РёРј РЅР°РєРѕРЅРµС† С‡С‚Рѕ С…РѕС‚РµР»Рё (РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅР°СЏ СЃСЃС‹Р»РєР°)
 wget http://up-file.com`cat links1` --load-cookies cook.FILE

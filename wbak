@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# WebBackup script. Save some web-page for history.
+
 MAIN_BAK_DIR='/home/pasha/_BAK'
 DATE_FORMAT='%Y-%m-%d'
 

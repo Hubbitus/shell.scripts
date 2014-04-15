@@ -1,6 +1,9 @@
 #!/bin/bash
 
+# Infinity try connect to particular host by SSH
+# See also sssh and whilesshs aliases.
+
 	while ! ssh $@; do
-	date
-	sleep 2
+		date
+		sleep 2
 	done

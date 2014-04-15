@@ -41,7 +41,7 @@ unset commment
 	#101) Format spaces to tabs and delete trailings spaces
 	replace_in_file -ie -w '# {2}#' -t '\t' -w '#\s+$#m' -t '' "$1"
 
-	echo "$1 обработан"
+	echo "[$1] обработан"
 }
 
 	if [ "$1" ]; then
@@ -49,6 +49,6 @@ unset commment
 		strip_html "$file"
 		done
 	else
-	echo Нету аргументов. Должен передаваться файл для обработки. Завершаю работу.
+	echo 'Нету аргументов. Должен передаваться файл для обработки. Завершаю работу.'
 	exit
 	fi
