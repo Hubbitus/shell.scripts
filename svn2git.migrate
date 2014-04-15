@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Used tutorial: http://habrahabr.ru/post/144626/
+
+# I IS NOT parametrized script, instead snippet to change it over new needs.
+
+{
+
+rm -rf trunk
+
+#git svn clone --authors-file=authors svn+ssh://pasha@x-www.info/svn/_SHARED_/trunk trunk
+git svn clone --authors-file=authors --ignore-paths="^(wzor.GET|wzor.REPACK|FOR.format|PREVIEW.bash|autosurf4cash.surf|depositfiles.GET.BAK|dos|enconvDir|innovatika.info_del.user.CMD|rpm.remove.FOR|rpms-arch|rpms-wasted|sizeS|surf.surf|svalka.GET|torrents.ru.parse|_private/webworlds.ru.activate_banner|_private)$" svn+ssh://pasha@x-www.info/svn/scripts/trunk trunk
+
+pushd trunk
+
+git filter-branch --commit-filter 'git_commit_non_empty_tree "$@"' HEAD
+git svn create-ignore
+
+git branch -rd git-svn
+git config --remove-section svn-remote.svn
+git config --remove-section svn
+rm -rf .git/svn
+
+git gc
+
+# Github:
+git remote add origin git@github.com:Hubbitus/shell.scripts.git
+git push -u origin master
+
+popd
+
+}  2>&1 | tee git-svn.log
