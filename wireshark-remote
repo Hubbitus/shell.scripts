@@ -7,4 +7,5 @@
 HOST="$1"
 shift
 
-ssh "$HOST" "tshark -iany -w- $@"| wireshark -k -i-
+# Use dumpcap instead of tshark to support old format: http://ask.wireshark.org/questions/28600/unrecognized-libpcap-format ( http://wiki.wireshark.org/CaptureSetup/Pipes )
+ssh "$HOST" "dumpcap -P -iany -w - '$@'" | wireshark -k -i-
