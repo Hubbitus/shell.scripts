@@ -1,7 +1,8 @@
 #!/bin/sh
 
+# For grep trick to do not match itself see http://stackoverflow.com/questions/9375711/more-elegant-ps-aux-grep-v-grep
 ps ax -o pid,state,ppid,cmd | \
-	fgrep ' Z ' | \
+	grep ' [Z] ' | \
 		while read pid state ppid cmd; do
 			if [ $ppid -eq 1 ]; then
 				echo "Zombie process $pid {$cmd} have parent 1. Skiping kill init!"
