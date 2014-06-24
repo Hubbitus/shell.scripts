@@ -21,7 +21,9 @@ function repoUpdate(){
 # --checksum sha for compatability with EPEL5
 #nice -n 19 createrepo --update --checksum sha -Cvpd -o "$1" "$2" | tee -a "$3"
 # createrpo_c should be faster and less memory hungry
-nice -n 19 createrepo_c --update --checksum sha -d --xz -o "$1" "$2" | tee -a "$3"
+#nice -n 19 createrepo_c --update --checksum sha -d --xz -o "$1" "$2" | tee -a "$3"
+# xz compression type is not supported by COPR - http://copr-be.cloud.fedoraproject.org/results/hubbitus/test/fedora-20-x86_64/python-nbxmpp-0.4-1.fc20/root.log
+nice -n 19 createrepo_c --update --checksum sha -d -o "$1" "$2" | tee -a "$3"
 }
 
 	for distr in ${REPOS[*]}

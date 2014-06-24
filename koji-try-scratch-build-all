@@ -1,8 +1,8 @@
 #!/bin/bash
 
-: ${1?"You must provide at least pachage-name.src.rpm: `basename $0` package.src.rpm"}
+: ${1?"You must provide at least package-name.src.rpm: `basename $0` package.src.rpm"}
 
-	for branch in f20 f21 5E-epel 6E-epel epel7; do
+	for branch in f19 f20 f21 dist-5E-epel dist-6E-epel epel7; do
 	echo "Try build for ===${branch}==="
-	koji build --scratch dist-$branch $@
+	koji build --scratch $branch $@
 	done

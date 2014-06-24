@@ -2,7 +2,7 @@
 
 : ${1?"Not enough arguments: `basename $0` task-url"}
 
-wget -q -O- "$1" | grep -Po '(?<=<a href=")http://kojipkgs.fedoraproject.org//work/tasks/[^\"]*\.rpm(?=")' \
+wget -q -O- "$1" | grep -Po '(?<=<a href=")https?://kojipkgs.fedoraproject.org//work/tasks/[^\"]*\.rpm(?=")' \
 	| while read url; do
 		echo "Downloading from $url";
 		curl -O "$url";
