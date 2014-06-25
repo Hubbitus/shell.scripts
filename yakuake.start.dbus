@@ -55,5 +55,6 @@ newTab $(( ++id )) 'root@zabbix.ant' 'sshs root@zabbix.ant'
 newTab $(( ++id )) 'd_o' 'sshs digitalocean.hubbitus.info'
 newTab $(( ++id )) 'pasha@d_o' 'sshs -XC pasha@digitalocean.hubbitus.info'
 #newTab $(( ++id )) 'root@192.168.3.128' 'sshs root@forward.x-www.info'
-newTab $(( ++id )) 'ols.backup' 'sshs ols.backup'
+newTab $(( ++id )) 'ols326.backup' 'sshs ols326.backup'
+newTab $(( ++id )) 'ols834.backup' 'sshs ols834.backup'
 
