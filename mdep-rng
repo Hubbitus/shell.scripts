@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd /home/pasha/imus/IdeaProjects/imus/ascug-maket/ascug-esb-modules/imus-rng-adapter/
+
+#PATTERN=target/imus-rng-adapter-*-SNAPSHOT-rev[0-9][0-9][0-9][0-9][0-9].jar
+PATTERN='imus-rng-adapter-*-SNAPSHOT-rev-[0-9].jar'
+
+rm -f target/imus-rng-adapter-*-SNAPSHOT*.jar ; mdep -Pcopy-dep && \
+	cp -fb target/$PATTERN /home/pasha/imus/fileSets/jar/ && \
+	cp -fb target/$PATTERN /mnt/net/p/users/Pasha/jar/
+
+rm -f /home/pasha/imus/IdeaProjects/imus/ascug-maket/ascug-esb-modules/imus-esb-core/target/dep/$PATTERN
+cp -vfb target/$PATTERN /home/pasha/imus/IdeaProjects/imus/ascug-maket/ascug-esb-modules/imus-esb-core/target/dep/
