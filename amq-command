@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Simple utility to send commands into ActiveMQ queues from commandline.
+
+# DEFAULTS
+# Base server URL, without admin and files parts
+AMQ_DEFAULT_QUEUE=${AMQ_DEFAULT_QUEUE-'AIS.CMDCONF.IN'}
+AMQ_DEFAULT_SERVER=${AMQ_DEFAULT_SERVER-'http://192.168.100.147:8161'}
+
+function usage(){
+	cat << EOF
+You must provide cmd-argument: `basename $0` command [AM-queue] [server to use]
+
+If ActiveMQ queue (2nd argument) did not specified default used - $AMQ_DEFAULT_QUEUE.
+	You may also change it by setting AMQ_DEFAULT_QUEUE env variable.
+
+If server to use (3rd argument) did not specified default used - $AMQ_DEFAULT_SERVER.
+	You may also change it by setting AMQ_DEFAULT_SERVER env variable.
+
+EXAMPLES of usage:
+	o `basename $0` GetInfo
+	o `basename $0` 'Query_SELECT * FROM Constants' 'RNG.CMDCONF.IN' 'http://192.168.100.100:8161'
+	o AMQ_DEFAULT_SERVER='http://192.168.100.100:8161' AMQ_DEFAULT_QUEUE='RNG.CMDCONF.IN' `basename $0` Test
+EOF
+}
+
+: ${1?"`usage`"}
+
+#### Main code ####
+
+COOKIE_FILE='.cookie.file'
+
+SECRET=$( curl -sS "${3-$AMQ_DEFAULT_SERVER}/admin/send.jsp" -c "$COOKIE_FILE" | grep -oP '(?<=<input type="hidden" name="secret" value=")[^"]+(?=")' )
+#'
+
+curl -sS -b "$COOKIE_FILE" --data "JMSDestination=${2:-$AMQ_DEFAULT_QUEUE}&JMSDestinationType=queue&JMSMessageCount=1&JMSMessageCountHeader=JMSXMessageCounter&secret=$SECRET" --data-urlencode "JMSText=$1" "${3-$AMQ_DEFAULT_SERVER}/admin/sendMessage.action"
+rm "$COOKIE_FILE"
