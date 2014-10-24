@@ -2,8 +2,8 @@
 
 cd /home/pasha/imus/IdeaProjects/imus/ascug-maket/ascug-esb-modules/imus-rng-adapter/
 
-#PATTERN=target/imus-rng-adapter-*-SNAPSHOT-rev[0-9][0-9][0-9][0-9][0-9].jar
-PATTERN='imus-rng-adapter-*-SNAPSHOT-rev-[0-9].jar'
+PATTERN='imus-rng-adapter-*-SNAPSHOT-rev[0-9][0-9][0-9][0-9][0-9].jar'
+#PATTERN='imus-rng-adapter-*-SNAPSHOT-rev-[0-9].jar'
 
 rm -f target/imus-rng-adapter-*-SNAPSHOT*.jar ; mdep -Pcopy-dep && \
 	cp -fb target/$PATTERN /home/pasha/imus/fileSets/jar/ && \

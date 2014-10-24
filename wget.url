@@ -2,4 +2,4 @@
 
 # Wrapper script around wget to save near downloaded files corresponded .URL files with real urls from what it was obtained.
 
-wget -c "$@" 2>&1 | tee >( echo "$@" > "$(grep -oP '(?<=«).+(?=» saved)').URL" )
+wget -c "$@" 2>&1 | tee >( echo "$@" > "$(grep -oP '(?<=«).+(?=» (saved|сохранён))').URL" )
