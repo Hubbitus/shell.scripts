@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "*" `LANG=C date +'%a %b %e %Y'` "Pavel Alexeev <Pahan@Hubbitus.info>"
+echo "*" `LANG=C date +'%a %b %d %Y'` "Pavel Alexeev <Pahan@Hubbitus.info>"
