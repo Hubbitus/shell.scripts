@@ -59,5 +59,6 @@ newTab $(( ++id )) 'pasha@d_o' 'sshs -XC pasha@digitalocean.hubbitus.info'
 #newTab $(( ++id )) 'ols834.backup' 'sshs ols834.backup'
 newTab $(( ++id )) 'ovh-ks1' 'sshs ovh-ks1'
 newTab $(( ++id )) 'pasha@ovh-ks1' 'sshs pasha@ovh-ks1'
-newTab $(( ++id )) 'pasha@cloudmouse.com' 'sshs pasha@cloudmouse.com'
+#newTab $(( ++id )) 'pasha@cloudmouse.com' 'sshs pasha@cloudmouse.com'
+newTab $(( ++id )) 'pasha@byteonsite' 'sshs pasha@byteonsite'
 
