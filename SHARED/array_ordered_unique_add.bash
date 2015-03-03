@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Add element to begin (if lesser) or end (if grether) of ordered array ir it still not there.
+# Add element to begin (if lesser) or end (if greather) of ordered array if it still not there.
 # $1 - name of array for indirect access ( http://tldp.org/LDP/abs/html/ivr.html )
 # $2 - element for addition
 function array_ordered_unique_add(){

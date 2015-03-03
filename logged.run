@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Script to write separately STDERR in one file and also mixed STDOUT+STDERR into another.
+# Common uscase: check what there no errors happened, but if they present - also look it in historical context of run flow.
+#
+# Esample:
+# executable file test.sh with content:
+# #!/bin/bash
+# echo 'This line on STDOUT'
+# echo 'This line on STDERR' 1>&2
+#
+# Call like:
+# $ CMD='./test.sh' ./run.logged
+# You got (filenames change able via LOG_ERR, LOG_ALL, by default based on command runned):
+# 1) Console aoutput ща both lines.
+# 2) test.sh.LOG.err file wit single line: 'This line on STDERR'
+# 3) test.sh.LOG.all file with both lines
+#
+# Also call variant from other scripts by sourcing: cat test.sh
+# #!/bin/bash
+# function somerun(){
+# echo 'This line on STDOUT'
+# echo 'This line on STDERR' 1>&2
+# }
+# CMD=somerun . ./run.logged
+# Note . (source) if you want use function name, not just string of global command
+
+: ${CMD?"CMD env variable should point on real command STDIN/STDOUT of will be written separately. LOG_ERR and LOG_ALL may be provided optionaly"}
+
+#http://wooledge.org:8000/BashFAQ?action=show&redirect=BashFaq#head-3ea5ee0ab12df2fd6f37f29b32c061436943232d
+# Redirect stderr to a pipe, keeping stdout unaffected.
+(
+exec 3>&1 # Save current "value" of stdout.
+$CMD "$@" 2>&1 >&3 | tee "${LOG_ERR:-$CMD.LOG.err}" # Send stdout to FD 3.
+exec 3>&- # Now close it for the remainder of the script.
+) | tee "${LOG_ALL:-$CMD.LOG.all}"

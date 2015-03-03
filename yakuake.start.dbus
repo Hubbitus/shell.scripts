@@ -45,7 +45,7 @@ qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'screen -x ||
 qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 'main'
 
 newTab $(( ++id )) 'ROOT' 'sus'
-newTab $(( ++id )) 'pasha@x-www.info' 'sshs -XC pasha@x-www.info'
+#newTab $(( ++id )) 'pasha@x-www.info' 'sshs -XC pasha@x-www.info'
 newTab $(( ++id )) 'pasha@1C' 'sshs pasha@linux'
 newTab $(( ++id )) 'ant@1C' 'sshs ant@linux'
 newTab $(( ++id )) 'root@1C' 'sshs root@linux'
@@ -57,6 +57,8 @@ newTab $(( ++id )) 'pasha@d_o' 'sshs -XC pasha@digitalocean.hubbitus.info'
 #newTab $(( ++id )) 'root@192.168.3.128' 'sshs root@forward.x-www.info'
 #newTab $(( ++id )) 'ols326.backup' 'sshs ols326.backup'
 #newTab $(( ++id )) 'ols834.backup' 'sshs ols834.backup'
-#newTab $(( ++id )) 'cloudmouse.com' 'sshs cloudmouse.com'
 newTab $(( ++id )) 'ovh-ks1' 'sshs ovh-ks1'
+newTab $(( ++id )) 'pasha@ovh-ks1' 'sshs pasha@ovh-ks1'
+#newTab $(( ++id )) 'pasha@cloudmouse.com' 'sshs pasha@cloudmouse.com'
+newTab $(( ++id )) 'pasha@byteonsite' 'sshs pasha@byteonsite'
 

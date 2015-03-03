@@ -3,27 +3,23 @@
 [ -r backup.settings ]  && . backup.settings
 . ../.rdiff-backup_shared_options
 
-: ${NICE?"You must provide config variables like NICE, IONICE, LOGDIR!"}
-: ${IONICE?"You must provide config variables like NICE, IONICE, LOGDIR!"}
-: ${LOGDIR?"You must provide config variables like NICE, IONICE, LOGDIR!"}
-: ${WHAT_BACKUP?"You must provide config variables like NICE, IONICE, LOGDIR!"}
+: ${WHAT_BACKUP?"You must provide config variables at least WHAT_BACKUP! Define it or place in backup.settings file"}
 
 ssh-add -l &>/dev/null || ( ssh-add &>/dev/null && ssh_local_identity=1 && echo Local ssh-add )
 
 #Renice himself
-renice $NICE $$
-sudo ionice -c$IONICE -p$$
+renice ${NICE-19} $$
+sudo ionice -c${IONICE-3} -p$$
 
 	{
-	eval "SCHEMA=\"$( echo "$T_SCHEMA" | sed 's/\"/\\"/g' )\""
+#	eval "SCHEMA=\"$( echo "$T_SCHEMA" | sed 's/\"/\\"/g' )\""
+#		--remote-schema "$SCHEMA" \
 	#echo SCHEMA=$SCHEMA
 
 	# --remote-schema used only when full SSH access present. In case one-command key in action it will be ignored, as well as $NICE and $IONICE values for remote operations.
 	# It shoud be set remote separately. Please see <BackUPs dir>/_tools/READ.me for more info.
-	rdiff-backup $RDIFF_SHARED_OPTIONS \
+	rdiff-backup $RDIFF_SHARED_OPTIONS $RDIFF_ADDON_OPTIONS \
 		--include-globbing-filelist=${INCLUDE_LIST_FILE-include} --exclude-globbing-filelist=${EXCLUDE_LIST_FILE-exclude} \
-		--remote-schema "$SCHEMA" \
-		--print-statistics \
 		"$WHAT_BACKUP" ${TO_BACKUP-'./_content/'}
 	} 2> >( tee "${LOGDIR:-LOGS/}${LOG_filename_ERR-log_$( date +'%Y-%m-%d_%H:%M:%S' ).ERR}" ) | tee "${LOGDIR:-LOGS/}${LOG_filename_ACS-log_$( date +'%Y-%m-%d_%H:%M:%S' ).LOG}"
 
