@@ -28,6 +28,7 @@ nice -n 19 createrepo_c --update --checksum sha -d -o "$1" "$2" | tee -a "$3"
 			lftp -c 'open -e "mirror -caveR \
 				--exclude=.htaccess \
 				--exclude=header.htm \
+				--exclude=_h5ai.headers.html \
 				--delete-first \
 				'"$LOCAL_REPO_DIR/$distr"' '"hubbitus.info/rpm/$distr"'" \
 					ftp.hubbitus.org' | tee "$LOGFILE"
