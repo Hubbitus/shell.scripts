@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Script to write separately STDERR in one file and also mixed STDOUT+STDERR into another.
-# Common uscase: check what there no errors happened, but if they present - also look it in historical context of run flow.
+# Common use case: check what there no errors happened, but if they present - also look it in historical context of run flow.
 #
-# Esample:
+# Example:
 # executable file test.sh with content:
 # #!/bin/bash
 # echo 'This line on STDOUT'
@@ -12,7 +12,7 @@
 # Call like:
 # $ CMD='./test.sh' ./run.logged
 # You got (filenames change able via LOG_ERR, LOG_ALL, by default based on command runned):
-# 1) Console aoutput ща both lines.
+# 1) Console aoutput of both lines.
 # 2) test.sh.LOG.err file wit single line: 'This line on STDERR'
 # 3) test.sh.LOG.all file with both lines
 #
