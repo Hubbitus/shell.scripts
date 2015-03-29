@@ -58,5 +58,4 @@ newTab $(( ++id )) 'ovh' 'sshs ovh'
 #newTab $(( ++id )) 'ovh-ks1' 'sshs ovh-ks1'
 newTab $(( ++id )) 'pasha@ovh-ks1' 'sshs pasha@ovh-ks1'
 newTab $(( ++id )) 'pasha@byteonsite' 'sshs pasha@byteonsite'
-#newTab $(( ++id )) 'pasha@aws-free-test' 'sshs pasha@aws-free-test'
-
+newTab $(( ++id )) 'pasha@aws.h-.info' 'sshs pasha@aws.hubbitus.info'
