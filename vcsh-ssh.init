@@ -1,0 +1,28 @@
+#!/bin/bash
+
+: ${1?"You must provide git-url to clone from (f.e. backup@git.hubbitus.info:git/ssh:public). Repository should contain .ssh directory and files in that to incorporate to $HOME.
+More info about usage vcsh see on official site."}
+
+#1)
+rm -rf ~/.config/vcsh/repo.d/ssh:public.git
+
+#2)
+vcsh clone "$1" ssh:public
+# It is oK, so files can;t owrwritten in the place:
+#  * branch            master     -> FETCH_HEAD
+#fatal: Not a valid object name origin/master
+#fatal: origin/master - not something we can merge
+
+
+#3)
+vcsh ssh:public fetch
+
+#4)
+mv .ssh/authorized_keys .ssh/authorized_keys.vcsh.bak
+mv .ssh/config .ssh/config.vcsh.bak
+
+#5)
+vcsh ssh:public merge FETCH_HEAD
+
+#6)
+chmod 0600 .ssh/*
