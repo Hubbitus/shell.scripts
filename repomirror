@@ -8,6 +8,14 @@
 
 ############################################################
 
+# http://unix.stackexchange.com/questions/1496/why-doesnt-my-bash-script-recognize-aliases
+shopt -s expand_aliases
+source ~/.bashrc
+
+#Renice himself
+renice ${NICE-19} $$
+sudo ionice -c${IONICE-3} -p$$
+
 function repoUpdate(){
 #$1 - In repodir.
 #$2 - Out dir where placed repodata directory
@@ -15,25 +23,29 @@ function repoUpdate(){
 
 # --checksum sha for compatability with EPEL5
 # xz compression type is not supported by COPR - http://copr-be.cloud.fedoraproject.org/results/hubbitus/test/fedora-20-x86_64/python-nbxmpp-0.4-1.fc20/root.log
-nice -n 19 createrepo_c --update --checksum sha -d -o "$1" "$2" | tee -a "$3"
+createrepo_c --update --checksum sha -d -o "$1" "$2" | tee -a "$3"
 }
 
-	for distr in ${REPOS[*]}
-	do
+{
+	for distr in ${REPOS[*]} ; do
 		pushd "$LOCAL_REPO_DIR/$distr"
 		repoUpdate ./ ./ "$LOGFILE"
-		echo $distr" DONE"
 
-		nice -n 19 \
+		if [ ! -z "$FTP_HOST" ]; then
 			lftp -c 'open -e "mirror -caveR \
 				--exclude=.htaccess \
 				--exclude=header.htm \
 				--exclude=_h5ai.headers.html \
+				--exclude=_h5ai \
 				--delete-first \
-				'"$LOCAL_REPO_DIR/$distr"' '"hubbitus.info/rpm/$distr"'" \
-					ftp.hubbitus.org' | tee "$LOGFILE"
-
+				'"$LOCAL_REPO_DIR/$distr"' '"$FTP_DIR/$distr"'" \
+					'"$FTP_HOST"
+		else # rsync
+			rsync_s --delete "$LOCAL_REPO_DIR/$distr/" "$RSYNC_URL/$distr/"
+		fi
+		echo "$distr DONE"
 		popd
 	done
 
 echo 'Repo updated'
+} 2>&1 | tee "$LOGFILE"
