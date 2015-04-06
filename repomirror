@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Example of config see at end of this file
 . ~/.config/repomirror/repomirror.conf
 
 : ${LOCAL_REPO_DIR?'You must provide env var LOCAL_REPO_DIR - local root of repo (directly or in config ~/.config/repomirror/repomirror.conf)!'}
@@ -49,3 +50,20 @@ createrepo_c --update --checksum sha -d -o "$1" "$2" | tee -a "$3"
 
 echo 'Repo updated'
 } 2>&1 | tee "$LOGFILE"
+
+
+# Sample config (must be placed in ~/.config/repomirror/repomirror.conf):
+##LOCAL_REPO_DIR=/local/path/RPM_REPO/
+## All
+##REPOS=( $( ls "$LOCAL_REPO_DIR" ) )
+## Chhosen
+#REPOS=( Fedora20 Fedora21 Fedora22 EL6 epel7 )
+#
+#LOGFILE=$HOME/repomirror.log
+#
+## You may define pair FTP_HOST/FTP_DIR (in that cale lftp mirror will be used) or RSYNC_URL, not both!
+##FTP_HOST=ftp.example.org
+##FTP_DIR=/var/www/rpms
+#
+## In last part REPOS will be added
+#RSYNC_URL=rsync.example.org:/var/www/rpms/
