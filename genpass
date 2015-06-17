@@ -1,10 +1,10 @@
 #!/bin/bash
 
-	for (( i=0; i<${2-5}; i++ )); do
+# Simple script to generate passwords.
+# $1 - length of passwords for generation in symbols. 10 by default.
+# $2 - number of passwords for generation. 5 by defaults
+
+for (( i=0; i<${2-5}; i++ )); do
 	head -c ${1-10} /dev/random | base64 | sed 's/==$//' | head -c ${1-10}
 	echo
-	done
-#head -c ${1-10} /dev/random | base64 | sed 's/==$//'
-#head -c ${1-10} /dev/random | base64 | sed 's/==$//'
-#head -c ${1-10} /dev/random | base64 | sed 's/==$//'
-#head -c ${1-10} /dev/random | base64 | sed 's/==$//'
+done
