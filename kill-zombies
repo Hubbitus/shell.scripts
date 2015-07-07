@@ -1,13 +1,42 @@
 #!/bin/sh
 
+# By default script ask to kill all process, providing breaf info by it.
+# If you specify parameter y or Y, it wiill silently kill all, if you provide any other value zombies just listed
+
+# http://misc.flogisoft.com/bash/tip_colors_and_formatting
+COLOR_RESET='\e[0m'
+COLOR_LIGHT_GREEN='\e[92m'
+COLOR_CYAN='\e[36m'
+
+# $1 pid
+# $2 cmd
+# $3 ppid
+function defaultString(){
+pid="$1"
+cmd="$2"
+ppid="$3"
+echo -ne "zombie process ${COLOR_CYAN}${pid}${COLOR_RESET} ${COLOR_LIGHT_GREEN}{$cmd}${COLOR_RESET} with parent ${COLOR_CYAN}${ppid}${COLOR_RESET} ${COLOR_LIGHT_GREEN}{$(ps h -o state,cmd --pid $ppid)}${COLOR_RESET}";
+}
+
 # For grep trick to do not match itself see http://stackoverflow.com/questions/9375711/more-elegant-ps-aux-grep-v-grep
 ps ax -o pid,state,ppid,cmd | \
 	grep ' [Z] ' | \
 		while read pid state ppid cmd; do
 			if [ $ppid -eq 1 ]; then
-				echo "Zombie process $pid {$cmd} have parent 1. Skiping kill init!"
+				echo -e "Zombie $(defaultString $pid "$cmd" $ppid). Skip kill init!"
 			else
-				echo "Kill process $pid {$cmd} with parent $ppid";
-				kill $ppid;
+				if [ -z "$1" ]; then
+					echo -e "Kill $(defaultString $pid "$cmd" $ppid) (y/N)?";
+					read ANS < /dev/tty
+					[[ 'y' == "${1,,}" || 'y' == "${ANS,,}" ]] && kill $ppid;
+					unset ANS
+				else
+					if [ 'y' == "${1,,}" ]; then
+						echo -e "Kill $(defaultString $pid "$cmd" $ppid)!";
+						kill $ppid;
+					else
+						echo -e "$(defaultString $pid "$cmd" $ppid) (requested only list)";
+					fi
+				fi
 			fi
 		done
