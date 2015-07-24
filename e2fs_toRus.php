@@ -1,6 +1,6 @@
 #!/usr/bin/php -q
-<?
-include_once('debug.php');
+<?php
+include_once('Debug/debug.php');
 #include_once('uniord.php');
 
 $cont = file_get_contents('tp.grep.uniq');
