@@ -15,7 +15,7 @@ DONECMD=${4-'wget -c http://temp/web_play.php -q -O /dev/null'}
 	done;
 
 	if [ "$MESSAGE" ]; then
-		xcowsay "$MESSAGE" 2>/dev/null || xmessage "$MESSAGE"
+		xcowsay --time=100000000000000 "$MESSAGE" 2>/dev/null || xmessage "$MESSAGE"
 	fi
 
 	#If present command - do it
