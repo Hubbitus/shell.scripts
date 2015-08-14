@@ -54,7 +54,7 @@ delete ARGV[1]
 #	print "Elements (count:" m[0, "length"] "): [0:" m[0] "] [1:" m[1] "] [2:" m[2] "][3:" m[3] "]";
 	key="";
 	for (i = 1; i<=9; i++){
-		if (m[i]){
+		if (length(m[i]) != 0){# Not just if (m[i]) because it discard matched "0" value! (http://stackoverflow.com/a/11952924/307525)
 #			if (m[i]) print "m["i"]=" m[i];
 			key = key "[" i ":" m[i] "]";
 		}
