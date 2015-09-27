@@ -10,15 +10,15 @@ DONECMD=${4-'wget -c http://temp/web_play.php -q -O /dev/null'}
 #echo INTERVAL=$INTERVAL
 
 	while ! eval $1 ; do
-	date;
-	sleep $INTERVAL;
+		date;
+		sleep $INTERVAL;
 	done;
 
 	if [ "$MESSAGE" ]; then
-	xmessage "$MESSAGE"
+		xcowsay --time=100000000000000 "$MESSAGE" 2>/dev/null || xmessage "$MESSAGE"
 	fi
 
 	#If present command - do it
 	if [ "$DONECMD" ]; then
-	eval "$DONECMD"
+		eval "$DONECMD"
 	fi

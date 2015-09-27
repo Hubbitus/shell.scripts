@@ -1,0 +1,53 @@
+#!/bin/bash
+
+
+function usage(){
+cat <<InputComesFromHERE
+
+Script workaround for aotomatically copy (rsync) from remotes host1 to host2 which can't peer directly.
+host1 <-- I --> host2
+  ^              ^
+  |<------X------|
+
+Unfortunately also rsnc can't copy remote-remote.
+So approach is to forward port and run rsync to one of them, and pass just tcp traffic through self.
+
+You must provide next ENV vars (with example parameters):
+- SERVER_FROM=egais.perf.app.node1
+    Server host (as present in ssh config, so may be alias and contain any settings like prosy, forwardings and so on) from what transfer will be happened.
+- SERVER_TO=server1.local
+    Server on what transfer (ssh alias, same as for SERVER_FROM).
+- SERVER_FROM_WHAT=/etc/hostname
+    Rsync-like files specification. Use local notation, do not add any hosts
+- SERVER_FROM_WHAT_OPTIONAL=/etc/hostname.BAK
+    Rsync-like files specification. Use local notation, do not add any hosts. If ls of that pattern return at least one string - additional transfer will be run. To do not ignore 23 exit code (partial pransfer)!
+- SERVER_TO_WHERE=/root/temp/
+    Rsync meaning destination on SERVER_TO. Also local.
+
+HOW IT WORKS
+  We just go by SSH on SERVER_TO and from it over tunnel talk with SERVER_FROM. So, SERVER_FROM *MUST* accept connection with key of SERVER_TO *WITHOUT* password prompt!
+
+EXAMPLE of run:
+
+  SERVER_FROM=egais.perf.app.node1 SERVER_TO=server1.local SERVER_FROM_WHAT=/etc/hostname SERVER_TO_WHERE=/root/temp/ `basename $0`
+
+InputComesFromHERE
+
+exit 1
+}
+
+: ${SERVER_FROM?"Not enough arguments: $(usage)"}
+: ${SERVER_TO?"Not enough arguments: $(usage)"}
+: ${SERVER_FROM_WHAT?"Not enough arguments: $(usage)"}
+: ${SERVER_TO_WHERE?"Not enough arguments: $(usage)"}
+
+# -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no requrede because one port for several hosts used
+ssh -R2022:$SERVER_FROM:22 $SERVER_TO \
+	"rsync -e 'ssh -p 2022 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' --compress --compress-level=9 -v --itemize-changes --times --stats --human-readable --progress --partial --partial-dir=.rsync-partial --temp-dir=/tmp 'localhost:$SERVER_FROM_WHAT' $SERVER_TO_WHERE"
+
+[ -n "${SERVER_FROM_WHAT_OPTIONAL}" ] && ssh $SERVER_FROM "ls $SERVER_FROM_WHAT_OPTIONAL &>/dev/null" && \
+	ssh -R2022:$SERVER_FROM:22 $SERVER_TO \
+		"rsync -e 'ssh -p 2022 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' --compress --compress-level=9 -v --itemize-changes --times --stats --human-readable --progress --partial --partial-dir=.rsync-partial --temp-dir=/tmp 'localhost:$SERVER_FROM_WHAT_OPTIONAL' $SERVER_TO_WHERE"
+
+# Required to do not dispose code from ls if absent optionals
+exit 0

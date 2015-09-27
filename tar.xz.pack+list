@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Shourtcut for:
+# tar.xz.pack DIR.tar.xz DIR ; tar.xz.list DIR.tar.xz > DIR.tar.xz.list
+
+: ${1?"Not enouth arguments: `basename $0` <directory>"}
+
+DIR="$( dirname $1 )"
+# At least cut trailing /
+NAME="$( basename $1 )"
+
+echo DIR=$DIR
+echo NAME=$NAME
+
+if [ -d "$1/.git" ]; then
+
+
+# $1 - size in bytes
+function sizeformat(){
+# http://stackoverflow.com/a/20533347/307525
+numfmt --to=iec-i --suffix=B $1
+}
+
+	echo '.git dir found. Compressing it first'
+	git_init_size=$( du -sb "$1/.git" | cut -f1 )
+	echo "Initial size $(sizeformat $git_init_size) ($git_init_size)"
+
+	git -C "$1/.git" gc --aggressive --prune=all
+
+	git_size=$( du -sb "$1/.git" | cut -f1 )
+	echo "After gc: $(sizeformat $git_size)/$git_size. Saved space: $(awk "BEGIN{printf \"%.2f\", (($git_init_size - $git_size)/$git_init_size * 100)}")%/$( sizeformat $[ $git_init_size - $git_size ] )/$[ $git_init_size - $git_size ] bytes" # "
+fi
+
+tar.xz.pack "$DIR/$NAME.tar.xz" "$DIR/$NAME"; tar.xz.list "$DIR/$NAME.tar.xz" > "$DIR/$NAME.tar.xz.list"

@@ -14,12 +14,13 @@ function newTab() {
 	name="${2}"
 	cmdString="${3}"
 
-	#(for debug) echo "sessionId:${sessionId},name=${name},cmdString=${cmdString}"
 	qdbus org.kde.yakuake /yakuake/sessions addSession
 	qdbus org.kde.yakuake /yakuake/tabs setTabTitle "${sessionId}" "${name}"
-		if [ "${cmdString}" != "" ] ; then
+	if [ "${cmdString}" != "" ] ; then
 		qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal "${sessionId}" "${cmdString}"
-		fi
+	fi
+	# To take sshs time manipulate with tab name
+	sleep 0.1
 }
 
 id=0
@@ -45,16 +46,16 @@ qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'screen -x ||
 qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 'main'
 
 newTab $(( ++id )) 'ROOT' 'sus'
-#newTab $(( ++id )) 'pasha@x-www.info' 'sshs -XC pasha@x-www.info'
-newTab $(( ++id )) 'pasha@1C' 'sshs pasha@linux'
-newTab $(( ++id )) 'ant@1C' 'sshs ant@linux'
-newTab $(( ++id )) 'root@1C' 'sshs root@linux'
+newTab $(( ++id )) 'egais.perf.db.master' 'sshs egais.perf.db.master'
+newTab $(( ++id )) 'egais.perf.app.node1' 'sshs egais.perf.app.node1'
+##newTab $(( ++id )) 'ant@1C' 'sshs ant@linux'
+##newTab $(( ++id )) 'root@1C' 'sshs root@linux'
 #newTab $(( ++id )) 'pasha@x-www.info Remotes' 'ssh -t pasha@x-www.info screen-remote'
-newTab $(( ++id )) 'ant@mrg.rgc' 'ssh -L1521:10.4.242.203:1521 mrg.rgc'
-newTab $(( ++id )) 'root@zabbix.ant' 'sshs root@zabbix.ant'
+##newTab $(( ++id )) 'ant@mrg.rgc' 'ssh -L1521:10.4.242.203:1521 mrg.rgc'
+##newTab $(( ++id )) 'root@zabbix.ant' 'sshs root@zabbix.ant'
 #newTab $(( ++id )) 'd_o' 'sshs digitalocean.hubbitus.info'
-newTab $(( ++id )) 'pasha@d_o' 'sshs -XC pasha@digitalocean.hubbitus.info'
-newTab $(( ++id )) 'ovh' 'sshs ovh'
+newTab $(( ++id )) '@d_o' 'sshs pasha@do -XC'
+#newTab $(( ++id )) 'ovh' 'sshs ovh'
 #newTab $(( ++id )) 'ovh-ks1' 'sshs ovh-ks1'
 newTab $(( ++id )) 'pasha@ovh-ks1' 'sshs pasha@ovh-ks1'
 newTab $(( ++id )) 'pasha@byteonsite' 'sshs pasha@byteonsite'

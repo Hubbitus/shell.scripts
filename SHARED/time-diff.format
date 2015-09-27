@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# $1 that date if present, otherwise - now
+function format_time(){
+    date ${1+--date $1} +%X.%N | cut -b1-12
+}
+
+# Function to format time differencies in short form.
+# f.e.:
+# 1) less than second: T1=14:14:20.680; T2=14:14:20.912
+# SAME_PREFIX=14:14:20
+# result: 14:14:20.680⎇.912
+# 2) less than minute: T1=14:14:33.240; T2=14:14:34.472
+# SAME_PREFIX=14:14
+# result: 14:14:33.240⎇:34.472
+#
+# $1 - first time (start).
+# $2 - end time (end). Optional - now assumed.
+function format_time_diff(){
+	: ${1?"Not enough arguments: at least start time required: <start time> [<end time>]"}
+
+	T1="$1"
+	T2="${2:-$(format_time)}"
+
+	#echo "T1=$T1; T2=$T2"
+
+	# Based on http://stackoverflow.com/a/6973268/307525 (my: http://stackoverflow.com/a/32116308/307525) + anchored to : or .
+	SAME_PREFIX="$( echo -e "$T1\n$T2" | grep -zoP '^(.*)(?=[:.].*?\n\1)' )"
+	echo "$T1⎇${T2//$SAME_PREFIX}"
+}
+
+# Example:
+# t1=$(format_time)
+# sleep 1.23
+# format_time_diff $t1
+
+
+
