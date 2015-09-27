@@ -56,7 +56,7 @@ echo 'Repo updated'
 ##LOCAL_REPO_DIR=/local/path/RPM_REPO/
 ## All
 ##REPOS=( $( ls "$LOCAL_REPO_DIR" ) )
-## Chhosen
+## Chosen
 #REPOS=( Fedora20 Fedora21 Fedora22 EL6 epel7 )
 #
 #LOGFILE=$HOME/repomirror.log
