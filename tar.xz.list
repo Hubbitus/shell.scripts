@@ -7,4 +7,10 @@
 	exit 1
 	fi
 
-nice -n ${NICE:-16} tar --list -Jf "$1"
+if [ which pxz &>/dev/null ]; then
+	XZ='-I pxz'
+else
+	XZ='-J'
+fi
+
+nice -n ${NICE:-16} tar --list $XZ -f "$1"

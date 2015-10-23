@@ -22,8 +22,14 @@
 FILE="$1"
 shift
 
+if [ which pxz &>/dev/null ]; then
+	XZ='-I pxz'
+else
+	XZ='-J'
+fi
+
 XZ_OPT="${XZ_OPTIONS:-9 --extreme --check=crc32 --memory=80% --verbose} $XZ_OPTIONS_ADDON -" nice -n${NICE:-19} \
-	tar $TAR_OPTIONS_ADDON -vcpJf "$FILE" "$@" \
+	tar $TAR_OPTIONS_ADDON $XZ -vcpf "$FILE" "$@" \
 		--absolute-names \
 		--force-local \
 		--one-file-system \
