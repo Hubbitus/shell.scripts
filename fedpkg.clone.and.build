@@ -1,0 +1,10 @@
+#!/bin/bash
+
+: ${1?"Not enough arguments: `basename $0` package-name"}
+
+fedpkg clone $1
+cd $1
+
+sudo dnf builddep -y *.spec
+
+fedpkg local
