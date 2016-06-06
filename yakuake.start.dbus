@@ -35,11 +35,11 @@ id=0
 # newTab (( ++id)) mplayer "cd /perso/music/"
 # newTab (( ++id)) nuxeo "cd /home/rpelisse/workspaces/nuxeo"
 
-# Start one instance, if needed
-killall -0 yakuake || yakuake
-
 ssh-agent
 ssh-add -l || ssh-add
+
+# Start one instance, if needed
+killall -0 yakuake || ( echo "Starting yakuake itself" && /usr/bin/yakuake && sleep 1 )
 
 # Run command in initial tab
 qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'screen -x || screen'
