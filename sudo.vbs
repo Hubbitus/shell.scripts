@@ -1,5 +1,5 @@
 ' http://habrahabr.ru/qa/4329/#answer_18829 and then fixed by author by request in Skype!
-' Thank you to Никита Абдуллин
+' Thank you to РќРёРєРёС‚Р° РђР±РґСѓР»Р»РёРЅ
 
 argc = WScript.Arguments.Count
 set argv = WScript.Arguments
