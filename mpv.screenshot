@@ -1,0 +1,8 @@
+#!/bin/bash
+
+: ${1?"Not enough arguments: `basename $0` video-file time-of-screenshot"}
+: ${2?"Not enough arguments: `basename $0` video-file time-of-screenshot"}
+
+# By https://wiki.archlinux.org/index.php/mpv
+mpv --no-audio --vo=image --start="$2" --frames=1 "$1" \
+	&& mv 00000001.jpg "${1%.*}.[scrn@$2].jpg"
