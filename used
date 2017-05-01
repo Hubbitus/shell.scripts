@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Script similar to `seen` - called for file file1 will create file names file1.used.
+# If argument is symlink also creates on destination folder such file too
+#
+# To go by some files and manual process and track current status.
+
+: ${1?"Not enough arguments: `basename $0` file"}
+
+touch "${1}.used"
+[ -n "$( readlink -f '$1' )" ] && touch "$( readlink -f "$1" ).used"
