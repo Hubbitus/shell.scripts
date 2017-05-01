@@ -1,6 +1,6 @@
 
 : ${1?"Not enough arguments: `basename $0` filter-regex-of-files-leave-in-project
-F.e. filter may be like: '^SPEC/zram.spec$'"}
+F.e. filter may be like: '^SPECS/zram.spec$'"}
 
 # http://stackoverflow.com/questions/5998987/splitting-a-set-of-files-within-a-git-repo-into-their-own-repository-preserving
 git filter-branch -f \
