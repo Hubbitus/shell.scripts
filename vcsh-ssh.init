@@ -3,6 +3,8 @@
 : ${1?"You must provide git-url to clone from (f.e. backup@git.hubbitus.info:git/ssh:public). Repository should contain .ssh directory and files in that to incorporate to $HOME.
 More info about usage vcsh see on official site."}
 
+pushd ~
+
 #1)
 rm -rf ~/.config/vcsh/repo.d/ssh:public.git
 
@@ -20,9 +22,12 @@ vcsh ssh:public fetch
 #4)
 mv .ssh/authorized_keys .ssh/authorized_keys.vcsh.bak
 mv .ssh/config .ssh/config.vcsh.bak
+mv .ssh/known_hosts .ssh/known_hosts.vcsh.bak
 
 #5)
 vcsh ssh:public merge FETCH_HEAD
 
 #6)
 chmod 0600 .ssh/*
+
+popd

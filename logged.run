@@ -12,7 +12,7 @@
 # Call like:
 # $ CMD='./test.sh' ./run.logged
 # You got (filenames change able via LOG_ERR, LOG_ALL, by default based on command runned):
-# 1) Console aoutput of both lines.
+# 1) Console output of both lines.
 # 2) test.sh.LOG.err file wit single line: 'This line on STDERR'
 # 3) test.sh.LOG.all file with both lines
 #

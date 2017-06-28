@@ -9,7 +9,7 @@ INTERVAL=${3-60}
 DONECMD=${4-'wget -c http://temp/web_play.php -q -O /dev/null'}
 #echo INTERVAL=$INTERVAL
 
-	while ! eval $1 ; do
+	while ! eval "$1" ; do
 		date;
 		sleep $INTERVAL;
 	done;

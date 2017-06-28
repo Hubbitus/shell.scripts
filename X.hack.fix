@@ -1,0 +1,19 @@
+#!/bin/bash
+
+DISPLAY=${DISPLAY:-:0}
+echo DISPLAY=$DISPLAY
+
+set -x
+
+killall plasmashell
+killall kwin
+
+sleep 0.5
+
+killall -9 plasmashell
+killall -9 kwin
+
+sleep 0.5
+
+DISPLAY=$DISPLAY plasmashell &
+DISPLAY=$DISPLAY kwin --replace &

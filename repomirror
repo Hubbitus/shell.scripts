@@ -41,8 +41,10 @@ createrepo_c --update --checksum sha -d -o "$1" "$2" | tee -a "$3"
 				--delete-first \
 				'"$LOCAL_REPO_DIR/$distr"' '"$FTP_DIR/$distr"'" \
 					'"$FTP_HOST"
-		else # rsync
-			rsync_s --delete "$LOCAL_REPO_DIR/$distr/" "$RSYNC_URL/$distr/"
+		else
+			if [ ! -z "$RSYNC_URL" ]; then
+				rsync_s --delete "$LOCAL_REPO_DIR/$distr/" "$RSYNC_URL/$distr/"
+			fi
 		fi
 		echo "$distr DONE"
 		popd

@@ -25,7 +25,7 @@ function format_time_diff(){
 	#echo "T1=$T1; T2=$T2"
 
 	# Based on http://stackoverflow.com/a/6973268/307525 (my: http://stackoverflow.com/a/32116308/307525) + anchored to : or .
-	SAME_PREFIX="$( echo -e "$T1\n$T2" | grep -zoP '^(.*)(?=[:.].*?\n\1)' )"
+	SAME_PREFIX="$( echo -e "$T1\n$T2" | grep -zoP '\A(.*)(?=[:.].*?\n\1)' )"
 	echo "$T1⎇${T2//$SAME_PREFIX}"
 }
 

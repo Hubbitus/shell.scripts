@@ -2,6 +2,8 @@
 
 : ${1?"Not enough arguments: `basename $0` target-file"}
 
+set -e
+
 echo "$1" > koji.build.url
 
 if echo "$1" | grep -q buildinfo ; then
@@ -12,7 +14,7 @@ else
 fi
 
 echo 'Process -Information for task-'
-wget -q -O- "$PAGE_URL" \
+wget --no-check-certificate -q -O- "$PAGE_URL" \
 	| sed -rn 's@.*(taskinfo\?taskID=[0-9]+).+buildArch.+, (.+)\)</a>@\1 \2@p' \
 		| while read url arch; do
 			echo "Process arch [$arch] ($url)"

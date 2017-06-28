@@ -40,32 +40,21 @@ BEGIN{
 	exit 1;
 	}
 
-#print "ARGV[1]=" ARGV[1]
-#print "ARGV[2]=" ARGV[2]
 regexp=ARGV[1]
 # Delete to do not process arguments as file names
 delete ARGV[1]
-#print "regexp=" regexp
 }
 {
 	delete m
 	if ( match($0, regexp, m) ) {
-#	print "Matched: " $0;
-#	print "Elements (count:" m[0, "length"] "): [0:" m[0] "] [1:" m[1] "] [2:" m[2] "][3:" m[3] "]";
 	key="";
 	for (i = 1; i<=9; i++){
 		if (length(m[i]) != 0){# Not just if (m[i]) because it discard matched "0" value! (http://stackoverflow.com/a/11952924/307525)
-#			if (m[i]) print "m["i"]=" m[i];
 			key = key "[" i ":" m[i] "]";
 		}
 	}
 	if (res[key]) res[key]++;
 	else res[key] = 1;
-#		for (e in m){
-#			if (length(e) > 0){
-#				print "elem: " e
-#			}
-#		}
 	}
 }
 END{
