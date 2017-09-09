@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Small helper script to mark video as seen
+# If it called on file then it will be truncated to 0 size and added suffix .seen
+# If It called on directory we try truncate so-named file in it and rename directory with .seen suffix also
+
+: ${1?"You must provide argument: `basename $0` target-video-file1 [file1, file2, file3]"}
+
+SUFFIX=.seen
+
+set -x
+
+	for f in "$@"; do # Don't touch & remove but mv instead to do not lose extended attributes!
+		mv "$f" "${f}${SUFFIX}"
+
+		if [ -d "$f${SUFFIX}" ]; then
+			find "$f${SUFFIX}" -regextype awk -regex "${f}${SUFFIX}/${f}\.(webm|ogg|avi|mpeg|mp4)" -exec sh -c ': > "{}"' \;
+			mkdir "${f}${SUFFIX}/#shots"
+		else # just empty it
+			: > "${f}${SUFFIX}"
+		fi
+	done
