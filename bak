@@ -1,9 +1,9 @@
 #!/bin/bash
 
-MAIN_BAK_DIR='/home/pasha/_BAK'
+MAIN_BAK_DIR=$HOME/_BAK
 DATE_FORMAT='%Y-%m-%d'
 
-. /home/pasha/bin/SHARED/getopt_long.bash
+. ~/bin/SHARED/getopt_long.bash
 
 GETOPT_STRING="c:"
 LONG_GETOPT_STRING="cmd:"
@@ -16,12 +16,12 @@ long_getopt_parse "$@"
 #$2 - ЧЕМ бакапим, какой коммандой (например cp, mv)
 
 	if [ ! "$1" ]; then
-	echo 'Нужен аргумент-файл!';
-	exit 1
+		echo 'Нужен аргумент-файл!';
+		exit 1
 	fi
 
 	if [ "$OPTcmd" ]; then
-	cmd="$OPTcmd"
+		cmd="$OPTcmd"
 	else
 		if [ "$OPTc" ]; then
 		cmd="$OPTc"
