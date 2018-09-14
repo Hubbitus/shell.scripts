@@ -15,4 +15,4 @@ git clone https://github.com/Hubbitus/shell.scripts.git ~/bin
 and configured bash to use it as search path (in `~/.bashrc` f.e.):
 ```
 PATH=$PATH:$HOME/bin
-``
+```
