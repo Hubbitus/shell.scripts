@@ -31,7 +31,7 @@ function echo_debug(){
 SSH_AUTH_SOCK=''
 SSH_AGENT_PID=''
 
-find /tmp -wholename '/tmp/ssh-*/agent.*' -user `id -u` 2>/dev/null | (	# About "(" Read http://bappoy.pp.ru/2008/12/18/bash-pitfalls-part02.html item #7 why we need it!!!
+find /tmp/ -wholename '/tmp/ssh-*/agent.*' -user `id -u` 2>/dev/null | (	# About "(" Read http://bappoy.pp.ru/2008/12/18/bash-pitfalls-part02.html item #7 why we need it!!!
 															# We need set SSH_AUTH_SOCK in while-cycle.
 	while read socket ; do # Check all, cleanup dead
 	agent_pid=$[ ${socket##*.} + 1 ] # I don't known why +1 needed!
