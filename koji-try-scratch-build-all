@@ -2,7 +2,10 @@
 
 : ${1?"You must provide at least package-name.src.rpm: `basename $0` package.src.rpm"}
 
-	for branch in f19 f20 f21 dist-5E-epel dist-6E-epel epel7; do
+set -e
+
+	for branch in f30 f32 epel7 epel8; do
 	echo "Try build for ===${branch}==="
 	koji build --scratch $branch $@
+	# fedpkg --release $branch scratch-build --srpm $@
 	done
