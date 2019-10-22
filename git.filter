@@ -1,10 +1,13 @@
 #!/bin/bash
 
-set -x
+#set -x
 
 : ${1?"Not enough arguments: `basename $0` filter-regex-of-files-LEAVE-in-project
 F.e. filter may be like: '^SPECS/zram.spec$', or just: 'zram' if you want simple match in any part of path.
 If you wish opposite behaviour - see git.filter.out script"}
+
+# Debug:
+#        | xargs -0 -r -I{} bash -c "F=\"{}\"; echo \"Process file deletion [\$F]\", GIT_COMMIT=\$GIT_COMMIT; git rm --cached -r -- \"\$F\""
 
 # http://stackoverflow.com/questions/5998987/splitting-a-set-of-files-within-a-git-repo-into-their-own-repository-preserving
 git filter-branch -f \
@@ -12,7 +15,7 @@ git filter-branch -f \
     --index-filter '
         git ls-tree -z -r --name-only --full-tree $GIT_COMMIT \
         | egrep -z -v "'$1'" \
-        | xargs -0 -r -I{} bash -c "F={}; echo F=\$F, GIT_COMMIT=\$GIT_COMMIT; git rm --cached -r -- \$F"
+        | xargs -0 -r git rm --cached -r
     ' \
     -- \
     --all
