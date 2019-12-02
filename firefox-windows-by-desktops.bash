@@ -10,7 +10,7 @@ set -e
 # instead of periodically save window titles into file (which is very unstable because of many tabs in each) I just label each window with custom label
 # by default match with desktop label (name).
 # 
-# For set Firefox windows custom titles used extension: https://addons.mozilla.org/en-GB/firefox/addon/window-titler/
+# For set Firefox windows custom titles used extension (OpenSource): https://addons.mozilla.org/en-GB/firefox/addon/window-titler/
 #
 # Now match is very simple - just one grep, but you may use regular expression or special symbols...
 # 
