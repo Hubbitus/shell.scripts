@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Swap content of two files
+# By https://stackoverflow.com/questions/1115904/shortest-way-to-swap-two-files-in-bash/11075489#11075489
+
+: ${1?"Not enough arguments: `basename $0` firstFile secondFile"}
+: ${2?"Not enough arguments: `basename $0` firstFile secondFile"}
+
+tmpfile=$(mktemp $(dirname "$1")/XXXXXX)
+mv "$1" "$tmpfile" && mv "$2" "$1" &&  mv "$tmpfile" "$2"
