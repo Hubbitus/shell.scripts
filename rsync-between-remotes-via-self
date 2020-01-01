@@ -9,7 +9,7 @@ host1 <-- I --> host2
   ^              ^
   |<------X------|
 
-Unfortunately also rsnc can't copy remote-remote.
+Unfortunately also rsync can't copy remote-remote.
 So approach is to forward port and run rsync to one of them, and pass just tcp traffic through self.
 
 You must provide next ENV vars (with example parameters):
