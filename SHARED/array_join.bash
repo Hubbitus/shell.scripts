@@ -24,3 +24,7 @@ function array_join() {
 # Or just:
 # array_join '<!>' 'foo bar' 'foo baz' 'bar baz'
 # Res: foo bar<!>foo baz<!>bar baz
+
+# Most universal one.
+# By https://stackoverflow.com/questions/1527049/how-can-i-join-elements-of-an-array-in-bash/17841619#17841619
+function join_by { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
