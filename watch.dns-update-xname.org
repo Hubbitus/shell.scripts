@@ -1,9 +1,0 @@
-#!/bin/bash
-
-: ${1?"Необходимо указать домен в параметр. Пример: `basename $0` ilove.spb.su"}
-
-	while [ ! "" = "$( dig @ns1.xname.org $1 axfr | grep 'Transfer failed' )" ] ; do
-	date;
-	sleep 60;
-	done;
-xmessage "Domain $1 active!"
