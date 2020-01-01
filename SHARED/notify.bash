@@ -8,24 +8,24 @@ _notify_command=$( which notify-send 2>/dev/null || which xcowsay 2>/dev/null ||
 # $1 - body
 # $2 - title (optional). If not provided date-time in --rfc-3339 format will be used.
 function notify(){
-	_notify_command-$(basename $_notify_command) "$1" "${2:-$(date --rfc-3339=seconds)}" &
+	cmd-$(basename $_notify_command) "$1" "${2:-$(date --rfc-3339=seconds)}" &
 }
 
 # $1 - body
 # $2 - title (optional)
-function _notify_command-notify-send(){
-	$_notify_command -u critical "$2" "$1"
+function cmd-notify-send(){
+	$_notify_command -u critical -i emblem-default "$2" "$1"
 }
 
 # $1 - body
 # $2 - title (optional)
-function _notify_command-xcowsay(){
+function cmd-xcowsay(){
 	$_notify_command --time=0 "$2: $1"
 }
 
 # $1 - body
 # $2 - title (optional)
-function _notify_command-xmessage(){
+function cmd-xmessage(){
 	$_notify_command -button Ok "$2: $1"
 }
 
