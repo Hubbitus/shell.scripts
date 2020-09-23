@@ -11,8 +11,8 @@ source $(dirname $0)/waitPID.bash
 regexp="$1"
 shift
 
-# Fully bufferize into variable first to do not catch self sub-shels in processes!
-PROCESSES=$( pgrep -af "$regexp" )
+# Fully bufferize into variable first to do not catch self sub-shels in processes (excluding processes with himself)!
+PROCESSES=$( pgrep -af "$regexp" | grep -v $( basename $0 ) )
 
 echo "$PROCESSES" | while read pid command; do
 	[[ $$ == $pid ]] && continue # exclude self
