@@ -1,0 +1,7 @@
+#!/bin/bash
+
+: ${1?"Please provide time to wait! Example values for TIME: 10, '1h 5m 30s', '12:00', '2020-01-01', '2020-01-01 14:00 UTC' (see details in termdown help).
+`basename $0` TIME [text of success: 'Time [\$TIME] is over']' [timer text: <Waiting \$TIME>] [command run at end]"
+}
+
+watch.update "/home/pasha/.local/bin/termdown '$1' -a --font big --title '${3-Waiting $1}' | pv -t" "${3-Time [$1] is over}" 50 "$3"
