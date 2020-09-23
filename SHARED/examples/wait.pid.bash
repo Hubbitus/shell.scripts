@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. /home/pasha/bin/waitPID.bash
+source ../../wait.pid.bash
 
 
 #( sleep 1 )&
@@ -13,25 +13,25 @@
 
 #( sleep 3 )&
 #Custom message
-#echo $( waitPID.bash $! 'Процесс %d закончился' )
+#echo $( waitPID.bash $! 'Process %d finished' )
 
 #( sleep 5 )&
 #Custom message & command
-#echo $( waitPID.bash $! 'Процесс %d закончился' 'echo TTTTT' )
+#echo $( waitPID.bash $! 'Process %d finished' 'echo TTTTT' )
 
 
 #Concurrent
 ( sleep 1 )&
-waitPID $! "=1= %d" &
+waitPID $! '[%s] command ended. PID: %d' &
 
 ( sleep 10 )&
-waitPID $! "=2= %d" &
+waitPID $! '[%s] command ended. PID: %d' &
 
 ( sleep 3 )&
-waitPID $! '=3= %d' &
+waitPID $! &
 
 ( sleep 5 )&
-waitPID $! '=4= %d' 'echo TTTTT' &
+waitPID $! '[%s] command ended. PID: %d' 'echo TTTTT' &
 
 # It is important! Whithout it, subshell output will appear after script end (and will cuted by MC)!
 wait

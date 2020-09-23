@@ -3,10 +3,10 @@
 : ${1?"Not enough arguments: `basename $0` posix-extended-RegExp-for-run-process-command [message on end] [command execute on end]
 For parameters extended description see in waitPID.bash script
 You may use also variables, f.e:
-(sleep 2&); CMD='mpv /usr/share/sounds/gnome/default/alerts/sonar.ogg' ./waitAppByGrep.bash sleep
+(sleep 2&); CMD='mpv /usr/share/sounds/gnome/default/alerts/sonar.ogg' ./wait.byGrep.bash sleep
 "}
 
-source $(dirname $0)/waitPID.bash
+source $(dirname $0)/wait.pid.bash
 
 regexp="$1"
 shift

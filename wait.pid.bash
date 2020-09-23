@@ -9,9 +9,12 @@ source ~/bin/SHARED/notify.bash
 : ${CMD:=mpv /usr/share/sounds/Oxygen-Sys-App-Positive.ogg}
 
 
+# Function to wait end of some app by watching PID dissapear in process list.
+# See SHARED/examples/wait.pid.bash for usage directions
+#
 #$1 - PID for wait
-#$2 - Message on the end. printf format. ( On place "%d" PID will be placed, %s will be replaced actual executed command )
-#$3 - Additional Command to execute on end. By defualt play /usr/share/sounds/Oxygen-Sys-App-Positive.ogg
+#$2 - Message on the end. printf format. ("%s" will be replaced by actual executed command, "%d" - PID will be placed)
+#$3 - Additional Command to execute at the end. By defualt play /usr/share/sounds/Oxygen-Sys-App-Positive.ogg
 function waitPID(){
 	local command="$(ps -o args= -p $1)"
 
