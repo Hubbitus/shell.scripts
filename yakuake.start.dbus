@@ -43,12 +43,13 @@ killall -0 yakuake || ( echo "Starting yakuake itself" && /usr/bin/yakuake && sl
 
 # Run command in initial tab
 qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'screen -x || screen'
-qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 'main'
+qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 '|main'
 
 newTab $(( ++id )) 'ROOT' 'sus'
 newTab $(( ++id )) '|EGAIS' 'screen-egais'
 newTab $(( ++id )) '|RLH' 'screen-rlh'
 newTab $(( ++id )) '|RDC' 'screen-rdc'
+newTab $(( ++id )) '|RR-datamart' 'screen-rr-datamart'
 #newTab $(( ++id )) 'egais.perf.db.master' 'sshs egais.perf.db.master'
 #newTab $(( ++id )) 'egais.perf.app.node1' 'sshs egais.perf.app.node1'
 ##newTab $(( ++id )) 'ant@1C' 'sshs ant@linux'

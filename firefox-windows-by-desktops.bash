@@ -73,3 +73,11 @@ function matchAllFirefoxWindowsByDesktops(){
 }
 
 matchAllFirefoxWindowsByDesktops
+
+placeWindowOnDesktop 'IntelliJ IDEA' 'RDC'
+placeWindowOnDesktop PyCharm SensoPressTakt
+
+# On all desktops:
+wmctrl -r Skype    -b add,sticky
+wmctrl -r Telegram -b add,sticky
+wmctrl -r DBeaver  -b add,sticky
