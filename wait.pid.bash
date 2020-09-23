@@ -2,7 +2,7 @@
 
 SLEEP_INTERVAL=0.5 #Seconds
 
-source ~/bin/SHARED/notify.bash
+source "$(dirname $0)/SHARED/notify.bash"
 
 # Allow redefinition outside!
 : ${MESSAGE_FORMAT:="Command [%s] with pid [%d] finished!"}
