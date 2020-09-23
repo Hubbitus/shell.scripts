@@ -4,8 +4,10 @@
 
 # DEFAULTS
 # Base server URL, without admin and files parts
-AMQ_DEFAULT_QUEUE=${AMQ_DEFAULT_QUEUE-'AIS.CMDCONF.IN'}
-AMQ_DEFAULT_SERVER=${AMQ_DEFAULT_SERVER-'http://192.168.100.147:8161'}
+AMQ_DEFAULT_QUEUE=${AMQ_DEFAULT_QUEUE-'to_sigma'}
+AMQ_DEFAULT_SERVER=${AMQ_DEFAULT_SERVER-'http://activemq:8161'}
+
+AUTH='--user admin:admin'
 
 function usage(){
 	cat << EOF
@@ -30,8 +32,8 @@ EOF
 
 COOKIE_FILE='.cookie.file'
 
-SECRET=$( curl -sS "${3-$AMQ_DEFAULT_SERVER}/admin/send.jsp" -c "$COOKIE_FILE" | grep -oP '(?<=<input type="hidden" name="secret" value=")[^"]+(?=")' )
+SECRET=$( curl $AUTH -sS "${3-$AMQ_DEFAULT_SERVER}/admin/send.jsp" -c "$COOKIE_FILE" | grep -oP '(?<=<input type="hidden" name="secret" value=")[^"]+(?=")' )
 #'
 
-curl -sS -b "$COOKIE_FILE" --data "JMSDestination=${2:-$AMQ_DEFAULT_QUEUE}&JMSDestinationType=queue&JMSMessageCount=1&JMSMessageCountHeader=JMSXMessageCounter&secret=$SECRET" --data-urlencode "JMSText=$1" "${3-$AMQ_DEFAULT_SERVER}/admin/sendMessage.action"
+curl $AUTH -sS -b "$COOKIE_FILE" --data "JMSDestination=${2:-$AMQ_DEFAULT_QUEUE}&JMSDestinationType=queue&JMSMessageCount=1&JMSMessageCountHeader=JMSXMessageCounter&secret=$SECRET" --data-urlencode "JMSText=$1" "${3-$AMQ_DEFAULT_SERVER}/admin/sendMessage.action"
 rm "$COOKIE_FILE"
