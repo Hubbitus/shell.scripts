@@ -5,4 +5,4 @@
 }
 
 # Termdown from https://github.com/trehn/termdown. Install: `sudo pip install termdown`
-watch.update "termdown '$1' -a --font big --title '${3-Waiting $1}' | pv --format='Elapsed time: %t'" "${2-Time [$1] is over}" 50 "$3"
+watch.update "termdown '$1' -a --no-bell --font big --title '${3-Waiting $1}' | pv --format='Elapsed time: %t'" "${2-Time [$1] is over}" 50 "$4"
