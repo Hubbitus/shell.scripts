@@ -24,8 +24,8 @@ function waitPID(){
 
 	notify "$( printf "${2-$MESSAGE_FORMAT}" "$command" $1 )"
 
-	#In short form: ${3-/usr/bin/php /var/www/temp/web_play.php &>/dev/null} don't worked redirection. It
-	# ('&>/dev/null') passed as argument to script. Unless we can made command quite by its arguments, like worked example:
+	#In short form: ${3-/usr/bin/php /var/www/temp/web_play.php &>/dev/null} don't work redirection. It
+	# ('&>/dev/null') passed as argument to script. Unless we can made command quite by its arguments, like:
 	# ${3-wget -q http://temp/web_play.php -O /dev/null} we can't use that.
 	# So, just use full "if" form to avoid this constraints.
 #	if [[ "$3" || "$CMD" ]]; then
