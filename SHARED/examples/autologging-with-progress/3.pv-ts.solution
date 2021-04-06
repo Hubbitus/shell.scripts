@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# See 0.pv-ts.problem script and its description for problem statement.
+# 1.pv-ts.exec and 2.pv-ts.dos2unix.log-fix contains two sub-steps of resolution with detailed description.
+# That script combines both to demonstrate correct result:
+# 1) Progress bap present in interractive session
+# 2) Log file have correct line endings
+
+# By https://tldp.org/LDP/abs/html/x17974.html
+exec 6>&2 # Link file descriptor #6 with stderr (saves stderr) - we will use it in interractip pv output.
+
+exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0).$(date --iso-8601=s).log" )
+
+echo Hi
+
+dd if=/dev/urandom bs=1 count=100 | pv -s 100 --force -L 20 2> >( tee /dev/stderr 2>&6 | tr '\r' '\n' ) > /dev/null
+
+echo Bye

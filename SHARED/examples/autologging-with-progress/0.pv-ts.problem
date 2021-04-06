@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# We want automatically log script execution, including see progress of several pipes.
+
+# By https://unix.stackexchange.com/questions/145651/using-exec-and-tee-to-redirect-logs-to-stdout-and-a-log-file-in-the-same-time/145654#145654
+# Grep preventing use Ctrl+C in pipe. Tee has -i. (by https://stackoverflow.com/questions/3173131/redirect-copy-of-stdout-to-log-file-from-within-bash-script-itself#comment48908731_3403786)
+exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0).$(date --iso-8601=s).log" )
+
+
+echo Hi
+
+# That line emulate long process (5 seconds) and should draw progress-bar
+dd if=/dev/urandom bs=1 count=100 | pv -s 100 --force -L 20 > /dev/null
+
+echo Bye
+
+# THE PROBLEM: on run screept looks like pv output lost, in log that present as very-very-long line with progress (\r instead of \n)
+
+# Note, without ts: exec &> >( tee -i -- "$(basename $0).$(date --iso-8601=s).log" )
+# it semi-works: interactive output is fine, but still log contains very-very-long line with progress (\r instead of \n)
