@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# See 0.pv-ts.problem script and its description for problem statement.
+# 1.pv-ts.exec and 2.pv-ts.dos2unix.log-fix contains two sub-steps of resolution with detailed description.
+# 3.pv-ts.solution have good full solution, but still have one drawback: pv output buferred and will not appeared in log untill command finished (and never if command terminated).
+# That script (idea got from https://stackoverflow.com/questions/40877384/jenkins-how-to-see-progress-in-the-log-output-when-it-gets-constantly-overwrit/48815760#48815760) should not have any mentioned drawbacks,
+# but looks very cumbersome on my mind!
+
+exec 6>&2 # Link file descriptor #6 with stderr (saves stderr) - we will use it in interractiv pv output.
+_log_file="$(basename $0).$(date --iso-8601=s).log"
+exec 7> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "${_log_file}" )
+exec 8> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S'          >> "${_log_file}" )
+exec 1>&7 2>&7
+
+
+echo Hi
+
+# WORKS!!!
+#dd if=/dev/urandom bs=1 count=100 | pv -s 100 --force -L 20 2> >( stdbuf -eL -oL tee /dev/stderr 2>&6 | stdbuf -eL -oL tr '\r' '\n' >&8 ) > /dev/null
+
+# Slightly shorter:
+dd if=/dev/urandom bs=1 count=100 | pv -s 100 --force -L 20 2> >( tee /dev/stderr 2>&6 | stdbuf -eL -oL tr '\r' '\n' >&8 ) > /dev/null
+
+echo Bye

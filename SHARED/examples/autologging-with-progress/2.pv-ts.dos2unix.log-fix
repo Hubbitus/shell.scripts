@@ -5,6 +5,8 @@
 # Semi-solution 2: we may redirect pv stderr output to sub-command and replace \r to \n. That may be sed, tr and etc..
 # Behaviour (partial solution): In file log all appeared as expected - line endings fixed. But progress-bar completely dissapeared when you wait command finishing!
 # See 3.pv-ts.solution for combining thats two approaches as complete solution.
+# See also https://stackoverflow.com/questions/40877384/jenkins-how-to-see-progress-in-the-log-output-when-it-gets-constantly-overwrit/48815760#48815760 if you
+# want progress in logs AND terminal as adding lines (not rewrites and dynamic change)
 
 exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0).$(date --iso-8601=s).log" )
 

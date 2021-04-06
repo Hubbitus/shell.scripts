@@ -9,7 +9,7 @@
 # Sometimes it may be desired (e.g. To do not save big amount of logs), but in some cases we want store it in log also.
 # For that see 2.pv-ts.dos2unix.log-fix [partial]solution (and full 3.pv-ts.solution)
 
-exec 6>&2 # Link file descriptor #6 with stderr (saves stderr) - we will use it in interractip pv output.
+exec 6>&2 # Link file descriptor #6 with stderr (saves stderr) - we will use it in interractiv pv output.
 
 exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0).$(date --iso-8601=s).log" )
 
