@@ -2,8 +2,11 @@
 
 # See 0.pv-ts.problem script and its description for problem statement.
 
-# Semi-solution 2: we may redirect pv stderr output to sub-command and replace \r to \n. That may be sed, tr and etc..
-# Behaviour (partial solution): In file log all appeared as expected - line endings fixed. But progress-bar completely dissapeared when you wait command finishing!
+# Semi-solution 2: we may redirect pv stderr output to sub-command and replace \r to \n. That may be sed, tr, and etc...
+# Behaviour (partial solution):
+#  1) In file log all appeared as expected - line endings fixed.
+#  2) But progress-bar completely dissapeared when you wait command finishing!
+#  3) FULL progress information come to input at pv finish time. Really it is not wat expected from that command.
 # See 3.pv-ts.solution for combining thats two approaches as complete solution.
 # See also https://stackoverflow.com/questions/40877384/jenkins-how-to-see-progress-in-the-log-output-when-it-gets-constantly-overwrit/48815760#48815760 if you
 # want progress in logs AND terminal as adding lines (not rewrites and dynamic change)
@@ -13,6 +16,6 @@ exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0)
 echo Hi
 
 #dd if=/dev/urandom bs=1 count=100 | pv -s 100 --force -L 20 2> >( sed -r 's/\r/\n/g' ) > /dev/null
-dd if=/dev/urandom bs=1 count=100 | pv -s 100 --force -L 20 2> >( tr '\r' '\n' ) > /dev/null
+dd if=/dev/urandom bs=1 count=100 | pv -s 100 --force -L 20 2> >( tr '\r' '\n' 1>&2 ) > /dev/null
 
 echo Bye

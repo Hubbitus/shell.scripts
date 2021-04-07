@@ -2,10 +2,12 @@
 
 # See 0.pv-ts.problem script and its description for problem statement.
 # 1.pv-ts.exec and 2.pv-ts.dos2unix.log-fix contains two sub-steps of resolution with detailed description.
-# That script combines both to demonstrate correct result:
-# 1) Progress bap present in interractive session
-# 2) Log file have correct line endings
-# There is also some drawback: pv output buferred and will not appeared in log untill command finished (and never if command terminated).
+# That script combines both to demonstrate correct results:
+#  1) Progress bar present in interractive session
+#  2) Log file have correct line endings
+# There is also some drawbacks:
+#  1) pv output buferred and will not appeared in log until command finished (and never if command terminated).
+#  2) pv progress output appeared in output as full text after command finishes (consequences of (1) at that moment it goes into log)!
 # See 4.pv-ts.stdbuf as alternative solution.
 
 # By https://tldp.org/LDP/abs/html/x17974.html
@@ -15,6 +17,9 @@ exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0)
 
 echo Hi
 
-dd if=/dev/urandom bs=1 count=100 | pv -s 100 --force -L 20 2> >( tee /dev/stderr 2>&6 | tr '\r' '\n' ) > /dev/null
+# Bytes:
+SIZE=10000
+SPEED=100
+dd if=/dev/urandom bs=1 count=$SIZE | pv -s $SIZE --force -L $SPEED 2> >( tee /dev/stderr 2>&6 | tr '\r' '\n' 1>&2 ) > /dev/null
 
 echo Bye
