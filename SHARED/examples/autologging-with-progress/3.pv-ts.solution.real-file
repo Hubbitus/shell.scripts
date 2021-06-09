@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# See 0.pv-ts.problem script and its description for problem statement.
+# 1.pv-ts.exec and 2.pv-ts.dos2unix.log-fix contains two sub-steps of resolution with detailed description.
+# That script combines both to demonstrate correct result:
+# 1) Progress bap present in interractive session
+# 2) Log file have correct line endings
+# There is also some drawback: pv output buferred and will not appeared in log untill command finished (and never if command terminated).
+# See 4.pv-ts.stdbuf as alternative solution.
+
+# By https://tldp.org/LDP/abs/html/x17974.html
+exec 6>&2 # Link file descriptor #6 with stderr (saves stderr) - we will use it in interractiv pv output.
+
+exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0).$(date --iso-8601=s).log" )
+
+echo Hi
+
+pv --force -L 50 2> >( tee /dev/stderr 2>&6 | tr '\r' '\n' ) in.file > out.file
+
+echo Bye

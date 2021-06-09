@@ -2,7 +2,7 @@
 
 # See 0.pv-ts.problem script and its description for problem statement.
 
-# Solution 1 use bash ctreams (fd) redirections (by https://tldp.org/LDP/abs/html/x17974.html):
+# Solution 1 use bash streams (fd) redirections (by https://tldp.org/LDP/abs/html/x17974.html):
 #  1) We copy descriptor 2 (stderr) into another copy (6)
 #  2) Then use it in pv for out interractive progress.
 # Behaviour (partial solution): Progress bar appeared as expected, but completely missing in the log!

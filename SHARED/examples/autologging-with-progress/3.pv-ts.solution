@@ -6,20 +6,24 @@
 #  1) Progress bar present in interractive session
 #  2) Log file have correct line endings
 # There is also some drawbacks:
-#  1) pv output buferred and will not appeared in log until command finished (and never if command terminated).
-#  2) pv progress output appeared in output as full text after command finishes (consequences of (1) at that moment it goes into log)!
+#  1) pv output buferred and appeared in log by some chunks (4kb?), or at command output).
+#  2) pv progress output appeared in output as by chunks doubles interractive progress. It will be better such form goes only in log (so we separate presentation for terminal and log)
 # See 4.pv-ts.stdbuf as alternative solution.
 
 # By https://tldp.org/LDP/abs/html/x17974.html
-exec 6>&2 # Link file descriptor #6 with stderr (saves stderr) - we will use it in interractiv pv output.
+exec 6>&2 # Link file descriptor #6 with stderr (saves stderr) - we will use it in interractive pv output.
 
 exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0).$(date --iso-8601=s).log" )
 
 echo Hi
 
+
 # Bytes:
-SIZE=10000
+SIZE=5000
 SPEED=100
-dd if=/dev/urandom bs=1 count=$SIZE | pv -s $SIZE --force -L $SPEED 2> >( tee /dev/stderr 2>&6 | tr '\r' '\n' 1>&2 ) > /dev/null
+# pv format increased to be longer for demonstrate output buffering. Run that and note as appeared parts of log
+dd if=/dev/urandom bs=1 count=$SIZE | pv -s $SIZE --name=RawArchive --force -w $[ $(tput cols) - 35 ] -W -F'%N [%b]; Speed: %r; AVGspeed: %a; Elapsed: %t; %e; %p' -L $SPEED \
+	2> >( tee /dev/stderr 2>&6 | tr '\r' '\n' 1>&2 ) \
+		> /dev/null
 
 echo Bye
