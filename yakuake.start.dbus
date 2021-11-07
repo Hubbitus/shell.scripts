@@ -25,7 +25,7 @@ function newTab() {
 
 id=0
 # Examples:
-# newTab (( ++id))  tunnel
+# newTab (( ++id)) tunnel
 # newTab (( ++id)) mutt "mutt"
 # newTab (( ++id)) apps "firefox &"
 # newTab (( ++id)) irssi "irssi --connect=irc.freenode.net --nick=rpelisse"
@@ -42,28 +42,8 @@ ssh-add -l || ssh-add
 killall -0 yakuake || ( echo "Starting yakuake itself" && /usr/bin/yakuake && sleep 1 )
 
 # Run command in initial tab
-qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'screen -x || screen'
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'tmux attach || tmux'
 qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 '|main'
 
 newTab $(( ++id )) 'ROOT' 'sus'
-newTab $(( ++id )) '|EGAIS' 'screen-egais'
-newTab $(( ++id )) '|RLH' 'screen-rlh'
-#newTab $(( ++id )) '|RDC' 'screen-rdc'
-#newTab $(( ++id )) '|RR-datamart' 'screen-rr-datamart'
-#newTab $(( ++id )) 'egais.perf.db.master' 'sshs egais.perf.db.master'
-#newTab $(( ++id )) 'egais.perf.app.node1' 'sshs egais.perf.app.node1'
-##newTab $(( ++id )) 'ant@1C' 'sshs ant@linux'
-##newTab $(( ++id )) 'root@1C' 'sshs root@linux'
-#newTab $(( ++id )) 'pasha@x-www.info Remotes' 'ssh -t pasha@x-www.info screen-remote'
-##newTab $(( ++id )) 'ant@mrg.rgc' 'ssh -L1521:10.4.242.203:1521 mrg.rgc'
-##newTab $(( ++id )) 'root@zabbix.ant' 'sshs root@zabbix.ant'
-#newTab $(( ++id )) 'd_o' 'sshs digitalocean.hubbitus.info'
-#newTab $(( ++id )) '|@d_o' 'sshs pasha@do -XC'
-#newTab $(( ++id )) 'ovh' 'sshs ovh'
-#newTab $(( ++id )) 'ovh-ks1' 'sshs ovh-ks1'
-#newTab $(( ++id )) '|pasha@ovh-ks1' 'sshs pasha@ovh-ks1'
-#newTab $(( ++id )) '|pasha@byteonsite' 'sshs pasha@byteonsite'
-newTab $(( ++id )) '|contabo' 'sshs contabo'
-#newTab $(( ++id )) '|time4vps' 'sshs time4vps.hubbitus.info'
-newTab $(( ++id )) '|pasha@euserv' 'sshs pasha@euserv'
-newTab $(( ++id )) '|forwardings' '~/forwardings/all.forward'
+newTab $(( ++id )) '_xneur' 'xneur'
