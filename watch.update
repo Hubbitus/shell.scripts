@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: ${1?"You need provide command to watch (Winn execute it untill it exit with 0 status)! Example:
+: ${1?"You need provide command to watch (Will execute it until it exit with 0 status)! Example:
 `basename $0` '[ \$( dig @TEZIS.MANAGEDNS1.ESTBOXES.COM alexeevs.info cname | grep -i cname | wc -l ) -gt 2 ]' 'Cname for alexeevs.info updated.' 50 'mplayer do-do.mp3'"
 }
 
