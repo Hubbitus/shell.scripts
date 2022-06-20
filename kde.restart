@@ -1,0 +1,3 @@
+
+# By https://askubuntu.com/questions/481329/can-i-restart-the-kde-plasma-desktop-without-logging-out/481738#481738
+kquitapp5 plasmashell || killall plasmashell && kstart5 plasmashell
