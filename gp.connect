@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+set -x
+
+globalprotect connect --portal vpn.epam.com --username Pavel_Alexeev@epam.com
+
+#globalprotect connect --portal vpn-eu-nix.epam.com --username Pavel_Alexeev@epam.com
+
+sudo resolvectl dns gpd0 10.66.110.11 10.66.110.10

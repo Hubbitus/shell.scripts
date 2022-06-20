@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+ps -C PanGPUI -o pid= | xargs kill ; sleep 1 && /opt/paloaltonetworks/globalprotect/PanGPUI &
