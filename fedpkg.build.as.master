@@ -1,2 +1,9 @@
 #!/bin/bash
-git pull && git merge origin/master ; git commit ; fedpkg push && fedpkg build && fedpkg update
+
+set -e
+git pull
+git merge origin/rawhide
+git commit
+fedpkg push
+fedpkg build
+fedpkg update
