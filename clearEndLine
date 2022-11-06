@@ -1,10 +1,10 @@
 #!/bin/bash
 
-	if [ "$1" ]
-	then
-	sed -i 's/\s*$//g' "$1" #Все завершающие строку "пробельные" символы удаляем
-	echo "$1 обработан"
-	else
-	echo "Нету аргументов. Должен передаваться файл для обработки. Завершаю работу."
-	exit
-	fi
+# Script to clear all "space" symbols at the end of line
+
+if [ "$1" ]; then
+	sed -i 's/\s*$//g' "$1"
+	echo "$1 processed"
+else # Work on stdin
+	sed 's/\s*$//g'
+fi
