@@ -45,5 +45,4 @@ killall -0 yakuake || ( echo "Starting yakuake itself" && /usr/bin/yakuake && sl
 qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'tmux attach || tmux'
 qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 '|main'
 
-newTab $(( ++id )) 'ROOT' 'sus'
-newTab $(( ++id )) '_xneur' 'xneur'
+newTab $(( ++id )) 'ROOT' 'sudo tmux'
