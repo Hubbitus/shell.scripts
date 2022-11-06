@@ -1,0 +1,34 @@
+#!/bin/bash
+
+: ${1?"Not enough arguments: `basename $0` "some text to guess charset encoding" [optional (30 by default): amount of recoding percolations]"}
+
+# How much results show
+TOP_N="${2:-30}"
+
+
+#TEXT=тест
+#TEXT=$( echo -n тест | iconv -t koi8r )
+TEXT="$1"
+
+echo '###############################################'
+echo "##### Text for recoding: [$TEXT] #####"
+echo "##### Show TOP $TOP_N results of recoding #####"
+echo '###############################################'
+
+# Simple:
+#http --form http://2cyr.com/decode/ text=тест
+# But it does not work with non-unicode!
+#http --form https://2cyr.com/decode/ text="$( echo -n тест | iconv -t koi8r )" \
+
+#curl -X POST -d text=тест -H 'Content-Type: application/x-www-form-urlencoded; charset=utf-8' http://2cyr.com/decode/
+
+# Sed by https://stackoverflow.com/questions/17988756/how-to-select-lines-between-two-marker-patterns-which-may-occur-multiple-times-w/17990436#17990436
+curl -sS -X POST -d "text=$TEXT" -H 'User-Agent: c_u_r_l' `# User-agent required! Curl blocked!` \
+		http://2cyr.com/decode/ \
+			| sed '/Select the successful sample/,/:UTF-7:SJIS/{//!b};d' \
+				| sed -r 's@<option value="(.+)">|</option>@\1#@g' \
+					| while read l; `# drop what incorrect initially` \
+						do (echo "$l" | iconv -t utf8 &>/dev/null) && echo "[$l]";
+					done \
+
+#						| head -$TOP_N
