@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# http://forum.ubuntu.ru/index.php?PHPSESSID=5n7ua60mdpdoe9gf77e20rlgr0&topic=39346.msg283315#msg283315
+find ${1-.} \
+	-iname "*.mp3" -print -exec mid3iconv {} -d -e ${2-CP1251} \;
