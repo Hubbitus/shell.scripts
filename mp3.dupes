@@ -1,0 +1,54 @@
+#!/bin/bash
+
+########################################################################################################################################
+# Script to search MP3 (and hypotetically othe media formats) files duplicates ignoring any metadata like idv3 tags                   ##
+# Posted to:                                                                                                                          ##
+# https://superuser.com/questions/248495/how-to-compare-mp3-flac-audio-data-in-a-file-ignoring-header-data-id3-tag-et/1219353#1219353 ##
+# https://superuser.com/questions/347141/identify-differences-between-mp3-files/1219360#1219360                                       ##
+########################################################################################################################################
+
+########## Algorithm:
+# 1)
+#diff Original.mp3 Possible-dup.mp3 ; echo $?
+#>Binary files Original.mp3 and Possible-dup.mp3 differ
+#>2
+
+# 2)
+#$ diff <( ffmpeg -loglevel 8 -i Original.mp3 -map_metadata -1 -f wav - ) <( ffmpeg -loglevel 8 -i Possible-dup.mp3 -map_metadata -1 -f wav - ) ; echo $?
+#0
+
+# 3)
+#for file in *.mp3; do printf "%s:%s\n" "$( ffmpeg -loglevel 8 -i "$file" -map_metadata -1 -f wav - | sha256sum | cut -d' ' -f1 )" "$file"; done > mp3data.hashes
+#find -L orig-dir dir-with-duplicates -name '*.mp3' -print0 | while read -r -d $'\0' file; do printf "%s:%s\n" "$( ffmpeg -loglevel 8 -i \"$file\" -map_metadata -1 -f wav - | sha256sum | cut -d' ' -f1 )" "$file"; done > mp3data.hashes
+
+# 4) Analyze.
+# Only dupes:
+#count.by.regexp.awk '([0-9a-f]+):' mp3data.hashes
+#>[1:54320b708cea0771a8cf71fac24196a070836376dd83eedd619f247c2ece7480]=1
+#>[1:1d8627a21bdbf74cc5c7bc9451f7db264c167f7df4cbad7d8db80bc2f347110f]=2
+#>[1:ad48913a11de29ad4639253f2f06d8480b73d48a5f1d0aaa24271c0ba3998d02]=1
+
+# 5) And files-duplicates list:
+# grep mp3data.hashes -f <( count.by.regexp.awk '([0-9a-f]+):' mp3data.hashes | grep -oP '(?<=\[1:).{64}(?!]=1$)' )
+
+##########/ Algorithm
+
+# All in one:
+: ${1?"Not enough arguments: `basename $0` dir-to-scan"}
+
+#set -x
+
+HASHES=$(
+	# find/while by: https://stackoverflow.com/questions/8677546/reading-null-delimited-strings-through-a-bash-loop/8677566#8677566
+	find -L "${1}" -name '*.mp3' -print0 | \
+		while IFS= read -r -d $'\0' _file; do
+			printf "%s:%s\n" "$( ffmpeg -loglevel 8 -i "${_file}" -map_metadata -1 -f wav - </dev/null | sha256sum | cut -d' ' -f1 )" "${_file}";
+		done
+)
+
+echo "$HASHES" | grep -f <( count.by.regexp.awk '([0-9a-f]+):' <<< "$HASHES" | grep -oP '(?<=\[1:).{64}(?!]=1$)' ) | sort -u
+
+# WARNING. That is more proof of concept than real life solution! That may be improved in several ways like:
+# 1) Adding pv to show progress
+# 2) Using some RDBMS (e.g. sqlite) to made calculations more clear and easy
+# 3) Enhance output...
