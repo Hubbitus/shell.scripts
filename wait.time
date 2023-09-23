@@ -1,8 +1,29 @@
 #!/bin/bash
 
 : ${1?"Please provide time to wait! Example values for TIME: 10, '1h 5m 30s', '12:00', '2020-01-01', '2020-01-01 14:00 UTC' (see details in termdown help).
-`basename $0` TIME [text of success: 'Time [\$TIME] is over']' [timer text: <Waiting \$TIME>] [command run at end]"
-}
+`basename $0` TIME [text of success: 'Time [\$TIME] is over']' [timer text: <Waiting \$TIME>] [command run at end]"}
+
+_TIME=$1
+
+if [ -n "$2" ]; then
+	_wait_text="$2 ${_TIME}"
+else
+	if [ -n "$1" ]; then
+		_wait_text="$1 ${_TIME}"
+	else
+		_wait_text="Waiting ${_TIME}"
+	fi
+fi
+
+if [ -n "$3" ]; then
+	_done_text="$3"
+else
+	if [ -n "$2" ]; then
+		_done_text="[${_wait_text}] is done"
+	else
+		_done_text="Time [${_TIME}] is over"
+	fi
+fi
 
 # Termdown from https://github.com/trehn/termdown. Install: `sudo pip install termdown`
-watch.update "termdown '$1' -a --no-bell --font big --title '${3-Waiting $1}' | pv --format='Elapsed time: %t'" "${2-Time [$1] is over}" 50 "$4"
+watch.update "termdown '${_TIME}' -a --no-bell --font big --title '${_wait_text}' | pv --format='Elapsed time: %t'" "${_done_text}" 50 "$4"
