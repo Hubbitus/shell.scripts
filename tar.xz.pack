@@ -3,21 +3,8 @@
 #$1 - Куда, имя архива
 #$2 - Что паковать
 
-: ${1?"Not enouth arguments: `basename $0` archiv.tar.xz source1 [source2,source2…sourceN]"}
-: ${2?"Not enouth arguments: `basename $0` archiv.tar.xz source1 [source2,source2…sourceN]"}
-
-# By default max compression level
-
-#nice -n${NICE:-19} \
-#	tar $TAR_OPTIONS_ADDON -vcp -f - "$1" \
-#		--absolute-names \
-#		--force-local \
-#		--one-file-system \
-#		--check-links \
-#		--totals \
-#		--seek \
-#		--sparse \
-#			| xz --compress ${XZ_OPTIONS:--check=crc32 -9 --extreme --memory=80% --verbose} $XZ_OPTIONS_ADDON --stdout > "$2"
+: ${1?"Not enouth arguments: `basename $0` archive.tar.xz source1 [source2,source2…sourceN]"}
+: ${2?"Not enouth arguments: `basename $0` archive.tar.xz source1 [source2,source2…sourceN]"}
 
 FILE="$1"
 shift
