@@ -1,5 +1,0 @@
-#!/bin/bash
-
-pushd /home/pasha/imus/fileSets/jar/
-sh refresh.bash
-popd
