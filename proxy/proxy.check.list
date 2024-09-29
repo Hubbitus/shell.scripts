@@ -1,35 +1,42 @@
 #!/bin/bash
 
-: ${1?"Not enough arguments: `basename $0` file.{txt,son} [type=socks://]"}
+: ${1?"Not enough arguments: `basename $0` file.{txt,json}
+TXT file name must be in form *.<type>.txt. There type one of http, socks4, socks5 and so on."}
 
-# Logging
-_log_file="$1.$(date --iso-8601=s).log"
+#" Logging
+_log_file="${1}.$(date --iso-8601=s).log"
+
 : "${CONNECTOR_CONFIG_FILE:=$(dirname $0)/_connectors/${CONNECTOR}.config.json}"
 source ~/bin/SHARED/examples/autologging-with-progress/4.pv-ts.stdbuf
 
 if [[ ${1} == *.json ]]; then
 	echo "Processing list [${1}] as JSON"
-	_READ="jq -c .data.[] ${1}"
+	# _READ="jq -c .data.[] ${1}"
+	_READ="jq -c .[] ${1}"
 	# $1 - proxy string
 	# $2 - proxy list type
 	function proxy_parse(){
-		echo "$(echo "$proxy" | jq -r .protocols[0])://$(echo "$proxy" | jq -r .ip):$(echo "$proxy" | jq -r .port)"
+#		echo -n "$(echo "$proxy" | jq -r .protocols[0])://$(echo "$proxy" | jq -r .ip):$(echo "$proxy" | jq -r .port)"
+		echo -n "$(echo "$proxy" | jq -r .Type | tr 'A-Z' 'a-z')://$(echo "$proxy" | jq -r .IP_Address):$(echo "$proxy" | jq -r .Port)"
+#		echo -n "$(echo "$proxy" | jq -r .protocols[0])://$(echo "$proxy" | jq -r .address)"
 	}
 else # assume text
-	echo "Processing list [${1}] as TEXT file with default type [$2]"
-	_READ="cat "${1}""
+	_type="$(echo ${1} | sed -r 's/(.+\.)?(.+?)\.txt/\2/')"
+	echo "Processing list [${1}] as TEXT file with default type [${_type}]" > /dev/stderr
+	_READ="cat ${1}"
 	# $1 - proxy string
 	# $2 - proxy list type
 	function proxy_parse(){
 		if [[ $proxy != *://* ]]; then
-			if [ -z "$2" ]; then
-				echo "Proxy [$proxy] without protocol, and type not provided for the list!";
+			if [ -z "${_type}" ]; then
+				echo "Proxy [$proxy] without protocol, and type not provided for the list! Please use file name in form *.<type>.txt. There type one of http, socks4, socks5 and so on.";
 				exit 1
 			else
-				echo "${2}$proxy"
+				echo -n "${_type}://$proxy"
 			fi
+		else
+			echo -n "$proxy"
 		fi
-		echo "$proxy"
 	}
 fi
 
@@ -40,7 +47,7 @@ ${_READ} \
 	| while read proxy; do
 		proxy="$(proxy_parse "${proxy}" "${2}")"
 		echo "$((i++))/${total}) Checking [$proxy]"
-		if curl -sS --no-progress-meter --connect-timeout 3 --proxy "$proxy" https://ifconfig.co; then
+		if curl -sS --no-progress-meter --connect-timeout 4 --max-time 20 --proxy "$proxy" https://ifconfig.co; then
 			echo "Proxy looks [$proxy] alive! Rechecking with bigger file:"
 			./proxy.check.one $proxy
 			if [ $? -eq 0 ]; then
