@@ -1,8 +1,0 @@
-#!/bin/bash
-
-cd /home/pasha/imus/IdeaProjects/imus/ascug-maket/ascug-esb-modules/imus-esb-core/
-
-rm -f target/imus-esb-core-*-SNAPSHOT.jar ; mdep -Pcopy-dep && \
-	cp -fb target/imus-esb-core-*-SNAPSHOT.jar /home/pasha/imus/fileSets/jar/ && \
-	cp -fb target/imus-esb-core-*-SNAPSHOT.jar /mnt/net/p/users/Pasha/jar/
-

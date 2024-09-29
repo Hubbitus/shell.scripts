@@ -1,7 +1,0 @@
-#!/bin/bash
-
-cd /home/pasha/imus/IdeaProjects/imus/ascug-maket/ascug-quickinput
-
-rm -f target/*.jar
-mdep -Pcopy-dep
-

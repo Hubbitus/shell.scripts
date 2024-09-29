@@ -1,5 +1,0 @@
-#!/bin/bash
-
-pushd /home/pasha/imus/IdeaProjects/imus
-mdep && mdep-esb-core && mdep-domain && mdep-quick && mdep-ais
-popd
