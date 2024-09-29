@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+#See https://support.r7-office.ru/using-api-document-builder/api-tables/api-api-%d1%82%d0%b0%d0%b1%d0%bb%d0%b8%d1%86/attachevent-3/
+/opt/r7-office/desktopeditors/DesktopEditors --ascdesktop-support-debug-info
