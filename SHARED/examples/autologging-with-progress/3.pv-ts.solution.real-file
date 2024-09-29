@@ -10,7 +10,6 @@
 
 # By https://tldp.org/LDP/abs/html/x17974.html
 exec 6>&2 # Link file descriptor #6 with stderr (saves stderr) - we will use it in interractive pv output.
-
 exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0).$(date --iso-8601=s).log" )
 
 echo Hi
