@@ -1,4 +1,4 @@
 #!/bin/bash
 
-`dirname $0`/aviInfo.video "$1"
-`dirname $0`/aviInfo.audio "$1"
+$(dirname $0)/aviInfo.video "$1"
+$(dirname $0)/aviInfo.audio "$1"

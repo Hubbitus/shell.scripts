@@ -125,7 +125,7 @@ AUDIO_OPTIONS='-oac mp3lame -lameopts cbr=3:br=128:q=0:aq=0'
     if [[ 2 = $PASS || 3 = $PASS ]]
     then
     #cat $PH/$EXT | nice -n $NICE mencoder - -ofps $FPS -aid $RUS -ni \
-    
+
     (
     # -oac copy
     echo Второй проход:

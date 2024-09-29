@@ -2,7 +2,7 @@
 
 #Создание и прикладывание патчей. Личный опыт. (http://volgograd.lug.ru/wiki/TarasAblamsky/articles/DiffAndPatch)
 
-#	Создание:
+# Создание:
 #1. разворачивам дерево исходников в рабочий каталог. Например /var/tmp/sources
 #2. работаем с файлами, вносим изменения, отлаживаем
 #3. удаляем резервные копии (find -name "*~" -exec rm -f {} \;)
@@ -10,7 +10,7 @@
 #5. делаем патч: cd /var/tmp; diff -k.orig -Naur sources > my-cool-feature.patch
 #6. патч my-cool-feature.patch готов
 
-#	Прикладывание:
+# Применение:
 #1. разворачивам дерево исходников в рабочий каталог. Например /var/tmp/sources
 #2. копируем патч в каталог с исходниками (cp my-cool-feature.patch /var/tmp/sources/)
 #3. прикладывам патч: cd /var/tmp/sources; patch -p1 -s < my-cool-feature.patch
