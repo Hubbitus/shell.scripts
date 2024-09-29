@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+podman login --username=plalexeev --password=$(pass show GID.ru/CorporateServices/gitlab.gid.ru/tokens/access/deploy-ci.data | head -1) registry.gid.team
