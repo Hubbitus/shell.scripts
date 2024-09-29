@@ -1,0 +1,10 @@
+#!/bin/bash
+
+: ${1?"Not enough arguments: `basename $0` socks5://ip:port"}
+
+rm -vf PDF10MB
+
+set -xe
+
+curl --connect-timeout 7 --proxy ${1} https://ifconfig.co
+curl --connect-timeout 7 --proxy "${1}" https://link.testfile.org/PDF10MB -LO

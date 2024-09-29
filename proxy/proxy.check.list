@@ -1,0 +1,55 @@
+#!/bin/bash
+
+: ${1?"Not enough arguments: `basename $0` file.{txt,son} [type=socks://]"}
+
+# Logging
+_log_file="$1.$(date --iso-8601=s).log"
+: "${CONNECTOR_CONFIG_FILE:=$(dirname $0)/_connectors/${CONNECTOR}.config.json}"
+source ~/bin/SHARED/examples/autologging-with-progress/4.pv-ts.stdbuf
+
+if [[ ${1} == *.json ]]; then
+	echo "Processing list [${1}] as JSON"
+	_READ="jq -c .data.[] ${1}"
+	# $1 - proxy string
+	# $2 - proxy list type
+	function proxy_parse(){
+		echo "$(echo "$proxy" | jq -r .protocols[0])://$(echo "$proxy" | jq -r .ip):$(echo "$proxy" | jq -r .port)"
+	}
+else # assume text
+	echo "Processing list [${1}] as TEXT file with default type [$2]"
+	_READ="cat "${1}""
+	# $1 - proxy string
+	# $2 - proxy list type
+	function proxy_parse(){
+		if [[ $proxy != *://* ]]; then
+			if [ -z "$2" ]; then
+				echo "Proxy [$proxy] without protocol, and type not provided for the list!";
+				exit 1
+			else
+				echo "${2}$proxy"
+			fi
+		fi
+		echo "$proxy"
+	}
+fi
+
+i=0
+total=$(${_READ} | wc -l)
+# From http://free-proxy.cz/en/proxylist/country/all/socks5/ping/all
+${_READ} \
+	| while read proxy; do
+		proxy="$(proxy_parse "${proxy}" "${2}")"
+		echo "$((i++))/${total}) Checking [$proxy]"
+		if curl -sS --no-progress-meter --connect-timeout 3 --proxy "$proxy" https://ifconfig.co; then
+			echo "Proxy looks [$proxy] alive! Rechecking with bigger file:"
+			./proxy.check.one $proxy
+			if [ $? -eq 0 ]; then
+				echo "Indeed proxy [$proxy] ALIVE!"
+				echo "$proxy" >> "${1}.good"
+			else
+				echo "Proxy [$proxy] failed individual check! Skipping"
+			fi
+		fi
+	done
+
+echo "LIST [$1] ended"
