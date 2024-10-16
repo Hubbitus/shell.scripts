@@ -4,8 +4,6 @@
 
 : ${DIR=lists}
 
-rm -vf proxy-list.*
-
 set -ex
 
 ## 1) From https://proxylist.geonode.com/api/proxy-list?protocols=socks5&limit=500&page=1&sort_by=lastChecked&sort_type=desc
@@ -47,5 +45,8 @@ curl -sS \
 curl -sS 'https://geoxy.io/proxies?count=99999' \
 	-H 'Authorization: BgPXfhUc8CAhK7wGOqzqz9m77j3sH7' \
 		> "${DIR}/geoxy.io.json"
+
+## 6) https://github.com/proxifly/free-proxy-list
+curl https://raw.githubusercontent.com/proxifly/free-proxy-list/refs/heads/main/proxies/all/data.json > "${DIR}/proxifly.json"
 
 echo DONE

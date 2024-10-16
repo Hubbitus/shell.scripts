@@ -17,11 +17,12 @@ if [[ ${1} == *.json ]]; then
 	# $1 - proxy string
 	# $2 - proxy list type
 	function proxy_parse(){
-#		echo -n "$(echo "$proxy" | jq -r .protocols[0])://$(echo "$proxy" | jq -r .ip):$(echo "$proxy" | jq -r .port)"
-#		echo -n "$(echo "$proxy" | jq -r .Type | tr 'A-Z' 'a-z')://$(echo "$proxy" | jq -r .IP_Address):$(echo "$proxy" | jq -r .Port)"
-#		echo -n "$(echo "$proxy" | jq -r .protocols[0])://$(echo "$proxy" | jq -r .address)"
 		# Try universally parse all incoming structures:
-		echo -n "${1}" | jq -r '(.ip? // .address? // .IP_Address?) as $addr | (.Port? // .port?) as $port | (.protocols[0] // .Type) + "://" + $addr + (if $port then ":" + $port else "" end)'
+		echo -n "${1}" \
+			| jq -r '
+				(.ip? // .address? // .IP_Address?) as $addr |
+				((.Port? // .port?) | tostring) as $port |
+					(.protocols[0] // .Type // .protocol) + "://" + $addr + (if "null" != $port then ":" + $port else "" end)'
 	}
 else # assume text
 	echo "Processing list [${1}] as TEXT file with default type [${_type}]" > /dev/stderr
@@ -50,7 +51,7 @@ _READ "${1}" \
 	| while read -re _proxy; do
 		proxy=$(proxy_parse "${_proxy}" "${2}")
 		[ $? -ne 0 ] && echo "Error parsing RAW proxy: ${_proxy}"
-		echo "$((i++))/${total}) Checking [${proxy}]"
+		echo -e "\e[4;49;32m$((i++))\e[0m/\e[1;49;92m${total}\e[0m) [\e[1;49;95m${1}\e[0m] Checking [${proxy}]"
 		if curl -sS --no-progress-meter --connect-timeout 4 --max-time 20 --proxy "$proxy" https://ifconfig.co; then
 			echo "Proxy looks [$proxy] alive! Rechecking with bigger file:"
 			./proxy.check.one $proxy
