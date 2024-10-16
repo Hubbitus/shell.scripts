@@ -1,8 +1,8 @@
 #!/bin/bash
 
-: ${1?"Not enough arguments: `basename $0` socks5://ip:port"}
+: ${1?"Not enough arguments: `basename $0` protocol://ip:port"}
 
 set -xe
 
-curl --connect-timeout 7 --max-time 20  --proxy "${1}" https://ifconfig.co "$@"
+curl --connect-timeout 7 --max-time 20  --proxy "${1}" https://ifconfig.co
 curl --connect-timeout 7 --max-time 200 --proxy "${1}" https://raw.githubusercontent.com/BitDoctor/speed-test-file/refs/heads/master/5mb.txt -L > /dev/null
