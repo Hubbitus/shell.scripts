@@ -11,19 +11,21 @@ source ~/bin/SHARED/examples/autologging-with-progress/4.pv-ts.stdbuf
 
 if [[ ${1} == *.json ]]; then
 	echo "Processing list [${1}] as JSON"
-	# _READ="jq -c .data.[] ${1}"
-	_READ="jq -c .[] ${1}"
+	# Support several format of structure automatically: .data.[], .[] and so on
+	function _READ(){ jq -c '(.data? // .).[]' "${1}"; }
 	# $1 - proxy string
 	# $2 - proxy list type
 	function proxy_parse(){
 #		echo -n "$(echo "$proxy" | jq -r .protocols[0])://$(echo "$proxy" | jq -r .ip):$(echo "$proxy" | jq -r .port)"
-		echo -n "$(echo "$proxy" | jq -r .Type | tr 'A-Z' 'a-z')://$(echo "$proxy" | jq -r .IP_Address):$(echo "$proxy" | jq -r .Port)"
+#		echo -n "$(echo "$proxy" | jq -r .Type | tr 'A-Z' 'a-z')://$(echo "$proxy" | jq -r .IP_Address):$(echo "$proxy" | jq -r .Port)"
 #		echo -n "$(echo "$proxy" | jq -r .protocols[0])://$(echo "$proxy" | jq -r .address)"
+		# Try universally parse all incoming structures:
+		echo -n "${1}" | jq -r '(.ip? // .address? // .IP_Address?) as $addr | (.Port? // .port?) as $port | .protocols[0] + "://" + $addr + (if $port then ":" + $port else "" end)'
 	}
 else # assume text
 	_type="$(echo ${1} | sed -r 's/(.+\.)?(.+?)\.txt/\2/')"
 	echo "Processing list [${1}] as TEXT file with default type [${_type}]" > /dev/stderr
-	_READ="cat ${1}"
+	function _READ() { "cat ${1}"; }
 	# $1 - proxy string
 	# $2 - proxy list type
 	function proxy_parse(){
@@ -41,12 +43,13 @@ else # assume text
 fi
 
 i=0
-total=$(${_READ} | wc -l)
+total=$(_READ "$1" | wc -l)
 # From http://free-proxy.cz/en/proxylist/country/all/socks5/ping/all
-${_READ} \
-	| while read proxy; do
-		proxy="$(proxy_parse "${proxy}" "${2}")"
-		echo "$((i++))/${total}) Checking [$proxy]"
+_READ "${1}" \
+	| while read -re _proxy; do
+		proxy=$(proxy_parse "${_proxy}" "${2}")
+		[ $? -ne 0 ] && echo "Error parsing RAW proxy: ${_proxy}"
+		echo "$((i++))/${total}) Checking [${proxy}]"
 		if curl -sS --no-progress-meter --connect-timeout 4 --max-time 20 --proxy "$proxy" https://ifconfig.co; then
 			echo "Proxy looks [$proxy] alive! Rechecking with bigger file:"
 			./proxy.check.one $proxy
