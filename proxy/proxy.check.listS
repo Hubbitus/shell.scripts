@@ -1,9 +1,11 @@
 #!/bin/bash
 
-for page in {1..14}; do
-	_file="proxy-list.$( printf '%02d' $page ).json"
-	echo "Running proxy list check for ${_file}"
-	./proxy.check.list "${_file}" &
+: ${1?"Not enough arguments: ./`basename $0` file [fiel2, file3...]
+To run for all files in directory you may call it like: ./`basename $0` lists/*"}
+
+for file in "$@"; do
+	echo "Running proxy list check for ${file}"
+	./proxy.check.list "${file}" &
 done
 
 wait

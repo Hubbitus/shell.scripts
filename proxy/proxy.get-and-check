@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+export DIR="lists/$(date --iso-8601=s)"
+
+set -xe
+mkdir -p "${DIR}"
+
+./proxy.download.list
+
+./proxy.check.listS "${DIR}/"*

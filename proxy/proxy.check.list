@@ -9,10 +9,11 @@ _log_file="${1}.$(date --iso-8601=s).log"
 : "${CONNECTOR_CONFIG_FILE:=$(dirname $0)/_connectors/${CONNECTOR}.config.json}"
 source ~/bin/SHARED/examples/autologging-with-progress/4.pv-ts.stdbuf
 
+_type="$(echo ${1} | sed -r 's/(.+\.)?(.+?)\.(txt|json)/\2/')"
 if [[ ${1} == *.json ]]; then
 	echo "Processing list [${1}] as JSON"
 	# Support several format of structure automatically: .data.[], .[] and so on
-	function _READ(){ jq -c '(.data? // .).[]' "${1}"; }
+	function _READ(){ jq -c "{ \"address\": .[]?.items?[]?, \"protocols\": [\"${_type}\"] } // (.data? // .items? // .).[]" "${1}"; }
 	# $1 - proxy string
 	# $2 - proxy list type
 	function proxy_parse(){
@@ -20,24 +21,24 @@ if [[ ${1} == *.json ]]; then
 #		echo -n "$(echo "$proxy" | jq -r .Type | tr 'A-Z' 'a-z')://$(echo "$proxy" | jq -r .IP_Address):$(echo "$proxy" | jq -r .Port)"
 #		echo -n "$(echo "$proxy" | jq -r .protocols[0])://$(echo "$proxy" | jq -r .address)"
 		# Try universally parse all incoming structures:
-		echo -n "${1}" | jq -r '(.ip? // .address? // .IP_Address?) as $addr | (.Port? // .port?) as $port | .protocols[0] + "://" + $addr + (if $port then ":" + $port else "" end)'
+		echo -n "${1}" | jq -r '(.ip? // .address? // .IP_Address?) as $addr | (.Port? // .port?) as $port | (.protocols[0] // .Type) + "://" + $addr + (if $port then ":" + $port else "" end)'
 	}
 else # assume text
-	_type="$(echo ${1} | sed -r 's/(.+\.)?(.+?)\.txt/\2/')"
 	echo "Processing list [${1}] as TEXT file with default type [${_type}]" > /dev/stderr
-	function _READ() { "cat ${1}"; }
+	function _READ() { cat "${1}"; }
 	# $1 - proxy string
 	# $2 - proxy list type
 	function proxy_parse(){
-		if [[ $proxy != *://* ]]; then
+		local proxy="${1}"
+		if [[ ${proxy} != *://* ]]; then
 			if [ -z "${_type}" ]; then
-				echo "Proxy [$proxy] without protocol, and type not provided for the list! Please use file name in form *.<type>.txt. There type one of http, socks4, socks5 and so on.";
+				echo "Proxy [${proxy}] without protocol, and type not provided for the list! Please use file name in form *.<type>.txt. There type one of http, socks4, socks5 and so on.";
 				exit 1
 			else
-				echo -n "${_type}://$proxy"
+				echo -n "${_type}://${proxy}"
 			fi
 		else
-			echo -n "$proxy"
+			echo -n "${proxy}"
 		fi
 	}
 fi
@@ -61,5 +62,7 @@ _READ "${1}" \
 			fi
 		fi
 	done
+
+[ -f "${1}.good" ] && echo "Foud good proxies: " && cat "${1}.good"
 
 echo "LIST [$1] ended"
