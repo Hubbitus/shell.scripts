@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+: ${DIR=lists}
+
+FILE="${DIR}/good.$(date --iso-8601=ns)"
+cat $(ls "${DIR}"/*/*.good) | sort -u | tee "${FILE}" | wc -l
+
+./proxy.check.list "$FILE"
