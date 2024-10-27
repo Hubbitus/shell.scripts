@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+## Lists from https://www.free-proxy-servers.com/
+## 2024-10-28 02:16:46 VERY outdated list and looks like project stalled. Disabling.
+
+: ${DIR=lists}
+
+set -e
+
+curl -sS https://www.free-proxy-servers.com/wp-content/uploads/proxy/proxy.json > "${DIR}/.free-proxy-servers.com.json.orig"
+
