@@ -54,6 +54,7 @@ class FreeproxyupdateProxyListScrapper(ProxyListScrapper):
 			print(f'For page {url} found {len(links_top+links_right)} additional page links')
 			return { tag.get('href').replace('/', ''): f'https://freeproxyupdate.com{tag.get("href")}' for tag in (links_top+links_right) }
 
+	@override
 	def filename(self, suffix: str) -> str:
 		return os.path.join(self.basedir, f'.{self.name}.{suffix}.txt.orig')
 
