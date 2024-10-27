@@ -1,0 +1,39 @@
+#!/usr/bin/python
+
+"""
+Lists from https://cyber-gateway.net/get-proxy/free-proxy
+Looks like new on each load?
+"""
+
+import os, pathlib
+
+DIR=pathlib.Path(os.environ.get('DIR', 'lists'))
+
+URLS={
+    'socks-google': 'https://cyber-gateway.net/get-proxy/free-proxy/57-free-proxy-google',
+    'socks': 'https://cyber-gateway.net/get-proxy/free-proxy/56-free-socks-proxy',
+    'http': 'https://cyber-gateway.net/get-proxy/free-proxy/24-free-http-proxy'
+}
+
+from bs4 import BeautifulSoup
+import requests
+
+for file_type, url in URLS.items():
+    doc = requests.get(url)
+    if 200 != doc.status_code:
+        exit(f'Document get failed with code {doc.status_code}')
+
+    html = doc.content
+    # https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+    soup = BeautifulSoup(html, 'html.parser')
+
+    with open(os.path.join(DIR, f'cyber-gateway.net.{file_type}.txt'), 'w') as res:
+        for tr in soup.body.find('div', attrs={'itemprop':'articleBody'}).table.find_all('tr'):
+            try:
+                proxy_type = tr.find_all('td')[3].text.lower()
+            except IndexError:  # Http page has not proxy type column
+                proxy_type = 'http'
+            if tr.td is None:  # <thead>
+                continue
+            # print(tr.td.text) if tr.td is not None else None
+            res.write(f'{proxy_type}://{tr.td.text}\n')

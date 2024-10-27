@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+: ${DIR=lists}
+
+set -ex
+
+## https://github.com/mmpx12/proxy-list
+## Updates once in a day?
+
+curl -sS https://raw.githubusercontent.com/mmpx12/proxy-list/refs/heads/master/proxies.txt > "${DIR}/github.com_mmpx12.txt"

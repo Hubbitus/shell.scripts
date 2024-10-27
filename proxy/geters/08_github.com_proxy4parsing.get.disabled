@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+: ${DIR=lists}
+
+set -ex
+
+## https://github.com/proxy4parsing/proxy-list promised "Free proxy list UPDATED EVERY 20 min" but no updates 6 month! Disabling

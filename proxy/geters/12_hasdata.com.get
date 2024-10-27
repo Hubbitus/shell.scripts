@@ -1,0 +1,39 @@
+#!/usr/bin/python
+
+"""
+Lists from https://hasdata.com/free-proxy-list
+Description: "We provide a list of free HTTP, HTTPS, and SOCKS proxies for web scraping. Our proxy lists are completely free of charge and are updated every few minutes."
+"""
+
+import os, pathlib
+
+DIR=pathlib.Path(os.environ.get('DIR', 'lists'))
+
+URLS={
+    'all': 'https://hasdata.com/free-proxy-list',
+}
+
+from bs4 import BeautifulSoup
+import requests
+
+for file_type, url in URLS.items():
+    doc = requests.get(url)
+    if 200 != doc.status_code:
+        exit(f'Document get failed with code {doc.status_code}')
+
+    html = doc.content
+    # https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+    soup = BeautifulSoup(html, 'html.parser')
+
+    with open(os.path.join(DIR, f'hasdata.com.{file_type}.txt'), 'w') as res:
+        for tr in soup.body.find('table', attrs={'class':'richtable'}).find_all('tr'):
+            if tr.td is None:  # <thead>
+                continue
+
+            tds = tr.find_all('td')
+            ip = tds[0].text
+            port = tds[1].text
+            proxy_type = tds[2].text.lower()
+
+            # print(tr.td.text) if tr.td is not None else None
+            res.write(f'{proxy_type}://{ip}:{port}\n')
