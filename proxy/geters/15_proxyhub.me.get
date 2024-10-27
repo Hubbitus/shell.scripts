@@ -1,0 +1,50 @@
+#!/usr/bin/python
+
+"""
+Lists from https://proxyhub.me/
+
+Paging is not working in any browsers. So, download the first page of each type and country
+"""
+import os
+from typing import override
+
+from bs4 import BeautifulSoup
+
+URLS={
+	'http': 'https://proxyhub.me/en/all-http-proxy-list.html',
+	'https': 'https://proxyhub.me/en/all-https-proxy-list.html',
+	'socks': 'https://proxyhub.me/en/all-socks-proxy-list.html',
+	'socks4': 'https://proxyhub.me/en/all-sock4-proxy-list.html',
+	'socks5': 'https://proxyhub.me/en/all-sock5-proxy-list.html'
+}
+
+from ProxyListScrapper import ProxyListScrapper
+
+class ProxyhubProxyListScrapper(ProxyListScrapper):
+	@override
+	def get_table_trs(self, soup):
+		return soup.body.find('div', attrs={'class':'list'}).table.find_all('tr')
+
+	@override
+	def filename(self, suffix: str) -> str:
+		return os.path.join(self.basedir, f'.{self.name}.{suffix}.txt.orig')
+
+	@override
+	def get_other_page_links(self, soup: BeautifulSoup, file_type: str, url: str) -> dict[str,str]:
+		if file_type not in self.urls.keys():
+			return {}
+		else:
+			countries = soup.body.find('select', attrs={'name':'country'}).find_all('option')
+			print(f'For page {url} found {len(countries)} additional page links by countries')
+			return { f'{tag.get('value')}-{file_type}': self.urls[file_type].replace('/all-', f'/{tag.get('value')}-') for tag in countries if tag.get('value') != 'all' }
+
+
+	@override
+	def finalize(self):
+		cmd = f'cat {self.basedir}/.{self.name}.*.txt.orig | sort -u > {self.basedir}/{self.name}.all-uniq.txt'
+		print(f'Running finalize command: {cmd}')
+		os.system(cmd)
+		print('Done')
+
+
+ProxyhubProxyListScrapper('proxyhub.me', URLS)
