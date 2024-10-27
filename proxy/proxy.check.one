@@ -2,7 +2,17 @@
 
 : ${1?"Not enough arguments: `basename $0` protocol://ip:port"}
 
-set -xe
+set -e
+
+#_MD5=$(curl --connect-timeout 7 --max-time 200 https://raw.githubusercontent.com/BitDoctor/speed-test-file/refs/heads/master/5mb.txt -L | md5sum -)
+_MD5='7d7a6dd7e37454c6a82992eabe7a4613  -'
 
 curl --connect-timeout 7 --max-time 20  --proxy "${1}" https://ifconfig.co
-curl --connect-timeout 7 --max-time 200 --proxy "${1}" https://raw.githubusercontent.com/BitDoctor/speed-test-file/refs/heads/master/5mb.txt -L > /dev/null
+_MD5_=$(curl --connect-timeout 7 --max-time 60 --proxy "${1}" https://raw.githubusercontent.com/BitDoctor/speed-test-file/refs/heads/master/5mb.txt -L | md5sum -)
+
+if [[ "${_MD%_}" != "${_MD5}" ]]; then
+	echo "File downloaded, but checksum does NOT match! (_MD5=[${_MD5}], _MD5_=[${_MD5_}])"
+	exit 1
+fi
+
+exit 0
