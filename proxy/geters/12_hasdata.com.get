@@ -8,14 +8,14 @@ Description: "We provide a list of free HTTP, HTTPS, and SOCKS proxies for web s
 from typing import override
 
 URLS={
-    'all': 'https://hasdata.com/free-proxy-list',
+	'all': 'https://hasdata.com/free-proxy-list',
 }
 
-from ProxyListScrapper import ProxyListScrapper, Proxy
+from ProxyListScrapper import ProxyListScrapper
 
 class HasdataProxyListScrapper(ProxyListScrapper):
-    @override
-    def get_table_trs(self, soup):
-        return soup.body.find('table', attrs={'class':'richtable'}).find_all('tr')
+	@override
+	def get_table_trs(self, soup):
+		return soup.body.find('table', attrs={'class':'richtable'}).find_all('tr')
 
-HasdataProxyListScrapper('cyber-gateway.net', URLS)
+HasdataProxyListScrapper('hasdata.com', URLS)

@@ -1,0 +1,67 @@
+#!/usr/bin/python
+
+"""
+Lists from https://freeproxyupdate.com/
+Description: "Free proxy services have checked and updated the online Proxy List (alive proxies) including various proxy protocols: http, https (secured SSL with encrypted content), socks4 socks5 with proxy anonymity levels: elite proxy (Level 1 or high anonymous), anonymous (Level 2) and transparent (Level 3) by ports 3128 8080."
+The Description also stated what here export present, but I have not found it, so parsing HTML.
+Because that, and the fact there is not paging, we scrab all available links on main page, by countries, types and so on - so we may get more unique proxies.
+"""
+
+import os
+import pathlib
+from typing import override
+
+from bs4 import BeautifulSoup
+
+DIR=pathlib.Path(os.environ.get('DIR', 'lists'))
+
+URLS={
+	'main': 'https://freeproxyupdate.com',
+	# 'http-proxy': 'https://freeproxyupdate.com/http-proxy',
+	# 'https-proxy': 'https://freeproxyupdate.com/https-ssl-proxy',
+	# 'socks-proxy': 'https://freeproxyupdate.com/socks-proxy',
+	# 'socks4-proxy': 'https://freeproxyupdate.com/socks4-proxy',
+	# 'socks5-proxy': 'https://freeproxyupdate.com/socks5-proxy',
+	# 'elite-proxy': 'https://freeproxyupdate.com/elite-proxy',
+	# 'anonymous-proxy': 'https://freeproxyupdate.com/anonymous-proxy',
+	# 'transparent-proxy': 'https://freeproxyupdate.com/transparent-proxy',
+	# 'high-speed-proxy': 'https://freeproxyupdate.com/high-speed-proxy',
+	# 'low-latency-proxy': 'https://freeproxyupdate.com/low-latency-proxy',
+	# 'fast-response-proxy': 'https://freeproxyupdate.com/fast-response-proxy',
+	# 'high-uptime-proxy': 'https://freeproxyupdate.com/high-uptime-proxy'
+}
+
+from ProxyListScrapper import ProxyListScrapper, Proxy
+
+
+class FreeproxyupdateProxyListScrapper(ProxyListScrapper):
+	@override
+	def get_table_trs(self, soup):
+		return soup.body.find('table', attrs={'class':'list-proxy'}).find_all('tr')
+
+	@override
+	def parse_table_tr_to_proxy(self, tr):
+		tds = tr.find_all('td')
+		return Proxy(tds[0].text, tds[1].text, tds[3].text)
+
+	@override
+	def get_other_page_links(self, soup: BeautifulSoup, file_type: str, url: str) -> dict[str,str]:
+		if file_type != 'main':
+			return {}
+		else:
+			links_top = soup.body.find('div', attrs={'class':'header-right'}).find_all('a')
+			links_right = soup.body.find('div', attrs={'id':'side-column'}).find_all('a')
+			print(f'For page {url} found {len(links_top+links_right)} additional page links')
+			return { tag.get('href').replace('/', ''): f'https://freeproxyupdate.com{tag.get("href")}' for tag in (links_top+links_right) }
+
+	def filename(self, suffix: str) -> str:
+		return os.path.join(self.basedir, f'.{self.name}.{suffix}.txt.orig')
+
+	@override
+	def finalize(self):
+		cmd = f'cat {self.basedir}/.{self.name}.*.txt.orig | sort -u > {self.basedir}/{self.name}.all-uniq.txt'
+		print(f'Running finalize command: {cmd}')
+		os.system(cmd)
+		print('Done')
+
+FreeproxyupdateProxyListScrapper('freeproxyupdate.com', URLS)
