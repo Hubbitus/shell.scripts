@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+: ${DIR=lists}
+
+set -ex
+
+## 4) https://proxybros.com/free-proxy-list/
+## First POST required before GET!
+curl --connect-timeout 7 --max-time 20 -sS -X POST --data 'action=nrproxyexport&type=2&lang=en&path=%2Ffree-proxy-list%2F' \
+	--header 'Cookie: pll_language=en; PHPSESSID=71e9e7593aca94c4667224441437d893' \
+		https://proxybros.com/wp-admin/admin-ajax.php
+curl --connect-timeout 7 --max-time 20 -sS \
+	--header 'Cookie: pll_language=en; PHPSESSID=71e9e7593aca94c4667224441437d893' \
+		https://proxybros.com/wp-json/proxy_list/download \
+			> "${DIR}/proxybros.com.json"

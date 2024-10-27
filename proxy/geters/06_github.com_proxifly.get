@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+: ${DIR=lists}
+
+set -ex
+
+## 6) https://github.com/proxifly/free-proxy-list
+curl https://raw.githubusercontent.com/proxifly/free-proxy-list/refs/heads/main/proxies/all/data.json > "${DIR}/proxifly.json"

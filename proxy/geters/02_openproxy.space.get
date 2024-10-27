@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+
+: ${DIR=lists}
+
+set -ex
+
+## 2) From https://openproxy.space/list
+curl -sS https://openproxy.space/list/socks4 \
+	| grep -oP '(?<=data:)\[\{code.+}\](?=,added:)' \
+		| sed -r 's/(code|added|items):/"\1":/g;s/(active|count):(\w+\b)/"\1": "\2"/g' \
+			> "${DIR}/openproxy.space.socks4.json"
+curl -sS https://openproxy.space/list/socks5 \
+	| grep -oP '(?<=data:)\[\{code.+}\](?=,added:)' \
+		| sed -r 's/(code|added|items):/"\1":/g;s/(active|count):(\w+\b)/"\1": "\2"/g' \
+			> "${DIR}/openproxy.space.socks5.json"
+curl -sS https://openproxy.space/list/http \
+	| grep -oP '(?<=data:)\[\{code.+}\](?=,added:)' \
+		| sed -r 's/(code|added|items):/"\1":/g;s/(active|count):(\w+\b)/"\1": "\2"/g' \
+			> "${DIR}/openproxy.space.http.json"

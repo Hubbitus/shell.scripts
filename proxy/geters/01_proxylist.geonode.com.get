@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+: ${DIR=lists}
+
+set -ex
+
+## 1) From https://proxylist.geonode.com/api/proxy-list?protocols=socks5&limit=500&page=1&sort_by=lastChecked&sort_type=desc
+for page in {01..14}; do
+	echo "Downloading page $page"
+	wget "https://proxylist.geonode.com/api/proxy-list?limit=500&page=${page}&sort_by=lastChecked&sort_type=desc" -O "${DIR}/proxy-list.${page}.json"
+done
