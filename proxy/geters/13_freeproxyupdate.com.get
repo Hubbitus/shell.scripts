@@ -4,7 +4,7 @@
 Lists from https://freeproxyupdate.com/
 Description: "Free proxy services have checked and updated the online Proxy List (alive proxies) including various proxy protocols: http, https (secured SSL with encrypted content), socks4 socks5 with proxy anonymity levels: elite proxy (Level 1 or high anonymous), anonymous (Level 2) and transparent (Level 3) by ports 3128 8080."
 The Description also stated what here export present, but I have not found it, so parsing HTML.
-Because that, and the fact there is not paging, we scrab all available links on main page, by countries, types and so on - so we may get more unique proxies.
+Because of that, and the fact there is not paging, we scrab all available links on main page, by countries, types and so on - so we may get more unique proxies.
 """
 
 import os
