@@ -31,6 +31,7 @@ else # assume text
 	# $2 - proxy list type
 	function proxy_parse(){
 		local proxy="${1}"
+		local _type="${2}"
 		if [[ ${proxy} != *://* ]]; then
 			if [ -z "${_type}" ]; then
 				echo "Proxy [${proxy}] without protocol, and type not provided for the list! Please use file name in form *.<type>.txt. There type one of http, socks4, socks5 and so on.";
@@ -43,27 +44,40 @@ else # assume text
 		fi
 	}
 fi
+export -f _READ proxy_parse
 
-i=0
+# $1 proxy string for parse
+# $2 run number (for logging)
+# $3 total proxies in list (for logging)
+# $4 processed file for logging and write ${4}.good
+# $5 proxy list type (default type of proxy)
+function proxess_proxy_candidate(){
+	local _proxy="${1}"
+	local _i="${2}"
+	local _total="${3}"
+	local _file="${4}"
+	local _type="${5}"
+	proxy=$(proxy_parse "${_proxy}" "${_type}")
+	[ $? -ne 0 ] && echo "Error parsing RAW proxy: ${_proxy}" && exit 2
+	echo -e "\e[4;49;32m${_i})\e[0m/\e[1;49;92m${_total}\e[0m) [\e[1;49;95m${_file}\e[0m] Checking [${proxy}]"
+	if curl -sS --no-progress-meter --connect-timeout 4 --max-time 20 --proxy "$proxy" https://ifconfig.co; then
+		echo "Proxy looks [$proxy] alive! Rechecking with bigger file:"
+		./proxy.check.one $proxy
+		if [ $? -eq 0 ]; then
+			echo "Indeed proxy [$proxy] ALIVE!"
+			echo "$proxy" >> "${_file}.good"
+		else
+			echo "Proxy [$proxy] failed individual check! Skipping"
+		fi
+	fi
+}
+export -f proxess_proxy_candidate
+
 total=$(_READ "$1" | wc -l)
 # From http://free-proxy.cz/en/proxylist/country/all/socks5/ping/all
 _READ "${1}" \
-	| while read -re _proxy; do
-		proxy=$(proxy_parse "${_proxy}" "${2}")
-		[ $? -ne 0 ] && echo "Error parsing RAW proxy: ${_proxy}"
-		echo -e "\e[4;49;32m$((i++))\e[0m/\e[1;49;92m${total}\e[0m) [\e[1;49;95m${1}\e[0m] Checking [${proxy}]"
-		if curl -sS --no-progress-meter --connect-timeout 4 --max-time 20 --proxy "$proxy" https://ifconfig.co; then
-			echo "Proxy looks [$proxy] alive! Rechecking with bigger file:"
-			./proxy.check.one $proxy
-			if [ $? -eq 0 ]; then
-				echo "Indeed proxy [$proxy] ALIVE!"
-				echo "$proxy" >> "${1}.good"
-			else
-				echo "Proxy [$proxy] failed individual check! Skipping"
-			fi
-		fi
-	done
+	| parallel --bar -j250 proxess_proxy_candidate {} {#} ${total} "${1}" "${_type}"
 
-[ -f "${1}.good" ] && echo "Foud good proxies: " && cat "${1}.good"
+[ -f "${1}.good" ] && echo 'Found good proxies: ' && cat "${1}.good"
 
-echo "LIST [$1] ended"
+echo "LIST [$1] processing done"
