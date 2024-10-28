@@ -5,10 +5,10 @@
 set -ex
 
 ## https://spys.me/proxy.txt by link from https://github.com/proxy4parsing (https://github.com/proxy4parsing/proxy4parsing)
-curl -sS https://spys.me/proxy.txt > "${DIR}/.spys.me.http.txt.orig"
+curl -sS https://spys.me/proxy.txt | dos2unix > "${DIR}/.spys.me.http.txt.orig"
 
 sed -r '1,6d;$d;s/^([^ ]+).+$/http:\/\/\1/' "${DIR}/.spys.me.http.txt.orig" > "${DIR}/spys.me.http.txt"
 
-curl -sS https://spys.me/socks.txt > "${DIR}/.spys.me.socks.txt.orig"
+curl -sS https://spys.me/socks.txt | dos2unix > "${DIR}/.spys.me.socks.txt.orig"
 
 sed -r '1,6d;$d;s/^([^ ]+).+$/socks5:\/\/\1/' "${DIR}/.spys.me.socks.txt.orig" > "${DIR}/spys.me.socks.txt"
