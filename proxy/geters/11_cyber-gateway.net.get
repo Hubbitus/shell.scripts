@@ -30,6 +30,6 @@ class CybergetwayProxyListScrapper(ProxyListScrapper):
 
 		proxy_address = tds[0].text.split(':')
 
-		return Proxy(proxy_address[0], proxy_address[0], proxy_type)
+		return Proxy(proxy_address[0], proxy_address[1], proxy_type)
 
 CybergetwayProxyListScrapper('cyber-gateway.net', URLS)

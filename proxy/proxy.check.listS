@@ -4,8 +4,8 @@
 To run for all files in directory you may call it like: ./`basename $0` lists/*"}
 
 for file in "$@"; do
-	echo "Running proxy list check for ${file}"
-	./proxy.check.list "${file}" &
+	echo "Running proxy list check for list [${file}]"
+	./proxy.check.list "${file}"
 done
 
 wait
