@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+## List(s) from https://github.com/elliottophellia/proxylist
+## Description: "The Ultimate Checked Proxy List -
+## Update every 20 minutes
+## HTTP(S), SOCKS4, SOCKS5"
+
+: ${DIR=lists}
+
+set -e
+
+curl -sS https://raw.githubusercontent.com/elliottophellia/proxylist/refs/heads/master/results/pmix_checked.txt > "${DIR}/github.com_elliottophellia.all.txt"

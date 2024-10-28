@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+## List(s) from https://github.com/Zaeem20/FREE_PROXIES_LIST
+## Description: "A list of proxies which gets auto updated on every 10 minutes"
+
+
+: ${DIR=lists}
+
+set -e
+
+curl -sS https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/refs/heads/master/http.txt > "${DIR}/github.com_Zaeem20.http.txt"
+
+curl -sS https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/refs/heads/master/https.txt > "${DIR}/github.com_Zaeem20.https.txt"
+
+curl -sS https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/refs/heads/master/socks4.txt > "${DIR}/github.com_Zaeem20.socks4.txt"

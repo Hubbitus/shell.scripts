@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+
+## Lists from https://github.com/zevtyardt/proxy-list
+## Last updated 2 hours ago on moment of adding
+
+: ${DIR=lists}
+
+set -e
+
+curl -sS https://raw.githubusercontent.com/zevtyardt/proxy-list/refs/heads/main/http.txt > "${DIR}/github.com_zevtyardt.http.txt"
+
+curl -sS https://raw.githubusercontent.com/zevtyardt/proxy-list/refs/heads/main/socks4.txt > "${DIR}/github.com_zevtyardt.socks4.txt"
+
+curl -sS https://raw.githubusercontent.com/zevtyardt/proxy-list/refs/heads/main/socks5.txt > "${DIR}/github.com_zevtyardt.socks5.txt"

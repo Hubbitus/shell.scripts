@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+
+## List(s) from https://github.com/vakhov/fresh-proxy-list
+## On the moment of adding - updated 36 minutes ago
+
+
+: ${DIR=lists}
+
+set -e
+
+_tmp="${DIR}/.github.com_vakhov.all.json"
+
+curl -sS https://raw.githubusercontent.com/vakhov/fresh-proxy-list/refs/heads/master/proxylist.json > "${_tmp}"
+
+#cat "${_tmp}" | jq -r '.[] | select("1" == .http) | "http://\(.ip):\(.port)"' >> "${DIR}/github.com_vakhov.all.txt"
+
+cat "${_tmp}" | jq -r '.[] | select("1" == .ssl) | "https://\(.ip):\(.port)"' >> "${DIR}/github.com_vakhov.all.txt"
+
+cat "${_tmp}" | jq -r '.[] | select("1" == .socks4) | "socks4://\(.ip):\(.port)"' >> "${DIR}/github.com_vakhov.all.txt"
+
+cat "${_tmp}" | jq -r '.[] | select("1" == .socks5) | "socks5://\(.ip):\(.port)"' >> "${DIR}/github.com_vakhov.all.txt"

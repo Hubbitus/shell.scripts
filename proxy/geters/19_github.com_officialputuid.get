@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+## Lists from https://github.com/officialputuid/KangProxy
+## Description: "Free proxy list (HTTP, HTTPS, SOCKS4, SOCKS5) and auto-updates every 5 hours."
+
+: ${DIR=lists}
+
+set -e
+
+curl -sS https://raw.githubusercontent.com/officialputuid/KangProxy/KangProxy/xResults/RAW.txt > "${DIR}/github.com_officialputuid.all.txt"

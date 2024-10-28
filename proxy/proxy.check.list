@@ -60,7 +60,8 @@ function proxess_proxy_candidate(){
 	proxy=$(proxy_parse "${_proxy}" "${_type}")
 	[ $? -ne 0 ] && echo "Error parsing RAW proxy: ${_proxy}" && exit 2
 	echo -e "\e[4;49;32m${_i})\e[0m/\e[1;49;92m${_total}\e[0m) [\e[1;49;95m${_file}\e[0m] Checking [${proxy}]"
-	if curl -sS --no-progress-meter --connect-timeout 4 --max-time 20 --proxy "$proxy" https://ifconfig.co; then
+	if curl -sS --no-progress-meter --connect-timeout 15 --max-time 100 --proxy "$proxy" https://ifconfig.co; then
+		echo "$proxy" >> "${_file}.candidate"
 		echo "Proxy looks [$proxy] alive! Rechecking with bigger file:"
 		./proxy.check.one $proxy
 		if [ $? -eq 0 ]; then
