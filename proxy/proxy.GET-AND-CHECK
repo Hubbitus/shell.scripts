@@ -2,9 +2,10 @@
 
 export DIR="lists/$(date --iso-8601=s)"
 
-set -xe
+set -e
 mkdir -p "${DIR}"
 
 ./proxy.download.listS
-
 ./proxy.check.listS "${DIR}/"*
+
+echo "Total good: $(cat $DIR/*.good | wc -l), unique: $(cat $DIR/*.good | sort -u | wc -l)"
