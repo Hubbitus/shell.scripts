@@ -1,12 +1,13 @@
 #!/bin/bash
 
+set -euo pipefail
+
 : ${1?"Not enough arguments: `basename $0` file.{txt,json}
 TXT file name must be in form *.<type>.txt. There type one of http, socks4, socks5 and so on."}
 
 #" Logging
 _log_file="${1}.$(date --iso-8601=s).log"
 
-: "${CONNECTOR_CONFIG_FILE:=$(dirname $0)/_connectors/${CONNECTOR}.config.json}"
 source ~/bin/SHARED/examples/autologging-with-progress/4.pv-ts.stdbuf
 
 _type="$(echo ${1} | sed -r 's/(.+\.)?(.+?)\.(txt|json)/\2/')"
@@ -51,34 +52,36 @@ export -f _READ proxy_parse
 # $3 total proxies in list (for logging)
 # $4 processed file for logging and write ${4}.good
 # $5 proxy list type (default type of proxy)
-function proxess_proxy_candidate(){
+function process_proxy_candidate(){
 	local _proxy="${1}"
 	local _i="${2}"
 	local _total="${3}"
 	local _file="${4}"
 	local _type="${5}"
-	proxy=$(proxy_parse "${_proxy}" "${_type}")
+	local proxy=$(proxy_parse "${_proxy}" "${_type}")
 	[ $? -ne 0 ] && echo "Error parsing RAW proxy: ${_proxy}" && exit 2
 	echo -e "\e[4;49;32m${_i})\e[0m/\e[1;49;92m${_total}\e[0m) [\e[1;49;95m${_file}\e[0m] Checking [${proxy}]"
-	if curl -sS --no-progress-meter --connect-timeout 15 --max-time 100 --proxy "$proxy" https://ifconfig.co; then
-		echo "$proxy" >> "${_file}.candidate"
-		echo "Proxy looks [$proxy] alive! Rechecking with bigger file:"
-		./proxy.check.one $proxy
+	if curl -sS --no-progress-meter --connect-timeout 15 --max-time 100 --proxy "${proxy}" https://ifconfig.co; then
+		echo "${proxy}" >> "${_file}.candidate"
+		echo "Proxy looks [${proxy}] alive! Rechecking with bigger file:"
+		./proxy.check.one "${proxy}"
 		if [ $? -eq 0 ]; then
-			echo "Indeed proxy [$proxy] ALIVE!"
-			echo "$proxy" >> "${_file}.good"
+			echo "Indeed proxy [${proxy}] ALIVE!"
+			echo "${proxy}" >> "${_file}.good"
+			echo "${proxy} $(curl -sS --connect-timeout 15 --max-time 100 --proxy "${proxy}" https://ifconfig.co/json | jq . -c) ${_proxy}" >> "${_file}.good-with-info"
 		else
-			echo "Proxy [$proxy] failed individual check! Skipping"
+			echo "Proxy [${proxy}] failed individual check! Skipping"
 		fi
 	fi
 }
-export -f proxess_proxy_candidate
+export -f process_proxy_candidate
 
 total=$(_READ "$1" | wc -l)
 # From http://free-proxy.cz/en/proxylist/country/all/socks5/ping/all
 _READ "${1}" \
-	| parallel --bar -j250 proxess_proxy_candidate {} {#} ${total} "${1}" "${_type}"
+	| parallel --bar -j250 process_proxy_candidate {} {#} ${total} "${1}" "${_type}" 2>&6
+# Note: 2>&6 used to show progress of parallel in interractive run, but do not write it into log
 
 [ -f "${1}.good" ] && echo 'Found good proxies: ' && cat "${1}.good"
 
-echo "LIST [$1] processing done"
+echo "LIST [${1}] processing done"

@@ -6,19 +6,22 @@ set -e
 
 ## https://www.proxydocker.com/
 
-# Responce JSON contains types like 17, 127 for same HTTP prosies... And I have not found dictionary. Furthermore, there is looks like applied limit on 3 pages, so by each type it will downloading more.
+# Responce JSON contains types like 17, 127 for same HTTP proxies... And I have not found dictionary. Furthermore, there is looks like applied limit on 3 pages, so by each type it will downloading more.
 # So, requesting by types
+
+
+token=$(curl -sS --cookie-jar "${DIR}"/.proxydocker.com.cookies https://www.proxydocker.com/ | sed -rn 's/.+?name="_token".+content\s*=\s*"(.+)".+/\1/p') # "
 
 for type in http https socks socks4 socks5; do
 	echo "Process type[$type]"
 	for page in {01..10}; do
 		echo "	Downloading page [$page]"
-		OUT=$(curl --connect-timeout 7 --max-time 20 -sS -X POST --data "token=gD7AGpMrlWYzzX4B5a61pZJzhjDad5tDGxXgJY-tMjc&country=all&city=all&state=all&port=all&type=all&anonymity=all&need=all&page=${page}" \
-			--header "Cookie: AWSALB=b89qn9Hne86GmSyxchiZ3Tp0SenaJbDxcs1z9OVpkk2fOJT0vRZ5cI0MBOSgCYXGT5k8/eo7DNm42pUAipo7DT+cDeGuiYaW7rznGYhUi3Ri2hq0puhOjoihwSf3; AWSALBCORS=b89qn9Hne86GmSyxchiZ3Tp0SenaJbDxcs1z9OVpkk2fOJT0vRZ5cI0MBOSgCYXGT5k8/eo7DNm42pUAipo7DT+cDeGuiYaW7rznGYhUi3Ri2hq0puhOjoihwSf3; PHPSESSID=im5uafdof38jh4at4pktuhhcuh; TawkConnectionTime=0; twk_idm_key=HSHt7B_PCjFIq6JyPqxbq; twk_uuid_58fe3f9864f23d19a89aefbe=%7B%22uuid%22%3A%221.WryIF0bGC3lDRxx3vkKulfpcZBQ861tP7IMxzjlLBSyT3lJ9EMwRJmYSZCTqili8M3iTEMV9IbdD2iPWTvFIvjzDDSYxr4lYTQ5nmTCLOjkb947F53YczPl83%22%2C%22version%22%3A3%2C%22domain%22%3A%22proxydocker.com%22%2C%22ts%22%3A1730054502383%7D" \
+		OUT=$(curl --connect-timeout 7 --max-time 20 -sS -X POST --data "token=${token}&country=all&city=all&state=all&port=all&type=all&anonymity=all&need=all&page=${page}" \
+			--cookie "${DIR}"/.proxydocker.com.cookies \
 				https://www.proxydocker.com/en/api/proxylist/ \
 					| tee "${DIR}/.proxydocker.com.${type}.page${page}.${type}.json.orig")
 		length=$( echo "$OUT" | jq '.proxies | length' )
-		echo "$OUT" | jq -r ".proxies[] | \"${type}://\(.ip):\(.port)\"" >> "${DIR}/proxydocker.com.all.txt"
 		[[ 0 == $length ]] && echo "	Page [$page] empty. Exiting" && break
+		echo "$OUT" | jq -r ".proxies[] | \"${type}://\(.ip):\(.port)\"" >> "${DIR}/proxydocker.com.all.txt"
 	done
 done

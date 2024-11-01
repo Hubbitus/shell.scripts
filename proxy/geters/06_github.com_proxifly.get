@@ -5,4 +5,6 @@
 set -ex
 
 ## 6) https://github.com/proxifly/free-proxy-list
-curl https://raw.githubusercontent.com/proxifly/free-proxy-list/refs/heads/main/proxies/all/data.json > "${DIR}/proxifly.json"
+curl https://raw.githubusercontent.com/proxifly/free-proxy-list/refs/heads/main/proxies/all/data.json > "${DIR}/.proxifly.json"
+
+jq '.[].proxy' -r "${DIR}/.proxifly.json" > "${DIR}/proxifly.txt"

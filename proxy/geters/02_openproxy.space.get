@@ -8,12 +8,17 @@ set -ex
 curl -sS https://openproxy.space/list/socks4 \
 	| grep -oP '(?<=data:)\[\{code.+}\](?=,added:)' \
 		| sed -r 's/(code|added|items):/"\1":/g;s/(active|count):(\w+\b)/"\1": "\2"/g' \
-			> "${DIR}/openproxy.space.socks4.json"
+			> "${DIR}/.openproxy.space.socks4.json"
+jq '.[].items[] | "socks4://\(.)"' -r "${DIR}/.openproxy.space.socks4.json" > "${DIR}/openproxy.space.all.txt"
+
 curl -sS https://openproxy.space/list/socks5 \
 	| grep -oP '(?<=data:)\[\{code.+}\](?=,added:)' \
 		| sed -r 's/(code|added|items):/"\1":/g;s/(active|count):(\w+\b)/"\1": "\2"/g' \
-			> "${DIR}/openproxy.space.socks5.json"
+			> "${DIR}/.openproxy.space.socks5.json"
+jq '.[].items[] | "socks5://\(.)"' -r "${DIR}/.openproxy.space.socks5.json" >> "${DIR}/openproxy.space.all.txt"
+
 curl -sS https://openproxy.space/list/http \
 	| grep -oP '(?<=data:)\[\{code.+}\](?=,added:)' \
 		| sed -r 's/(code|added|items):/"\1":/g;s/(active|count):(\w+\b)/"\1": "\2"/g' \
-			> "${DIR}/openproxy.space.http.json"
+			> "${DIR}/.openproxy.space.http.json"
+jq '.[].items[] | "http://\(.)"' -r "${DIR}/.openproxy.space.http.json" >> "${DIR}/openproxy.space.all.txt"

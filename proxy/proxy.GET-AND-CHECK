@@ -1,11 +1,17 @@
 #!/usr/bin/bash
 
-export DIR="lists/$(date --iso-8601=s)"
+: ${DIR:="lists/$(date --iso-8601=s)"}
+export DIR
 
 set -e
 mkdir -p "${DIR}"
 
 ./proxy.download.listS
-./proxy.check.listS "${DIR}/"*
+cat "${DIR}"/*.txt | sort -u > "${DIR}"/@all.txt
+# Symlink to just see it in top of directory listing :)
+ln -s @all.txt "${DIR}"/.@all.txt
 
-echo "Total good: $(cat $DIR/*.good | wc -l), unique: $(cat $DIR/*.good | sort -u | wc -l)"
+echo "Total proxies to check: $(wc -l ${DIR}/@all.txt)"
+./proxy.check.list "${DIR}/@all.txt"
+echo "Total proxies [$(wc -l ${DIR}/@all.txt)], good found: [$(wc -l ${DIR}/@all.txt.good)]"
+ln -s @all.txt.good "${DIR}"/.@all.txt.good

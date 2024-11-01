@@ -9,14 +9,25 @@
 
 set -e
 
-curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/http.txt > "${DIR}/github.com_MuRongPIG.http.txt"
+curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/http.txt > "${DIR}/.github.com_MuRongPIG.http.txt"
+sed 's/^/http:\/\//' "${DIR}/.github.com_MuRongPIG.http.txt" > "${DIR}/github.com_MuRongPIG.all.txt"
+echo >> "${DIR}/github.com_MuRongPIG.all.txt"
 
-curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/http_checked.txt > "${DIR}/github.com_MuRongPIG.checked.http.txt"
+curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/http_checked.txt > "${DIR}/.github.com_MuRongPIG.checked.http.txt"
+sed 's/^/http:\/\//' "${DIR}/.github.com_MuRongPIG.checked.http.txt" >> "${DIR}/github.com_MuRongPIG.all.txt"
+echo >> "${DIR}/github.com_MuRongPIG.all.txt"
 
-curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/socks4.txt > "${DIR}/github.com_MuRongPIG.socks4.txt"
+curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/socks4.txt > "${DIR}/.github.com_MuRongPIG.socks4.txt"
+sed 's/^/socks4:\/\//' "${DIR}/.github.com_MuRongPIG.socks4.txt" >> "${DIR}/github.com_MuRongPIG.all.txt"
+echo >> "${DIR}/github.com_MuRongPIG.all.txt"
 
-curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/socks4_checked.txt > "${DIR}/github.com_MuRongPIG.checked.socks4.txt"
+curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/socks4_checked.txt > "${DIR}/.github.com_MuRongPIG.checked.socks4.txt"
+sed 's/^/socks4:\/\//' "${DIR}/.github.com_MuRongPIG.checked.socks4.txt" >> "${DIR}/github.com_MuRongPIG.all.txt"
+echo >> "${DIR}/github.com_MuRongPIG.all.txt"
 
-curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/socks5.txt > "${DIR}/github.com_MuRongPIG.socks5.txt"
+curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/socks5.txt > "${DIR}/.github.com_MuRongPIG.socks5.txt"
+sed 's/^/socks5:\/\//' "${DIR}/.github.com_MuRongPIG.socks5.txt" >> "${DIR}/github.com_MuRongPIG.all.txt"
+echo >> "${DIR}/github.com_MuRongPIG.all.txt"
 
-curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/socks5_checked.txt > "${DIR}/github.com_MuRongPIG.checked.socks5.txt"
+curl -sS https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/socks5_checked.txt > "${DIR}/.github.com_MuRongPIG.checked.socks5.txt"
+sed 's/^/socks5:\/\//' "${DIR}/.github.com_MuRongPIG.checked.socks5.txt" >> "${DIR}/github.com_MuRongPIG.all.txt"

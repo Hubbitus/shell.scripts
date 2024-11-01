@@ -12,9 +12,9 @@ _tmp="${DIR}/.github.com_vakhov.all.json"
 
 curl -sS https://raw.githubusercontent.com/vakhov/fresh-proxy-list/refs/heads/master/proxylist.json > "${_tmp}"
 
-#cat "${_tmp}" | jq -r '.[] | select("1" == .http) | "http://\(.ip):\(.port)"' >> "${DIR}/github.com_vakhov.all.txt"
+cat "${_tmp}" | jq -r '.[] | select("1" == .http)   | "http://\(.ip):\(.port)"'    > "${DIR}/github.com_vakhov.all.txt"
 
-cat "${_tmp}" | jq -r '.[] | select("1" == .ssl) | "https://\(.ip):\(.port)"' >> "${DIR}/github.com_vakhov.all.txt"
+cat "${_tmp}" | jq -r '.[] | select("1" == .ssl)    | "https://\(.ip):\(.port)"'  >> "${DIR}/github.com_vakhov.all.txt"
 
 cat "${_tmp}" | jq -r '.[] | select("1" == .socks4) | "socks4://\(.ip):\(.port)"' >> "${DIR}/github.com_vakhov.all.txt"
 

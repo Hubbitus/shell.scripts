@@ -8,8 +8,11 @@
 
 set -e
 
-curl -sS https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/refs/heads/master/http.txt > "${DIR}/github.com_Zaeem20.http.txt"
+curl -sS https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/refs/heads/master/http.txt > "${DIR}/.github.com_Zaeem20.http.txt"
+sed 's/^/http:\/\//' "${DIR}/.github.com_Zaeem20.http.txt" > "${DIR}/github.com_Zaeem20.all.txt"
 
-curl -sS https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/refs/heads/master/https.txt > "${DIR}/github.com_Zaeem20.https.txt"
+curl -sS https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/refs/heads/master/https.txt > "${DIR}/.github.com_Zaeem20.https.txt"
+sed 's/^/https:\/\//' "${DIR}/.github.com_Zaeem20.https.txt" >> "${DIR}/github.com_Zaeem20.all.txt"
 
-curl -sS https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/refs/heads/master/socks4.txt > "${DIR}/github.com_Zaeem20.socks4.txt"
+curl -sS https://raw.githubusercontent.com/Zaeem20/FREE_PROXIES_LIST/refs/heads/master/socks4.txt > "${DIR}/.github.com_Zaeem20.socks4.txt"
+sed 's/^/socks4:\/\//' "${DIR}/.github.com_Zaeem20.socks4.txt" >> "${DIR}/github.com_Zaeem20.all.txt"

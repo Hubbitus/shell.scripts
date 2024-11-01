@@ -7,4 +7,6 @@ set -ex
 ## 5) https://gologin.com/free-proxy/ (https://geoxy.io/)
 curl -sS 'https://geoxy.io/proxies?count=99999' \
 	-H 'Authorization: BgPXfhUc8CAhK7wGOqzqz9m77j3sH7' \
-		> "${DIR}/geoxy.io.json"
+		> "${DIR}/.geoxy.io.json"
+
+jq '.[] | "\(.protocols[0])://\(.address)"' -r "${DIR}/.geoxy.io.json" > "${DIR}/geoxy.io.all.txt"
