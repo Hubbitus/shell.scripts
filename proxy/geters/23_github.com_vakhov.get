@@ -3,6 +3,8 @@
 ## List(s) from https://github.com/vakhov/fresh-proxy-list
 ## On the moment of adding - updated 36 minutes ago
 
+## Was dead. I Filled issue: https://github.com/vakhov/fresh-proxy-list/issues/2
+## Looks like work now
 
 : ${DIR=lists}
 
