@@ -1,0 +1,28 @@
+#!/usr/bin/bash
+
+## List(s) from https://github.com/sunny9577/proxy-scraper
+## "⭐A proxy scraper made using Protractor | Proxy list Updates every three hour 🔥 "
+## On the moment of adding - updated 1 hour ago
+
+## [Embedded sources](https://raw.githubusercontent.com/sunny9577/proxy-scraper/refs/heads/master/spec.js):
+# - https://www.proxynova.com/proxy-server-list/
+# - https://us-proxy.org/#list
+# - https://www.socks-proxy.net/
+# - https://www.sslproxies.org/
+# - https://openproxy.space/
+# - https://www.freeproxy.world/
+
+: ${DIR=lists}
+
+set -e
+
+_FILE_PATTERN=github.com_sunny9577
+_tmp="${DIR}/.${_FILE_PATTERN}.json"
+_DEST="${DIR}/${_FILE_PATTERN}.all.txt"
+
+#curl -sS "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/refs/heads/master/${_type}.txt" > "${DIR}/.${_FILE_PATTERN}.${_type}.txt"
+#sed "s/^/${_type}:\/\//" "${DIR}/.${_FILE_PATTERN}.${_type}.txt" >> "${DIR}/${_FILE_PATTERN}.all.txt"
+
+curl -sS https://raw.githubusercontent.com/sunny9577/proxy-scraper/refs/heads/master/proxies.json > "${_tmp}"
+
+cat "${_tmp}" | jq -r '.[] | "\(.type | ascii_downcase | gsub("(http/https|unknown)";"http"))://\(.ip):\(.port)"'    > "${_DEST}"
