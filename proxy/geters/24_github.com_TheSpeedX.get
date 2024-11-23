@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+
+## List(s) from https://github.com/TheSpeedX/PROXY-List
+## "Get PROXY List that gets updated everyday "
+
+: ${DIR=lists}
+
+set -e
+
+_FILE_PATTERN=github.com_TheSpeedX
+
+for _type in http socks4 socks5; do
+	echo "Process type [${_type}]"
+	curl -sS "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/refs/heads/master/${_type}.txt" > "${DIR}/.${_FILE_PATTERN}.${_type}.txt"
+	sed "s/^/${_type}:\/\//" "${DIR}/.${_FILE_PATTERN}.${_type}.txt" >> "${DIR}/${_FILE_PATTERN}.all.txt"
+done
