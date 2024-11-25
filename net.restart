@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+set -ex
+
+echo 'UnLoad modules:'
+sudo modprobe -vr rtw88_8822ce rtw88_8822c rtw88_pci rtw88_core mac80211 cfg80211
+sleep 1
+
+echo 'Load modules:'
+sudo modprobe -v rtw88_8822ce
+
+sudo systemctl restart NetworkManager
+sudo systemctl restart wpa_supplicant.service
+sleep 3
+nmcli connection up Hubbitus-home
