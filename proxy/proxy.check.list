@@ -12,6 +12,8 @@ _log_file="${1}.$(date --iso-8601=s).log"
 : ${PROXY_CHECK_MAX_TIME_SEC:=60}
 : ${PROXY_CHECK_SCRIPT:="$(dirname $(realpath $0))/proxy.check.one"}
 : ${PROXY_CHECK_SCRIPT_INFO:="$(dirname $(realpath $0))/proxy.check.one.info"}
+# Amount of parralel proxies check at once. 250 looks like reasonable maximum.
+: ${PROXY_CHECK_PARALLELIZM:=150}
 
 source ~/bin/SHARED/examples/autologging-with-progress/4.pv-ts.stdbuf
 
@@ -83,8 +85,7 @@ function process_proxy_candidate(){
 			echo "Indeed proxy [${proxy}] ALIVE!"
 			echo "${proxy}" >> "${_file}.good"
 			if [ -x "${_proxy_check_script_info}" ]; then
-				local _proxy_info="$(${_proxy_check_script_info} "${proxy}")"
-				echo "${_proxy_info}" >> "${_file}.good-with-info"
+				${_proxy_check_script_info} "${proxy}" >> "${_file}.good-with-info"
 			fi
 		else
 			echo "Proxy [${proxy}] failed individual check! Skipping"
@@ -95,7 +96,7 @@ export -f process_proxy_candidate
 
 total=$(_READ "$1" | wc -l)
 _READ "${1}" \
-	| parallel --bar -j250 process_proxy_candidate {} {#} ${total} "${1}" "${_type}" "${PROXY_CHECK_SCRIPT}" "${PROXY_CHECK_SCRIPT_INFO}" "${PROXY_CONNECT_TIMEOUT_SEC}" "${PROXY_CHECK_MAX_TIME_SEC}" 2>&6
+	| parallel --bar -j${PROXY_CHECK_PARALLELIZM} process_proxy_candidate {} {#} ${total} "${1}" "${_type}" "${PROXY_CHECK_SCRIPT}" "${PROXY_CHECK_SCRIPT_INFO}" "${PROXY_CONNECT_TIMEOUT_SEC}" "${PROXY_CHECK_MAX_TIME_SEC}" 2>&6
 # Note: 2>&6 used to show progress of parallel in interractive run, but do not write it into log
 
 [ -f "${1}.good" ] && echo 'Found good proxies: ' && cat "${1}.good"

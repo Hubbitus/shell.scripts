@@ -2,9 +2,10 @@
 
 : ${1?"Not enough arguments: `basename $0` protocol://ip:port"}
 
+set -x
 set -uo pipefail
 
-: ${PROXY_CONNECT_TIMEOUT_SEC:=15}
+: ${PROXY_CONNECT_TIMEOUT_SEC:=5}
 : ${PROXY_CHECK_MAX_TIME_SEC:=40}
 
 proxy="${1}"
@@ -13,14 +14,15 @@ proxy="${1}"
 STATUS="{\"proxy\": \"${proxy}\""
 
 # 2)) Is access to JetBrains available?
-curl -sSf -L --connect-timeout ${PROXY_CONNECT_TIMEOUT_SEC} --max-time ${PROXY_CHECK_MAX_TIME_SEC} --proxy "${proxy}" 'https://plugins.jetbrains.com/pluginManager?id=com.redhat.devtools.intellij.quarkus&build=IC-243.22562.218&uuid=2024-04-10_f73c48db-4a13-4225-990f-9cfd8213da6d&updatedFrom' | grep -q 'We are sorry, but we are currently unable to provide our products or services to you due to export control regulations'
+curl -sSf -L --retry 2 --retry-all-errors --connect-timeout ${PROXY_CONNECT_TIMEOUT_SEC} --max-time ${PROXY_CHECK_MAX_TIME_SEC} --proxy "${proxy}" 'https://plugins.jetbrains.com/pluginManager?id=com.redhat.devtools.intellij.quarkus&build=IC-243.22562.218&uuid=2024-04-10_f73c48db-4a13-4225-990f-9cfd8213da6d&updatedFrom' | grep -q 'We are sorry, but we are currently unable to provide our products or services to you due to export control regulations'
 STATUS="${STATUS}, \"access.JB\": \"$( [[ 0 != ${PIPESTATUS[0]} || 0 == $? ]] && echo no || echo yes )\""
 
 # 3)) Is access to GigaIde marketplace available?
-curl -sSf --connect-timeout ${PROXY_CONNECT_TIMEOUT_SEC} --max-time ${PROXY_CHECK_MAX_TIME_SEC} --proxy "${proxy}" 'https://gigacode.ru/jarvis/updatePlugins.xml' >/dev/null
+curl -sSf --retry 2 --retry-all-errors --connect-timeout ${PROXY_CONNECT_TIMEOUT_SEC} --max-time ${PROXY_CHECK_MAX_TIME_SEC} --proxy "${proxy}" 'https://gigacode.ru/jarvis/updatePlugins.xml' >/dev/null
 STATUS="${STATUS}, \"access.GigaCode\": \"$([ 0 -eq $? ] && echo yes || echo no)\""
 
 # 4)) Generic infor like county etc...
-STATUS="${STATUS}, \"info\": $(curl -sSf --retry 5 --retry-all-errors --connect-timeout ${PROXY_CONNECT_TIMEOUT_SEC} --max-time ${PROXY_CHECK_MAX_TIME_SEC} --proxy "${proxy}" https://ifconfig.co/json | jq . -c)"
+_info="$(curl -sSf --retry 2 --retry-all-errors --connect-timeout ${PROXY_CONNECT_TIMEOUT_SEC} --max-time ${PROXY_CHECK_MAX_TIME_SEC} --proxy "${proxy}" https://ifconfig.co/json | jq . -c)"
+STATUS="${STATUS}, \"info\": ${_info:-{\"error\": true\}}"
 
 echo "${STATUS}}"
