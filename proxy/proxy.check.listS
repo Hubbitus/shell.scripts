@@ -1,7 +1,8 @@
 #!/bin/bash
 
 : ${1?"Not enough arguments: ./`basename $0` file [fiel2, file3...]
-To run for all files in directory you may call it like: ./`basename $0` lists/*"}
+To run for all files in directory you may call it like: ./`basename $0` lists/*
+DEPRECATED. If you have many files with proxies it much more optimal to combine it into single list, drop duplicates and process in parralel as it done in new version of 'proxy.check.list' script. Please look to main script 'proxy.GET-AND-CHECK' for reference!"}
 
 for file in "$@"; do
 	echo "Running proxy list check for list [${file}]"

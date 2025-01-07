@@ -8,6 +8,11 @@ TXT file name must be in form *.<type>.txt. There type one of http, socks4, sock
 #" Logging
 _log_file="${1}.$(date --iso-8601=s).log"
 
+: ${PROXY_CONNECT_TIMEOUT_SEC:=15}
+: ${PROXY_CHECK_MAX_TIME_SEC:=60}
+: ${PROXY_CHECK_SCRIPT:="$(dirname $(realpath $0))/proxy.check.one"}
+: ${PROXY_CHECK_SCRIPT_INFO:="$(dirname $(realpath $0))/proxy.check.one.info"}
+
 source ~/bin/SHARED/examples/autologging-with-progress/4.pv-ts.stdbuf
 
 _type="$(echo ${1} | sed -r 's/(.+\.)?(.+?)\.(txt|json)/\2/')"
@@ -52,23 +57,35 @@ export -f _READ proxy_parse
 # $3 total proxies in list (for logging)
 # $4 processed file for logging and write ${4}.good
 # $5 proxy list type (default type of proxy)
+# $6 proxy detail check script (PROXY_CHECK_SCRIPT)
+# $7 proxy get addon info (PROXY_CHECK_SCRIPT_INFO)
+# $8 proxy connect timeout in seconds (PROXY_CONNECT_TIMEOUT_SEC)
+# $9 proxy max time try to gen result in seconds (PROXY_CHECK_MAX_TIME_SEC)
 function process_proxy_candidate(){
 	local _proxy="${1}"
 	local _i="${2}"
 	local _total="${3}"
 	local _file="${4}"
 	local _type="${5}"
+	local _proxy_check_script="${6}"
+	local _proxy_check_script_info="${7}"
+	local _proxy_connect_timeout_sec="${8}"
+	local _proxy_check_max_time_sec="${9}"
+
 	local proxy=$(proxy_parse "${_proxy}" "${_type}")
 	[ $? -ne 0 ] && echo "Error parsing RAW proxy: ${_proxy}" && exit 2
 	echo -e "\e[4;49;32m${_i})\e[0m/\e[1;49;92m${_total}\e[0m) [\e[1;49;95m${_file}\e[0m] Checking [${proxy}]"
-	if curl -sSf --no-progress-meter --connect-timeout 15 --max-time 100 --proxy "${proxy}" https://ifconfig.co; then
+	if curl -sSf --no-progress-meter --connect-timeout ${_proxy_connect_timeout_sec} --max-time ${_proxy_check_max_time_sec} --proxy "${proxy}" https://ifconfig.co; then
 		echo "${proxy}" >> "${_file}.candidate"
 		echo "Proxy looks [${proxy}] alive! Rechecking with bigger file:"
-		./proxy.check.one "${proxy}"
+		"${_proxy_check_script}" "${proxy}"
 		if [ $? -eq 0 ]; then
 			echo "Indeed proxy [${proxy}] ALIVE!"
 			echo "${proxy}" >> "${_file}.good"
-			echo "${proxy} $(curl -sSf --retry 5 --retry-all-errors --connect-timeout 15 --max-time 100 --proxy "${proxy}" https://ifconfig.co/json | jq . -c) ${_proxy}" >> "${_file}.good-with-info"
+			if [ -x "${_proxy_check_script_info}" ]; then
+				local _proxy_info="$(${_proxy_check_script_info} "${proxy}")"
+				echo "${_proxy_info}" >> "${_file}.good-with-info"
+			fi
 		else
 			echo "Proxy [${proxy}] failed individual check! Skipping"
 		fi
@@ -77,9 +94,8 @@ function process_proxy_candidate(){
 export -f process_proxy_candidate
 
 total=$(_READ "$1" | wc -l)
-# From http://free-proxy.cz/en/proxylist/country/all/socks5/ping/all
 _READ "${1}" \
-	| parallel --bar -j250 process_proxy_candidate {} {#} ${total} "${1}" "${_type}" 2>&6
+	| parallel --bar -j250 process_proxy_candidate {} {#} ${total} "${1}" "${_type}" "${PROXY_CHECK_SCRIPT}" "${PROXY_CHECK_SCRIPT_INFO}" "${PROXY_CONNECT_TIMEOUT_SEC}" "${PROXY_CHECK_MAX_TIME_SEC}" 2>&6
 # Note: 2>&6 used to show progress of parallel in interractive run, but do not write it into log
 
 [ -f "${1}.good" ] && echo 'Found good proxies: ' && cat "${1}.good"

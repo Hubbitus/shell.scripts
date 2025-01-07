@@ -7,7 +7,7 @@ set -euo pipefail
 #_MD5=$(curl --connect-timeout 7 --max-time 200 https://raw.githubusercontent.com/BitDoctor/speed-test-file/refs/heads/master/5mb.txt -L | md5sum -)
 _MD5='7d7a6dd7e37454c6a82992eabe7a4613  -'
 
-curl -sS --connect-timeout 15 --max-time 100 --proxy "${1}" https://ifconfig.co/json | jq '{"ip": .ip, "country": .country, "city": .city, "region_name": .region_name, "time_zone": .time_zone, "hostname": .hostname }'
+curl -sSf --connect-timeout 15 --max-time 100 --proxy "${1}" https://ifconfig.co/json | jq '{"ip": .ip, "country": .country, "city": .city, "region_name": .region_name, "time_zone": .time_zone, "hostname": .hostname }'
 _MD5_=$(curl --connect-timeout 30 --max-time 200 --retry 3 --proxy "${1}" https://raw.githubusercontent.com/BitDoctor/speed-test-file/refs/heads/master/5mb.txt -L | md5sum -)
 
 if [[ "${_MD5_}" != "${_MD5}" ]]; then
