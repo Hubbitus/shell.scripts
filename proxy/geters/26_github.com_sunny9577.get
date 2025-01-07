@@ -20,9 +20,9 @@ _FILE_PATTERN=github.com_sunny9577
 _tmp="${DIR}/.${_FILE_PATTERN}.json"
 _DEST="${DIR}/${_FILE_PATTERN}.all.txt"
 
-#curl -sS "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/refs/heads/master/${_type}.txt" > "${DIR}/.${_FILE_PATTERN}.${_type}.txt"
+#curl -sSf "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/refs/heads/master/${_type}.txt" > "${DIR}/.${_FILE_PATTERN}.${_type}.txt"
 #sed "s/^/${_type}:\/\//" "${DIR}/.${_FILE_PATTERN}.${_type}.txt" >> "${DIR}/${_FILE_PATTERN}.all.txt"
 
-curl -sS https://raw.githubusercontent.com/sunny9577/proxy-scraper/refs/heads/master/proxies.json > "${_tmp}"
+curl -sSf https://raw.githubusercontent.com/sunny9577/proxy-scraper/refs/heads/master/proxies.json > "${_tmp}"
 
 cat "${_tmp}" | jq -r '.[] | "\(.type | ascii_downcase | gsub("(http/https|unknown)";"http"))://\(.ip):\(.port)"'    > "${_DEST}"

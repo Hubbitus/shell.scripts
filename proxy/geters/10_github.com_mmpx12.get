@@ -7,4 +7,4 @@ set -ex
 ## https://github.com/mmpx12/proxy-list
 ## Updates once in a day?
 
-curl -sS https://raw.githubusercontent.com/mmpx12/proxy-list/refs/heads/master/proxies.txt | dos2unix > "${DIR}/github.com_mmpx12.txt"
+curl -sSf https://raw.githubusercontent.com/mmpx12/proxy-list/refs/heads/master/proxies.txt | dos2unix > "${DIR}/github.com_mmpx12.txt"

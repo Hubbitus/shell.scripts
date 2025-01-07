@@ -10,5 +10,5 @@ set -e
 _FILE_PATTERN=github.com_TheSpeedX
 _type=socks5
 
-curl -sS "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/refs/heads/master/${_type}.txt" > "${DIR}/.${_FILE_PATTERN}.${_type}.txt"
+curl -sSf "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/refs/heads/master/${_type}.txt" > "${DIR}/.${_FILE_PATTERN}.${_type}.txt"
 sed "s/^/${_type}:\/\//" "${DIR}/.${_FILE_PATTERN}.${_type}.txt" >> "${DIR}/${_FILE_PATTERN}.all.txt"

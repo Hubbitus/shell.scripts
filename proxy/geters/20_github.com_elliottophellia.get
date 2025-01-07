@@ -9,4 +9,4 @@
 
 set -e
 
-curl -sS https://raw.githubusercontent.com/elliottophellia/proxylist/refs/heads/master/results/pmix_checked.txt > "${DIR}/github.com_elliottophellia.all.txt"
+curl -sSf https://raw.githubusercontent.com/elliottophellia/proxylist/refs/heads/master/results/pmix_checked.txt > "${DIR}/github.com_elliottophellia.all.txt"

@@ -8,4 +8,4 @@
 
 set -e
 
-curl -sS https://raw.githubusercontent.com/monosans/proxy-list/refs/heads/main/proxies/all.txt > "${DIR}/github.com_monosans.all.txt"
+curl -sSf https://raw.githubusercontent.com/monosans/proxy-list/refs/heads/main/proxies/all.txt > "${DIR}/github.com_monosans.all.txt"

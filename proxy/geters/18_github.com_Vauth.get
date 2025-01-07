@@ -7,4 +7,4 @@
 
 set -e
 
-curl -sS https://raw.githubusercontent.com/Vauth/proxy/refs/heads/main/proxy.txt > "${DIR}/github.com_Vauth.http.txt"
+curl -sSf https://raw.githubusercontent.com/Vauth/proxy/refs/heads/main/proxy.txt > "${DIR}/github.com_Vauth.http.txt"

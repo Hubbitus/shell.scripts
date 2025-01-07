@@ -10,13 +10,13 @@ set -e
 # So, requesting by types
 
 
-token=$(curl -sS --cookie-jar "${DIR}"/.proxydocker.com.cookies https://www.proxydocker.com/ | sed -rn 's/.+?name="_token".+content\s*=\s*"(.+)".+/\1/p') # "
+token=$(curl -sSf --cookie-jar "${DIR}"/.proxydocker.com.cookies https://www.proxydocker.com/ | sed -rn 's/.+?name="_token".+content\s*=\s*"(.+)".+/\1/p') # "
 
 for type in http https socks socks4 socks5; do
 	echo "Process type[$type]"
 	for page in {01..10}; do
 		echo "	Downloading page [$page]"
-		OUT=$(curl --connect-timeout 7 --max-time 20 -sS -X POST --data "token=${token}&country=all&city=all&state=all&port=all&type=all&anonymity=all&need=all&page=${page}" \
+		OUT=$(curl --connect-timeout 7 --max-time 20 -sSf -X POST --data "token=${token}&country=all&city=all&state=all&port=all&type=all&anonymity=all&need=all&page=${page}" \
 			--cookie "${DIR}"/.proxydocker.com.cookies \
 				https://www.proxydocker.com/en/api/proxylist/ \
 					| tee "${DIR}/.proxydocker.com.${type}.page${page}.${type}.json.orig")

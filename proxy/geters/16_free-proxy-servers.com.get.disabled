@@ -7,5 +7,5 @@
 
 set -e
 
-curl -sS https://www.free-proxy-servers.com/wp-content/uploads/proxy/proxy.json > "${DIR}/.free-proxy-servers.com.json.orig"
+curl -sSf https://www.free-proxy-servers.com/wp-content/uploads/proxy/proxy.json > "${DIR}/.free-proxy-servers.com.json.orig"
 

@@ -8,11 +8,11 @@ set -ex
 ## Lists links to https://github.com/roosterkid/openproxylist
 ## Updates once in a hour?
 
-curl -sS https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/HTTPS_RAW.txt > "${DIR}/.openproxylist.com.http.txt.orig"
+curl -sSf https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/HTTPS_RAW.txt > "${DIR}/.openproxylist.com.http.txt.orig"
 sed -r 's/^(.+)$/http:\/\/\1/' "${DIR}/.openproxylist.com.http.txt.orig" > "${DIR}/openproxylist.com.http.txt"
 
-curl -sS https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/SOCKS4_RAW.txt > "${DIR}/.openproxylist.com.socks4.txt.orig"
+curl -sSf https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/SOCKS4_RAW.txt > "${DIR}/.openproxylist.com.socks4.txt.orig"
 sed -r 's/^(.+)$/socks4:\/\/\1/' "${DIR}/.openproxylist.com.socks4.txt.orig" > "${DIR}/openproxylist.com.socks4.txt"
 
-curl -sS https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/SOCKS5_RAW.txt > "${DIR}/.openproxylist.com.socks5.txt.orig"
+curl -sSf https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/SOCKS5_RAW.txt > "${DIR}/.openproxylist.com.socks5.txt.orig"
 sed -r 's/^(.+)$/socks5:\/\/\1/' "${DIR}/.openproxylist.com.socks5.txt.orig" > "${DIR}/openproxylist.com.socks5.txt"
