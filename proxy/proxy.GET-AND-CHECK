@@ -7,7 +7,7 @@ set -e
 mkdir -p "${DIR}"
 
 ./proxy.download.listS
-cat "${DIR}"/*.txt | sort -u > "${DIR}"/@all.txt
+cat "${DIR}"/*.txt | sort -Vu > "${DIR}"/@all.txt
 # Symlink to just see it in top of directory listing :)
 ln -s @all.txt "${DIR}"/.@all.txt
 
