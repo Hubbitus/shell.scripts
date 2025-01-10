@@ -6,12 +6,12 @@ export DIR
 set -e
 mkdir -p "${DIR}"
 
-./proxy.download.listS
+$(dirname $(realpath $0))/proxy.download.listS
 cat "${DIR}"/*.txt | sort -Vu > "${DIR}"/@all.txt
 # Symlink to just see it in top of directory listing :)
 ln -s @all.txt "${DIR}"/.@all.txt
 
 echo "Total proxies to check: $(wc -l ${DIR}/@all.txt)"
-./proxy.check.list "${DIR}/@all.txt"
+$(dirname $(realpath $0))/proxy.check.list "${DIR}/@all.txt"
 echo "Total proxies [$(wc -l ${DIR}/@all.txt)], good found: [$(wc -l ${DIR}/@all.txt.good)]"
 ln -s @all.txt.good "${DIR}"/.@all.txt.good

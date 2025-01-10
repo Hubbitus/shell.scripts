@@ -10,8 +10,8 @@ set -e
 
 _FILE_PATTERN=github.com_zloi-user_hideip.me
 
-for _type in http socks4 socks5; do
+for _type in http https socks4 socks5; do
 	echo "Process type [${_type}]"
-	curl -sSf "https://raw.githubusercontent.com/zloi-user/hideip.me/main/${_type}.txt" > "${DIR}/.${_FILE_PATTERN}.${_type}.txt"
+	curl -sSf "https://raw.githubusercontent.com/zloi-user/hideip.me/refs/heads/master/${_type}.txt" > "${DIR}/.${_FILE_PATTERN}.${_type}.txt"
 	sed "s/^/${_type}:\/\//" "${DIR}/.${_FILE_PATTERN}.${_type}.txt" | cut -d: -f1-3 >> "${DIR}/${_FILE_PATTERN}.all.txt"
 done

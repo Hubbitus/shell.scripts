@@ -1,4 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/env -S sh -c 'exec "$(dirname $0)/venv/bin/python3" "$0" "$@"'
+# Shebang for relative venv python interpreter! See https://stackoverflow.com/questions/20095351/shebang-use-interpreter-relative-to-the-script-path/33225909#33225909
+
+# # !venv/bin/python3
 
 """
 Lists from https://cyber-gateway.net/get-proxy/free-proxy
