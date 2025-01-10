@@ -1,0 +1,20 @@
+#!/usr/bin/bash
+
+: ${DIR=lists}
+
+set -ex
+
+## https://proxybros.com/free-proxy-list/
+## First POST required before GET (Tuk-Tuk)!
+curl --connect-timeout 20 --max-time 40 -sSf -X POST --data 'action=nrproxyexport&type=2&lang=en&path=%2Ffree-proxy-list%2F' \
+	--header 'Cookie: pll_language=en; PHPSESSID=71e9e7593aca94c4667224441437d893; prli_click_15=go%2Fsmartproxy; prli_visitor=671aa3aae55cf' \
+		https://proxybros.com/wp-admin/admin-ajax.php
+
+curl --connect-timeout 20 --max-time 40 -sSf \
+	--header 'Cookie: pll_language=en; PHPSESSID=71e9e7593aca94c4667224441437d893' \
+		https://proxybros.com/wp-json/proxy_list/download \
+			> "${DIR}/.proxybros.com.json"
+
+jq '.[] | "\(.Type | ascii_downcase)://\(.IP_Address):\(.Port)"' -r "${DIR}/.proxybros.com.json" > "${DIR}/proxybros.com.all.txt"
+
+#cat res.txt | sed -r 's/\r//g;s/^(.+?): (.+?)$/"\1": "\2",/g;s/^("Last Checked".+),$/\1/g;1s/^/[{\n/;s/^$/},{/g;$a}]' > ttt.json
