@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+
+# This is workaround of problem what command `react-native run-android` will hang forewer!
+# Proofs:
+# * https://stackoverflow.com/questions/60579350/command-react-native-run-android-hangs-at-info-starting-js-server
+# * https://stackoverflow.com/questions/57313661/stuck-on-info-starting-js-server
+#
+# As convenient workaround, if you use yakuake to run will be this script wrapper which runs metro server in separate tab with name "RN: metro server"
+# Example of usage:
+# REACT_TERMINAL='react-native.terminal.yakuake-tab' react-native run-android --mode ftestDebug
+#
+# NOTE. If you wish to reimplement it in some other way, not for the yakuake, be sure your script ends with all theirs childs! So, it is not enough just run script in the background or subprocess!
+
+args="$@"
+
+#echo "$args" > "$(dirname $0)/$(basename $0).log"
+#date >> "$(dirname $0)/$(basename $0).log"
+
+sessionId=$(qdbus org.kde.yakuake /yakuake/sessions addSession)
+name='RN: metro server'
+cmdString="date; ${args/-e sh }"
+
+qdbus org.kde.yakuake /yakuake/tabs setTabTitle "${sessionId}" "${name}"
+qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal "${sessionId}" "${cmdString}"
