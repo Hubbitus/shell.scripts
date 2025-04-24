@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+#exec npx react-native@0.75.4 "$@"
+
+exec npx react-native@latest "$@"
