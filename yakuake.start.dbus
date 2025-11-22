@@ -39,10 +39,13 @@ ssh-agent
 ssh-add -l || ssh-add
 
 # Start one instance, if needed
-killall -0 yakuake || ( echo "Starting yakuake itself" && /usr/bin/yakuake && sleep 1 )
+killall -0 yakuake || ( echo 'Starting yakuake itself' && /usr/bin/yakuake && sleep 1 )
 
 # Run command in initial tab
-qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'tmux attach || tmux'
-qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 '|main'
+#qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'tmux attach || tmux'
+#qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 '|main'
+#newTab $(( ++id )) 'ROOT' 'sudo tmux'
 
-newTab $(( ++id )) 'ROOT' 'sudo tmux'
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand 'sudo tmux attach || sudo tmux'
+qdbus org.kde.yakuake /yakuake/tabs org.kde.yakuake.setTabTitle 0 '|ROOT'
+newTab $(( ++id )) '|main' 'tmux attach || tmux'
