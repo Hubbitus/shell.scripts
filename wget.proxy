@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+#proxychains -f /home/pasha/.proxychains.conf wget "$@"
+
+_PASS=$(pass show Hubbitus/proxy.hubbitus.info@hubbitus | head -1)
+proxychains -f <(sed "s/{proxy.hubbitus.info-password}/${_PASS}/" /home/pasha/.proxychains.conf) wget "$@"

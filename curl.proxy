@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+curl --proxy $(pass show Hubbitus/proxy.hubbitus.info@hubbitus-host) "$@"
