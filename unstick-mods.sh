@@ -35,7 +35,7 @@ MODS=("${args[@]:-${MODS_ALL[@]}}")
 
 restart_portal_kde() {
     local pid
-    pid=$(pgrep -x xdg-desktop-portal-kde | head -1)
+    pid=$(pgrep -f '(^|/)xdg-desktop-portal-kde($|\s)' | head -1)
     if [[ -z "$pid" ]]; then
         log "portal-kde not running — nothing to restart"
         return 1
@@ -46,7 +46,7 @@ restart_portal_kde() {
     for _ in 1 2 3 4 5; do
         sleep 0.5
         local newpid
-        newpid=$(pgrep -x xdg-desktop-portal-kde | head -1)
+        newpid=$(pgrep -f '(^|/)xdg-desktop-portal-kde($|\s)' | head -1)
         if [[ -n "$newpid" && "$newpid" != "$pid" ]]; then
             log "portal-kde respawned (pid=$newpid)"
             return 0
