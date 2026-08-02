@@ -1,3 +1,17 @@
 #!/usr/bin/bash
 
-curl -sS --max-time=30 --fail-early --fail-with-body https://ifconfig.co/json | jq '{ip, country, city, country_iso, country_eu, region_name, region_code, time_zone, asn_org, hostname}'
+echo '1) By ifconfig.co:'
+curl -sS --max-time=10 --fail-early --fail-with-body https://ifconfig.co/json | jq '{ip, country, city, country_iso, country_eu, region_name, region_code, time_zone, asn_org, hostname}'
+
+# Second try in any case (in case if just service down), but not others in chain if second failed:
+set -e
+
+echo '2) By trackip.net:'
+curl -sS --max-time=10 --fail-early --fail-with-body https://trackip.net/json | jq .
+echo
+
+echo '3) By myip.wtf:'
+curl -sS --max-time=10 --fail-early --fail-with-body https://myip.wtf/json | jq 'with_entries(.key |= ltrimstr("YourFucking"))'
+
+echo '4) By http://ip-api.com/json:'
+curl -sS --max-time=10 --fail-early --fail-with-body http://ip-api.com/json | jq .
