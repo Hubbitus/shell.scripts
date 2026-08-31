@@ -1,4 +1,4 @@
 
 beautifulsoup4==4.12.3
-requests==2.32.4
+requests==2.33.0
 multithreading==0.2.0
