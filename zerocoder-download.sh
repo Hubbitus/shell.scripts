@@ -406,8 +406,8 @@ print(html.unescape(m.group(1)).strip() if m else "")
 
 FINAL_DIR="${OUT_DIR}"
 if [[ -z "${OUT_DIR_EXPLICIT}" && -n "${TITLE}" ]]; then
-    # Sanitize: strip slashes/colons/control chars but keep cyrillic
-    SAFE_TITLE="$(echo "${TITLE}" | tr '/:\\' '___' | tr -d '\r\n')"
+    # Sanitize: strip slashes/control chars but keep cyrillic
+    SAFE_TITLE="$(echo "${TITLE}" | tr '/\\' '__' | tr -d '\r\n')"
     PARENT_DIR="$(dirname "${OUT_DIR}")"
     CANDIDATE="${PARENT_DIR}/${SAFE_TITLE}"
     if [[ -e "${CANDIDATE}" && "${CANDIDATE}" != "${OUT_DIR}" ]]; then
