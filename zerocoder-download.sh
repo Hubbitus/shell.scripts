@@ -5,6 +5,7 @@
 #
 # Usage:
 #   ./zerocoder-download.sh <lesson-url> [output-dir]
+#   ./zerocoder-download.sh '[Lesson title](<lesson-url>)' [output-dir]   — title used as output-dir
 #
 # Requirements:
 #   - monolith (https://github.com/Y2Z/monolith) — inlines all page assets
@@ -25,8 +26,15 @@ exec &> >( ts '%d-%H:%M:%.S' | ts -i -- '+%H:%M:%.S' | tee -i -- "$(basename $0)
 # Ensure cargo-installed binaries (monolith) are on PATH
 export PATH="${HOME}/.cargo/bin:${PATH}"
 
-URL="${1:?Usage: $0 <lesson-url> [output-dir]}"
+URL="${1:?Usage: $0 <lesson-url|[title](lesson-url)> [output-dir]}"
 OUT_DIR_EXPLICIT="${2:-}"
+# Markdown link form: [title](url) → url to download, title as output dir (unless 2nd arg given)
+MD_LINK_RE='^[[:space:]]*\[(.*)\]\((https?://[^[:space:])]+)\)[[:space:]]*$'
+if [[ "${URL}" =~ ${MD_LINK_RE} ]]; then
+    MD_TITLE="${BASH_REMATCH[1]//\//_}"
+    URL="${BASH_REMATCH[2]}"
+    OUT_DIR_EXPLICIT="${OUT_DIR_EXPLICIT:-${MD_TITLE}}"
+fi
 OUT_DIR="${OUT_DIR_EXPLICIT:-./downloaded}"
 LOGIN_EMAIL="pahan@hubbitus.info"
 PASS_ENTRY="Hubbitus/zerocoder.ru"
@@ -64,6 +72,7 @@ LOGIN_RESP="$(
         --data-urlencode "action=login" \
         "${LOGIN_API}"
 )"
+#"
 unset PASSWORD
 
 echo "${LOGIN_RESP}" | grep -q '"success":true' \
