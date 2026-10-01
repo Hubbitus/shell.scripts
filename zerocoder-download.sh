@@ -35,7 +35,8 @@ if [[ "${URL}" =~ ${MD_LINK_RE} ]]; then
     URL="${BASH_REMATCH[2]}"
     OUT_DIR_EXPLICIT="${OUT_DIR_EXPLICIT:-${MD_TITLE}}"
 fi
-OUT_DIR="${OUT_DIR_EXPLICIT:-./downloaded}"
+# Always work in ./downloaded (monolith panics on ":" in --output path); renamed at the end
+OUT_DIR="./downloaded"
 LOGIN_EMAIL="pahan@hubbitus.info"
 PASS_ENTRY="Hubbitus/zerocoder.ru"
 UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
@@ -443,11 +444,16 @@ print(html.unescape(m.group(1)).strip() if m else "")
 )"
 
 FINAL_DIR="${OUT_DIR}"
-if [[ -z "${OUT_DIR_EXPLICIT}" && -n "${TITLE}" ]]; then
+CANDIDATE=""
+if [[ -n "${OUT_DIR_EXPLICIT}" ]]; then
+    CANDIDATE="${OUT_DIR_EXPLICIT%/}"
+    mkdir -p "$(dirname "${CANDIDATE}")"
+elif [[ -n "${TITLE}" ]]; then
     # Sanitize: strip slashes/control chars but keep cyrillic
     SAFE_TITLE="$(echo "${TITLE}" | tr '/\\' '__' | tr -d '\r\n')"
-    PARENT_DIR="$(dirname "${OUT_DIR}")"
-    CANDIDATE="${PARENT_DIR}/${SAFE_TITLE}"
+    CANDIDATE="$(dirname "${OUT_DIR}")/${SAFE_TITLE}"
+fi
+if [[ -n "${CANDIDATE}" ]]; then
     if [[ -e "${CANDIDATE}" && "${CANDIDATE}" != "${OUT_DIR}" ]]; then
         echo "==> WARN: «${CANDIDATE}» exists, keeping «${OUT_DIR}»"
     else
