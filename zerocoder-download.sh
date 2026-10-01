@@ -130,6 +130,8 @@ for SIGN_URL in "${SIGN_URLS[@]}"; do
 
     PLAYER_HTML="${WORK}/player_${idx}.html"
     curl -sSL -b "${COOKIES}" \
+        --connect-timeout 15 --max-time 60 \
+        --retry 5 --retry-delay 3 --retry-all-errors \
         -H "Referer: ${BASE}/" \
         -A "${UA}" \
         "${SIGN_URL}" -o "${PLAYER_HTML}"
@@ -146,7 +148,22 @@ for SIGN_URL in "${SIGN_URLS[@]}"; do
     # Get a fresh sign URL to prevent token expiration issues
     SIGN_URL="$(
         python3 - "${COOKIES}" "${UA}" "${URL}" "${VIDEO_HASH}" "${SIGN_URL}" <<'PYEOF'
-import sys, re, html, json, base64, urllib.request, http.cookiejar
+import sys, re, html, json, base64, time, urllib.request, http.cookiejar, socket
+socket.setdefaulttimeout(30)
+
+def fetch(req, opener=None, attempts=5, delay=3):
+    """GET/POST with retries; raises last error after all attempts fail."""
+    last = None
+    for a in range(1, attempts + 1):
+        try:
+            with (opener.open(req) if opener else urllib.request.urlopen(req)) as r:
+                return r.read().decode('utf-8')
+        except Exception as e:
+            last = e
+            print(f"  WARN: {req.full_url[:100]} attempt {a}/{attempts}: {e}", file=sys.stderr)
+            if a < attempts:
+                time.sleep(delay)
+    raise last
 cookies_path, ua, lesson_url, video_hash, fallback_url = sys.argv[1:6]
 
 cj = http.cookiejar.MozillaCookieJar()
@@ -158,11 +175,10 @@ except Exception:
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
 req = urllib.request.Request(lesson_url, headers={'User-Agent': ua})
 try:
-    with opener.open(req) as resp:
-        html_content = resp.read().decode('utf-8')
-except Exception:
-    print(fallback_url)
-    sys.exit(0)
+    html_content = fetch(req, opener)
+except Exception as e:
+    print(f"  ERROR: lesson page fetch failed: {e}", file=sys.stderr)
+    sys.exit(3)
 
 urls = re.findall(r'https://[^"\'<>\s]+/sign-player/[^"\'<>\s]+', html_content)
 for u in urls:
@@ -181,7 +197,7 @@ for u in urls:
 
 print(fallback_url)
 PYEOF
-    )"
+    )" || { echo "  ERROR: cannot refresh sign URL for ${VIDEO_HASH}" >&2; exit 3; }
 
     OUT_MP4="${VIDEO_DIR}/${VIDEO_HASH}.mp4"
     if [[ -s "${OUT_MP4}" ]]; then
@@ -190,7 +206,22 @@ PYEOF
         # Fetch master playlist and find the best working variant using python
         PICK_INFO="$(
             python3 - "${PLAYER_HTML}" "${SIGN_URL}" "${UA}" <<'PYEOF'
-import sys, re, json, urllib.request, urllib.parse, time
+import sys, re, json, urllib.request, urllib.parse, time, socket
+socket.setdefaulttimeout(30)
+
+def fetch(req, opener=None, attempts=5, delay=3):
+    """GET/POST with retries; raises last error after all attempts fail."""
+    last = None
+    for a in range(1, attempts + 1):
+        try:
+            with (opener.open(req) if opener else urllib.request.urlopen(req)) as r:
+                return r.read().decode('utf-8')
+        except Exception as e:
+            last = e
+            print(f"  WARN: {req.full_url[:100]} attempt {a}/{attempts}: {e}", file=sys.stderr)
+            if a < attempts:
+                time.sleep(delay)
+    raise last
 
 player_html_path = sys.argv[1]
 sign_url = sys.argv[2]
@@ -279,8 +310,7 @@ def get_height(ln):
 for master_url in domains:
     req = urllib.request.Request(master_url, headers={'User-Agent': ua, 'Referer': sign_url})
     try:
-        with urllib.request.urlopen(req) as resp:
-            master_content = resp.read().decode('utf-8')
+        master_content = fetch(req)
     except Exception:
         continue
 
@@ -310,8 +340,7 @@ for master_url in domains:
     for height, v_url, ln in variants:
         req_var = urllib.request.Request(v_url, headers={'User-Agent': ua, 'Referer': sign_url})
         try:
-            with urllib.request.urlopen(req_var) as resp_var:
-                var_content = resp_var.read().decode('utf-8')
+            var_content = fetch(req_var)
             segments = [l for l in var_content.splitlines() if l.strip() and not l.startswith('#')]
             if len(segments) > 0:
                 print(v_url)
