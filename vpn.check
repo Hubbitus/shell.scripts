@@ -15,3 +15,6 @@ curl -sS --max-time=10 --fail-early --fail-with-body https://myip.wtf/json | jq 
 
 echo '4) By http://ip-api.com/json:'
 curl -sS --max-time=10 --fail-early --fail-with-body http://ip-api.com/json | jq .
+
+echo '5) By ipinfo.io:'
+curl -sS --max-time=10 --fail-early --fail-with-body https://ipinfo.io | jq .
