@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+# By https://docs.z.ai/devpack/tool/claude
+# And by: https://docs.z.ai/devpack/latest-model#switching-models-in-claude-code
+
+CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 \
+ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic" \
+ANTHROPIC_AUTH_TOKEN="$(pass show Hubbitus/@AI/z.ai.key | head -1)" \
+CLAUDE_CODE_AUTO_COMPACT_WINDOW=500000 \
+ANTHROPIC_DEFAULT_HAIKU_MODEL='glm-4.7-flash[1m]' \
+ANTHROPIC_DEFAULT_SONNET_MODEL='glm-4.7-flash[1m]' \
+ANTHROPIC_DEFAULT_OPUS_MODEL='glm-4.7-flash[1m]' \
+	claude "$@"
