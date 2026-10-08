@@ -1,20 +1,25 @@
 #!/usr/bin/bash
 
-echo '1) By ifconfig.co:'
-curl -sS --max-time=10 --fail-early --fail-with-body https://ifconfig.co/json | jq '{ip, country, city, country_iso, country_eu, region_name, region_code, time_zone, asn_org, hostname}'
+readonly CURL='curl -sS --max-time=10 --fail-early --fail-with-body'
 
 # Second try in any case (in case if just service down), but not others in chain if second failed:
 set -e
 
-echo '2) By trackip.net:'
-curl -sS --max-time=10 --fail-early --fail-with-body https://trackip.net/json | jq .
-echo
+echo '1) By trackip.net:'
+$CURL https://trackip.net/json | jq .
 
-echo '3) By myip.wtf:'
-curl -sS --max-time=10 --fail-early --fail-with-body https://myip.wtf/json | jq 'with_entries(.key |= ltrimstr("YourFucking"))'
+echo '2) By myip.wtf:'
+$CURL https://myip.wtf/json | jq 'with_entries(.key |= ltrimstr("YourFucking"))'
 
-echo '4) By http://ip-api.com/json:'
-curl -sS --max-time=10 --fail-early --fail-with-body http://ip-api.com/json | jq .
+echo '3) By http://ip-api.com/json:'
+$CURL http://ip-api.com/json | jq .
 
-echo '5) By ipinfo.io:'
-curl -sS --max-time=10 --fail-early --fail-with-body https://ipinfo.io | jq .
+echo '4) By ipinfo.io:'
+$CURL https://ipinfo.io | jq .
+
+echo '5) By ip.sb:'
+$CURL https://api.ip.sb/geoip | jq .
+
+# Ifconfig was first initially. But it looks like it always wrong about GEO by IP. DB outdated?
+#echo '1) By ifconfig.co:'
+#curl -sS --max-time=10 --fail-early --fail-with-body https://ifconfig.co/json | jq '{ip, country, city, country_iso, country_eu, region_name, region_code, time_zone, asn_org, hostname}'
