@@ -1,24 +1,43 @@
 #!/usr/bin/bash
+# Show the externally visible IP and how several geo databases place it.
+#
+# The probes are independent on purpose.
+# Geo databases disagree often: free ones (ip-api.com, myip.wtf) are routinely years out of date for hosting ranges, and a single failing service used to abort the whole run via `set -e`, hiding every answer after it.
+#
+# The RDAP section is the authoritative one: it is the IP registry record (RIPE/ARIN/APNIC/...), not a commercial guess.
 
 readonly CURL='curl -sS --max-time=10 --fail-early --fail-with-body'
-
-# Second try in any case (in case if just service down), but not others in chain if second failed:
-set -e
+readonly IP_URL='https://ipinfo.io/ip'
 
 echo '1) By trackip.net:'
-$CURL https://trackip.net/json | jq .
+$CURL https://trackip.net/json | jq . || echo '   (probe failed)'
 
 echo '2) By myip.wtf:'
-$CURL https://myip.wtf/json | jq 'with_entries(.key |= ltrimstr("YourFucking"))'
+$CURL https://myip.wtf/json | jq 'with_entries(.key |= ltrimstr("YourFucking"))' || echo '   (probe failed)'
 
 echo '3) By http://ip-api.com/json:'
-$CURL http://ip-api.com/json | jq .
+$CURL http://ip-api.com/json | jq . || echo '   (probe failed)'
 
 echo '4) By ipinfo.io:'
-$CURL https://ipinfo.io | jq .
+$CURL https://ipinfo.io | jq . || echo '   (probe failed)'
 
 echo '5) By ip.sb:'
-$CURL https://api.ip.sb/geoip | jq .
+$CURL https://api.ip.sb/geoip | jq . || echo '   (probe failed)'
+
+echo '6) RDAP registry (authoritative):'
+IP="$($CURL "$IP_URL" 2>/dev/null || true)"
+if [ -z "$IP" ]; then
+    echo '   (could not determine the external IP)'
+else
+    echo "   external IP: $IP"
+    # rdap.org bootstraps to the right RIR, so it works for any region.
+    $CURL -L "https://rdap.org/ip/$IP" | jq '{handle, name, country, type}' \
+        || echo '   (RDAP lookup failed)'
+    echo '   Announced prefix / ASN (RIPE Stat):'
+    $CURL "https://stat.ripe.net/data/prefix-overview/data.json?resource=$IP" \
+        | jq '{prefix: .data.resource, announced: .data.announced, asns: [.data.asns[] | {asn, holder}]}' \
+        || echo '   (RIPE Stat lookup failed)'
+fi
 
 # Ifconfig was first initially. But it looks like it always wrong about GEO by IP. DB outdated?
 #echo '1) By ifconfig.co:'
