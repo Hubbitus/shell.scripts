@@ -1,0 +1,22 @@
+#!/bin/sh
+# List all sing-box@ VPN instances discovered from /etc/sing-box/*.json
+# with their current active state. systemd's list-units only shows
+# template instances that are currently loaded, which hides inactive
+# ones — this script enumerates from configs instead.
+set -eu
+
+CONF_DIR=/etc/sing-box
+STATE_FILE=/var/lib/vpn/last-active
+LAST=""
+[ -r "$STATE_FILE" ] && LAST=$(cat "$STATE_FILE" 2>/dev/null || true)
+
+printf '%-45s %-10s %s\n' UNIT STATE NOTE
+for f in "$CONF_DIR"/*.json; do
+    [ -e "$f" ] || continue
+    n=$(basename "$f" .json)
+    unit="sing-box@${n}.service"
+    state=$(systemctl is-active "$unit" 2>/dev/null || true)
+    note=""
+    [ "$n" = "$LAST" ] && note="(last-active)"
+    printf '%-45s %-10s %s\n' "$unit" "$state" "$note"
+done
